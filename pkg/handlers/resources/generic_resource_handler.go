@@ -8,15 +8,17 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zxh326/kite/pkg/cluster"
-	"github.com/zxh326/kite/pkg/common"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/zxh326/kite/pkg/cluster"
+	"github.com/zxh326/kite/pkg/common"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type GenericResourceHandler[T client.Object, V client.ObjectList] struct {

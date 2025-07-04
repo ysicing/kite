@@ -12,9 +12,9 @@ import (
 	"syscall"
 	"time"
 
-	_ "net/http/pprof"
-
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog/v2"
+
 	"github.com/zxh326/kite/pkg/auth"
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/common"
@@ -22,7 +22,8 @@ import (
 	"github.com/zxh326/kite/pkg/handlers/resources"
 	"github.com/zxh326/kite/pkg/middleware"
 	"github.com/zxh326/kite/pkg/utils"
-	"k8s.io/klog/v2"
+
+	_ "net/http/pprof"
 )
 
 //go:embed static

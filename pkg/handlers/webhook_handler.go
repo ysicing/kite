@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"k8s.io/klog/v2"
+
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/common"
 	"github.com/zxh326/kite/pkg/handlers/resources"
-	"k8s.io/klog/v2"
 )
 
 type WebhookHandler struct {

@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zxh326/kite/pkg/cluster"
-	"github.com/zxh326/kite/pkg/kube"
 	"golang.org/x/net/websocket"
 	"k8s.io/klog/v2"
+
+	"github.com/zxh326/kite/pkg/cluster"
+	"github.com/zxh326/kite/pkg/kube"
 )
 
 type TerminalHandler struct {

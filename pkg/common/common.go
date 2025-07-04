@@ -3,8 +3,9 @@ package common
 import (
 	"os"
 
-	"github.com/zxh326/kite/pkg/utils"
 	"k8s.io/klog/v2"
+
+	"github.com/zxh326/kite/pkg/utils"
 )
 
 const (

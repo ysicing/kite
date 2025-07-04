@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zxh326/kite/pkg/common"
 	"k8s.io/klog/v2"
+
+	"github.com/zxh326/kite/pkg/common"
 )
 
 type AuthHandler struct {
