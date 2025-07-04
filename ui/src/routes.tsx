@@ -4,6 +4,7 @@ import App from './App'
 import { ProtectedRoute } from './components/protected-route'
 import { CRListPage } from './pages/cr-list-page'
 import { LoginPage } from './pages/login'
+import { OpenKruisePage } from './pages/openkruise-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <Overview />,
+      },
+      {
+        path: 'openkruise',
+        element: <OpenKruisePage />,
       },
       {
         path: 'crds/:crd',

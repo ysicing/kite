@@ -1075,3 +1075,30 @@ export const useLogsStream = (
     stopStreaming,
   }
 }
+
+// OpenKruise API
+export interface OpenKruiseWorkload {
+  name: string
+  kind: string
+  apiVersion: string
+  available: boolean
+  count: number
+  description: string
+}
+
+export interface OpenKruiseStatus {
+  installed: boolean
+  version?: string
+  workloads: OpenKruiseWorkload[]
+}
+
+export const useOpenKruiseStatus = () => {
+  return useQuery<OpenKruiseStatus>({
+    queryKey: ['openkruise-status'],
+    queryFn: async () => {
+      return await apiClient.get<OpenKruiseStatus>('/openkruise/status')
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+  })
+}

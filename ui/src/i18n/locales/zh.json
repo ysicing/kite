@@ -31,6 +31,7 @@
     "overview": "概览",
     "cluster": "集群",
     "workloads": "工作负载",
+    "openkruise": "OpenKruise",
     "pods": "容器组",
     "deployments": "无状态副本集",
     "statefulsets": "有状态副本集",
@@ -48,7 +49,15 @@
     "yaml": "YAML",
     "monitor": "监控",
     "terminal": "终端",
-    "events": "事件"
+    "events": "事件",
+    "clonesets": "CloneSets",
+    "advancedstatefulsets": "高级有状态副本集",
+    "advanceddaemonsets": "高级守护进程集",
+    "broadcastjobs": "广播任务",
+    "advancedcronjobs": "高级定时任务",
+    "sidecarsets": "边车集",
+    "imagepulljobs": "镜像拉取任务",
+    "nodeimages": "节点镜像"
   },
   "overview": {
     "title": "概览",
@@ -271,6 +280,166 @@
       "contactSupport": "请重试或联系支持（如果问题仍然存在）。",
       "invalidCredentials": "用户名或密码无效",
       "unknownError": "发生未知错误"
+    }
+  },
+  "terminal": {
+    "title": "终端",
+    "connecting": "连接中...",
+    "connected": "已连接",
+    "disconnected": "已断开",
+    "reconnecting": "重新连接中...",
+    "connectionError": "连接错误",
+    "clear": "清除",
+    "settings": "设置",
+    "theme": "主题",
+    "fontSize": "字体大小",
+    "fontFamily": "字体",
+    "small": "小",
+    "medium": "中",
+    "large": "大",
+    "searchPlaceholder": "搜索...",
+    "searchNext": "下一个",
+    "searchPrevious": "上一个",
+    "searchClose": "关闭搜索",
+    "noResults": "无结果",
+    "findInTerminal": "在终端中查找",
+    "copy": "复制",
+    "paste": "粘贴",
+    "selectAll": "全选",
+    "webLinks": "网页链接",
+    "fitToWindow": "适应窗口",
+    "defaultShell": "默认Shell",
+    "customCommand": "自定义命令",
+    "enterCommand": "输入命令",
+    "executeCommand": "执行命令",
+    "commandHistory": "命令历史",
+    "noCommandHistory": "无命令历史",
+    "clearHistory": "清除历史",
+    "session": "会话",
+    "newSession": "新会话",
+    "closeSession": "关闭会话",
+    "sessionName": "会话名称",
+    "renameSession": "重命名会话",
+    "duplicateSession": "复制会话",
+    "sessionSettings": "会话设置",
+    "autoReconnect": "自动重连",
+    "keepAlive": "保持连接",
+    "encoding": "编码",
+    "utf8": "UTF-8",
+    "ascii": "ASCII",
+    "latin1": "Latin1",
+    "scrollback": "回滚行数",
+    "unlimited": "无限制",
+    "lines": "行",
+    "cursorBlink": "光标闪烁",
+    "cursorStyle": "光标样式",
+    "block": "块状",
+    "underline": "下划线",
+    "bar": "竖线",
+    "bell": "响铃",
+    "visualBell": "视觉响铃",
+    "audioBell": "音频响铃",
+    "noBell": "无响铃",
+    "rightClick": "右键菜单",
+    "selectToCopy": "选择复制",
+    "pasteOnRightClick": "右键粘贴",
+    "wordSeparators": "单词分隔符",
+    "macOptionIsMeta": "Mac Option键作为Meta",
+    "macOptionClickForcesSelection": "Mac Option+点击强制选择",
+    "altClickMovesCursor": "Alt+点击移动光标",
+    "rendererType": "渲染器类型",
+    "canvas": "Canvas",
+    "dom": "DOM",
+    "experimentalCharAtlas": "实验性字符图集",
+    "experimentalBufferLineImpl": "实验性缓冲区行实现",
+    "logLevel": "日志级别",
+    "debug": "调试",
+    "info": "信息",
+    "warn": "警告",
+    "error": "错误",
+    "off": "关闭"
+  },
+  "openkruise": {
+    "title": "OpenKruise",
+    "notInstalled": "集群未安装 OpenKruise",
+    "notInstalledDescription": "OpenKruise 是一个基于 Kubernetes 的扩展套件，主要聚焦于云原生应用的自动化管理。",
+    "installGuide": "安装指南",
+    "learnMore": "了解更多",
+    "version": "版本",
+    "summary": "总览",
+    "availableWorkloads": "可用工作负载",
+    "totalResources": "总资源数",
+    "totalInstances": "总实例数",
+    "supportedTypes": "支持类型",
+    "workloads": "工作负载",
+    "management": "管理",
+    "availability": "可用性",
+    "categories": {
+      "advancedWorkloads": "高级工作负载",
+      "sidecarManagement": "边车容器管理",
+      "multiDomainManagement": "多域管理",
+      "enhancedOperations": "增强运维",
+      "applicationProtection": "应用保护"
+    },
+    "clonesets": {
+      "title": "CloneSets",
+      "description": "增强版的无状态工作负载，支持原地升级和灵活的发布策略"
+    },
+    "advancedstatefulsets": {
+      "title": "高级有状态副本集",
+      "description": "增强版的有状态工作负载，支持原地升级和并行发布"
+    },
+    "advanceddaemonsets": {
+      "title": "高级守护进程集",
+      "description": "增强版的守护进程集，支持原地升级和灵活的发布策略"
+    },
+    "broadcastjobs": {
+      "title": "广播任务",
+      "description": "在集群中的每个节点上运行Pod的任务类型"
+    },
+    "advancedcronjobs": {
+      "title": "高级定时任务",
+      "description": "提供增强的 CronJob 能力"
+    },
+    "sidecarsets": {
+      "title": "边车集",
+      "description": "管理应用的边车容器，支持原地升级"
+    },
+    "uniteddeployments": {
+      "title": "联合部署",
+      "description": "管理跨多个域的部署"
+    },
+    "workloadspreads": {
+      "title": "工作负载分布",
+      "description": "约束无状态工作负载的Pod分布策略"
+    },
+    "imagepulljobs": {
+      "title": "镜像拉取任务",
+      "description": "在节点上预拉取镜像"
+    },
+    "containerrecreaterequest": {
+      "title": "容器重建请求",
+      "description": "重启运行中Pod的容器"
+    },
+    "resourcedistributions": {
+      "title": "资源分发",
+      "description": "跨命名空间分发资源"
+    },
+    "persistentpodstates": {
+      "title": "持久化Pod状态",
+      "description": "在重启时保持Pod状态"
+    },
+    "podprobemarkers": {
+      "title": "Pod探针标记",
+      "description": "自定义Pod就绪探针"
+    },
+    "nodeimages": {
+      "title": "节点镜像",
+      "description": "管理节点上的镜像预下载"
+    },
+    "podunavailablebudgets": {
+      "title": "Pod不可用预算",
+      "description": "防护Pod在多种中断场景下的可用性"
     }
   }
 }

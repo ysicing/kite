@@ -31,6 +31,7 @@
     "overview": "Overview",
     "cluster": "Cluster",
     "workloads": "Workloads",
+    "openkruise": "OpenKruise",
     "pods": "Pods",
     "deployments": "Deployments",
     "statefulsets": "StatefulSets",
@@ -48,7 +49,15 @@
     "yaml": "YAML",
     "monitor": "Monitor",
     "terminal": "Terminal",
-    "events": "Events"
+    "events": "Events",
+    "clonesets": "CloneSets",
+    "advancedstatefulsets": "Advanced StatefulSets",
+    "advanceddaemonsets": "Advanced DaemonSets",
+    "broadcastjobs": "Broadcast Jobs",
+    "advancedcronjobs": "Advanced CronJobs",
+    "sidecarsets": "Sidecar Sets",
+    "imagepulljobs": "Image Pull Jobs",
+    "nodeimages": "Node Images"
   },
   "overview": {
     "title": "Overview",
@@ -271,6 +280,166 @@
       "contactSupport": "Please try again or contact support if the issue persists.",
       "invalidCredentials": "Invalid username or password",
       "unknownError": "An unknown error occurred"
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "connecting": "Connecting...",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting...",
+    "connectionError": "Connection Error",
+    "clear": "Clear",
+    "settings": "Settings",
+    "theme": "Theme",
+    "fontSize": "Font Size",
+    "fontFamily": "Font Family",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "searchPlaceholder": "Search...",
+    "searchNext": "Next",
+    "searchPrevious": "Previous",
+    "searchClose": "Close Search",
+    "noResults": "No Results",
+    "findInTerminal": "Find in Terminal",
+    "copy": "Copy",
+    "paste": "Paste",
+    "selectAll": "Select All",
+    "webLinks": "Web Links",
+    "fitToWindow": "Fit to Window",
+    "defaultShell": "Default Shell",
+    "customCommand": "Custom Command",
+    "enterCommand": "Enter Command",
+    "executeCommand": "Execute Command",
+    "commandHistory": "Command History",
+    "noCommandHistory": "No Command History",
+    "clearHistory": "Clear History",
+    "session": "Session",
+    "newSession": "New Session",
+    "closeSession": "Close Session",
+    "sessionName": "Session Name",
+    "renameSession": "Rename Session",
+    "duplicateSession": "Duplicate Session",
+    "sessionSettings": "Session Settings",
+    "autoReconnect": "Auto Reconnect",
+    "keepAlive": "Keep Alive",
+    "encoding": "Encoding",
+    "utf8": "UTF-8",
+    "ascii": "ASCII",
+    "latin1": "Latin1",
+    "scrollback": "Scrollback Lines",
+    "unlimited": "Unlimited",
+    "lines": "Lines",
+    "cursorBlink": "Cursor Blink",
+    "cursorStyle": "Cursor Style",
+    "block": "Block",
+    "underline": "Underline",
+    "bar": "Bar",
+    "bell": "Bell",
+    "visualBell": "Visual Bell",
+    "audioBell": "Audio Bell",
+    "noBell": "No Bell",
+    "rightClick": "Right Click Menu",
+    "selectToCopy": "Select to Copy",
+    "pasteOnRightClick": "Paste on Right Click",
+    "wordSeparators": "Word Separators",
+    "macOptionIsMeta": "Mac Option is Meta",
+    "macOptionClickForcesSelection": "Mac Option Click Forces Selection",
+    "altClickMovesCursor": "Alt Click Moves Cursor",
+    "rendererType": "Renderer Type",
+    "canvas": "Canvas",
+    "dom": "DOM",
+    "experimentalCharAtlas": "Experimental Char Atlas",
+    "experimentalBufferLineImpl": "Experimental Buffer Line Impl",
+    "logLevel": "Log Level",
+    "debug": "Debug",
+    "info": "Info",
+    "warn": "Warn",
+    "error": "Error",
+    "off": "Off"
+  },
+  "openkruise": {
+    "title": "OpenKruise",
+    "notInstalled": "OpenKruise is not installed in this cluster",
+    "notInstalledDescription": "OpenKruise is a Kubernetes extension suite focused on automating cloud-native application management.",
+    "installGuide": "Installation Guide",
+    "learnMore": "Learn More",
+    "version": "Version",
+    "summary": "Summary",
+    "availableWorkloads": "Available Workloads",
+    "totalResources": "Total Resources",
+    "totalInstances": "Total Instances",
+    "supportedTypes": "Supported Types",
+    "workloads": "Workloads",
+    "management": "Management",
+    "availability": "Availability",
+    "categories": {
+      "advancedWorkloads": "Advanced Workloads",
+      "sidecarManagement": "Sidecar Container Management",
+      "multiDomainManagement": "Multi-domain Management",
+      "enhancedOperations": "Enhanced Operations",
+      "applicationProtection": "Application Protection"
+    },
+    "clonesets": {
+      "title": "CloneSets",
+      "description": "Enhanced stateless workload with in-place update and flexible release strategies"
+    },
+    "advancedstatefulsets": {
+      "title": "Advanced StatefulSets",
+      "description": "Enhanced stateful workload with in-place update and parallel release"
+    },
+    "advanceddaemonsets": {
+      "title": "Advanced DaemonSets",
+      "description": "Enhanced daemon set with in-place update and flexible release strategies"
+    },
+    "broadcastjobs": {
+      "title": "Broadcast Jobs",
+      "description": "Job type that runs pods on every node in the cluster"
+    },
+    "advancedcronjobs": {
+      "title": "Advanced CronJobs",
+      "description": "Provides enhanced CronJob capabilities"
+    },
+    "sidecarsets": {
+      "title": "Sidecar Sets",
+      "description": "Manage application sidecar containers with in-place update support"
+    },
+    "uniteddeployments": {
+      "title": "United Deployments",
+      "description": "Manage multi-domain deployments"
+    },
+    "workloadspreads": {
+      "title": "Workload Spreads",
+      "description": "Constrain the spread of stateless workload pods"
+    },
+    "imagepulljobs": {
+      "title": "Image Pull Jobs",
+      "description": "Pre-pull images on nodes"
+    },
+    "containerrecreaterequest": {
+      "title": "Container Recreate Request",
+      "description": "Restart containers in running pods"
+    },
+    "resourcedistributions": {
+      "title": "Resource Distributions",
+      "description": "Distribute resources across namespaces"
+    },
+    "persistentpodstates": {
+      "title": "Persistent Pod States",
+      "description": "Maintain pod state across restarts"
+    },
+    "podprobemarkers": {
+      "title": "Pod Probe Markers",
+      "description": "Customize pod readiness probes"
+    },
+    "nodeimages": {
+      "title": "Node Images",
+      "description": "Manage image pre-downloading on nodes"
+    },
+    "podunavailablebudgets": {
+      "title": "Pod Unavailable Budgets",
+      "description": "Protect pod availability in various disruption scenarios"
     }
   }
 }

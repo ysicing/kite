@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	kruiseappsv1alpha1 "github.com/openkruise/kruise-api/apps/v1alpha1"
+	kruiseappsv1beta1 "github.com/openkruise/kruise-api/apps/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -30,6 +32,9 @@ func init() {
 	_ = scheme.AddToScheme(runtimeScheme)
 	_ = apiextensionsv1.AddToScheme(runtimeScheme)
 	_ = metricsv1.AddToScheme(runtimeScheme)
+	// Add OpenKruise schemes
+	_ = kruiseappsv1alpha1.AddToScheme(runtimeScheme)
+	_ = kruiseappsv1beta1.AddToScheme(runtimeScheme)
 }
 
 // K8sClient holds the Kubernetes client instances

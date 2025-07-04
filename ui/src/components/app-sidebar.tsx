@@ -18,6 +18,7 @@ import {
   IconRouter,
   IconServer2,
   IconStack2,
+  IconStack3,
   IconTopologyBus,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
@@ -25,6 +26,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useCluster } from '@/hooks/use-cluster'
+import { useOpenKruiseStatus } from '@/lib/api'
 import {
   Sidebar,
   SidebarContent,
@@ -47,6 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation()
   const { isMobile, setOpenMobile } = useSidebar()
   const { clusters, isLoading } = useCluster()
+  const { data: openKruiseStatus } = useOpenKruiseStatus()
   const shouldShowClusterSelector = !isLoading && clusters.length > 1
 
   const menus = {
@@ -55,6 +58,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.nodes'),
         url: '/nodes',
         icon: IconServer2,
+      },
+      // Always show OpenKruise in cluster group
+      {
+        title: t('nav.openkruise'),
+        url: '/openkruise',
+        icon: IconStack3,
       },
     ],
     [t('nav.workloads')]: [
@@ -89,6 +98,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconClockHour4,
       },
     ],
+    ...(openKruiseStatus?.installed ? {
+      [t('nav.openkruise')]: [
+        {
+          title: t('nav.clonesets'),
+          url: '/clonesets',
+          icon: IconRocket,
+        },
+        {
+          title: t('nav.advancedstatefulsets'),
+          url: '/advancedstatefulsets',
+          icon: IconStack2,
+        },
+        {
+          title: t('nav.advanceddaemonsets'),
+          url: '/advanceddaemonsets',
+          icon: IconTopologyBus,
+        },
+        {
+          title: t('nav.broadcastjobs'),
+          url: '/broadcastjobs',
+          icon: IconPlayerPlay,
+        },
+        {
+          title: t('nav.advancedcronjobs'),
+          url: '/advancedcronjobs',
+          icon: IconClockHour4,
+        },
+        {
+          title: t('nav.sidecarsets'),
+          url: '/sidecarsets',
+          icon: IconBox,
+        },
+        {
+          title: t('nav.imagepulljobs'),
+          url: '/imagepulljobs',
+          icon: IconDatabase,
+        },
+        {
+          title: t('nav.nodeimages'),
+          url: '/nodeimages',
+          icon: IconServer2,
+        },
+      ]
+    } : {}),
     Traffic: [
       {
         title: t('nav.ingresses'),
@@ -198,6 +251,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
+
+
 
         {Object.entries(menus).map(([group, items]) => (
           <Collapsible defaultOpen className="group/collapsible" key={group}>
