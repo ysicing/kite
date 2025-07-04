@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query'
 import {
   clusterScopeResources,
   DeploymentRelatedResource,
+  NodeDetailInfo,
+  NodeDetailList,
   OverviewData,
   PodMetrics,
   ResourcesTypeMap,
@@ -222,6 +224,16 @@ export const untaintNode = async (
   }>(endpoint, { key })
 
   return response
+}
+
+// 获取所有节点的详细信息
+export const fetchNodesWithDetails = (): Promise<NodeDetailList> => {
+  return fetchAPI<NodeDetailList>('/nodes/_all/details')
+}
+
+// 获取单个节点的详细信息
+export const fetchNodeDetails = (nodeName: string): Promise<NodeDetailInfo> => {
+  return fetchAPI<NodeDetailInfo>(`/nodes/_all/${nodeName}/details`)
 }
 
 export const updateResource = async <T extends ResourceType>(
@@ -531,6 +543,42 @@ export const usePodMetrics = (
     enabled: !!namespace && !!podName,
     staleTime: options?.staleTime || 10000, // 10 seconds cache
     refetchInterval: options?.refreshInterval || 30 * 1000, // 1 second
+    retry: 0,
+    placeholderData: (prevData) => prevData,
+  })
+}
+
+// 获取所有节点详细信息的hook
+export const useNodesWithDetails = (
+  options?: {
+    staleTime?: number
+    refreshInterval?: number
+  }
+) => {
+  return useQuery({
+    queryKey: ['nodes-with-details'],
+    queryFn: () => fetchNodesWithDetails(),
+    staleTime: options?.staleTime || 5000, // 5 seconds cache
+    refetchInterval: options?.refreshInterval || 30000, // 30 seconds
+    retry: 0,
+    placeholderData: (prevData) => prevData,
+  })
+}
+
+// 获取单个节点详细信息的hook
+export const useNodeDetails = (
+  nodeName: string,
+  options?: {
+    staleTime?: number
+    refreshInterval?: number
+  }
+) => {
+  return useQuery({
+    queryKey: ['node-details', nodeName],
+    queryFn: () => fetchNodeDetails(nodeName),
+    enabled: !!nodeName,
+    staleTime: options?.staleTime || 5000, // 5 seconds cache
+    refetchInterval: options?.refreshInterval || 30000, // 30 seconds
     retry: 0,
     placeholderData: (prevData) => prevData,
   })

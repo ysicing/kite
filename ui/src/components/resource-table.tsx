@@ -48,6 +48,11 @@ export interface ResourceTableProps<T> {
   searchQueryFilter?: (item: T, query: string) => boolean // Custom filter function
   showCreateButton?: boolean // If true, show create button
   onCreateClick?: () => void // Callback for create button click
+  data?: { items: T[] } | T[] // Optional external data, overrides internal data fetching
+  isLoading?: boolean // Optional external loading state
+  error?: Error | null // Optional external error state
+  hideHeader?: boolean // If true, hide the header section
+  customFilters?: React.ReactNode // Custom filter components to display alongside column filters
 }
 
 export function ResourceTable<T>({
@@ -58,6 +63,11 @@ export function ResourceTable<T>({
   searchQueryFilter,
   showCreateButton = false,
   onCreateClick,
+  data: externalData,
+  isLoading: externalIsLoading,
+  error: externalError,
+  hideHeader = false,
+  customFilters,
 }: ResourceTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -71,13 +81,23 @@ export function ResourceTable<T>({
   const [selectedNamespace, setSelectedNamespace] = useState<
     string | undefined
   >()
-  const { isLoading, data, isError, error, refetch } = useResources(
+  
+  // Use external data if provided, otherwise fetch data internally
+  const internalQuery = useResources(
     resourceType ?? (resourceName.toLowerCase() as ResourceType),
     selectedNamespace,
     {
       refreshInterval: 5000, // Refresh every 5 seconds
+      disable: !!externalData, // Only fetch if no external data is provided
     }
   )
+  
+  // Use external data/loading/error states if provided, otherwise use internal states
+  const isLoading = externalIsLoading !== undefined ? externalIsLoading : internalQuery.isLoading
+  const data = externalData ? (Array.isArray(externalData) ? externalData : externalData.items) : internalQuery.data
+  const isError = externalError !== undefined ? !!externalError : internalQuery.isError
+  const error = externalError !== undefined ? externalError : internalQuery.error
+  const refetch = internalQuery.refetch
 
   // Set initial namespace when namespaces are loaded
   useEffect(() => {
@@ -342,19 +362,21 @@ export function ResourceTable<T>({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold capitalize">{resourceName}</h1>
-          {!clusterScope &&
-            selectedNamespace &&
-            selectedNamespace !== '_all' && (
-              <div className="text-muted-foreground flex items-center mt-1">
-                <span>Namespace:</span>
-                <Badge variant="outline" className="ml-2 ">
-                  {selectedNamespace}
-                </Badge>
-              </div>
-            )}
-        </div>
+        {!hideHeader && (
+          <div>
+            <h1 className="text-2xl font-bold capitalize">{resourceName}</h1>
+            {!clusterScope &&
+              selectedNamespace &&
+              selectedNamespace !== '_all' && (
+                <div className="text-muted-foreground flex items-center mt-1">
+                  <span>Namespace:</span>
+                  <Badge variant="outline" className="ml-2 ">
+                    {selectedNamespace}
+                  </Badge>
+                </div>
+              )}
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex items-center gap-2 flex-wrap">
@@ -365,6 +387,9 @@ export function ResourceTable<T>({
                 showAll={true}
               />
             )}
+            {/* Custom Filters */}
+            {customFilters}
+            
             {/* Column Filters */}
             {table
               .getAllColumns()

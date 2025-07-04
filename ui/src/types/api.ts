@@ -300,3 +300,50 @@ export interface PodCurrentMetrics {
   cpu: number // CPU cores
   memory: number // Memory in MB
 }
+
+// Node detailed information
+export interface NodeDetailInfo extends Node {
+  // 资源使用情况 (原始Quantity字符串)
+  cpuUsage?: string
+  memoryUsage?: string
+  
+  // 资源分配情况 (原始Quantity字符串)
+  cpuRequested?: string
+  memoryRequested?: string
+  cpuLimited?: string
+  memoryLimited?: string
+  
+  // 资源使用情况 (转换为核心数/字节数)
+  cpuUsageCores: number
+  memoryUsageBytes: number
+  
+  // 资源分配情况 (转换为核心数/字节数)
+  cpuRequestedCores: number
+  memoryRequestedBytes: number
+  cpuLimitedCores: number
+  memoryLimitedBytes: number
+  
+  // 资源容量 (转换为核心数/字节数)
+  cpuCapacityCores: number
+  memoryCapacityBytes: number
+  cpuAllocatableCores: number
+  memoryAllocatableBytes: number
+  
+  // Pod信息
+  podCount: number
+  podCapacity: number
+  
+  // 存活时间
+  age: string
+  
+  // 使用率百分比
+  cpuUsagePercent: number
+  memoryUsagePercent: number
+  cpuRequestedPercent: number
+  memoryRequestedPercent: number
+  podUsagePercent: number
+}
+
+export interface NodeDetailList {
+  items: NodeDetailInfo[]
+}

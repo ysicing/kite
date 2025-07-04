@@ -106,6 +106,56 @@ export function formatCPU(cores: string | number): string {
   return `${cores} cores`
 }
 
+// Format CPU for node list display (without "cores" suffix)
+export function formatCPUValue(cores: string | number): string {
+  if (typeof cores === 'string') {
+    if (cores.endsWith('m')) {
+      const milliCores = parseInt(cores.slice(0, -1))
+      return `${(milliCores / 1000).toFixed(3)}`
+    }
+    // Handle whole number cores
+    const numValue = parseFloat(cores)
+    if (!isNaN(numValue)) {
+      return numValue.toString()
+    }
+    return cores
+  }
+  return cores.toString()
+}
+
+// Format memory for node list display (without unit)
+export function formatMemoryValue(memory: string | number): string {
+  if (typeof memory === 'number') {
+    return formatBytes(memory)
+  }
+
+  const units = {
+    Ki: 1024,
+    Mi: 1024 * 1024,
+    Gi: 1024 * 1024 * 1024,
+    Ti: 1024 * 1024 * 1024 * 1024,
+    K: 1000,
+    M: 1000 * 1000,
+    G: 1000 * 1000 * 1000,
+    T: 1000 * 1000 * 1000 * 1000,
+  }
+
+  for (const [suffix, multiplier] of Object.entries(units)) {
+    if (memory.endsWith(suffix)) {
+      const value = parseFloat(memory.slice(0, -suffix.length))
+      return formatBytes(value * multiplier)
+    }
+  }
+
+  // If no unit, assume bytes
+  const numValue = parseFloat(memory)
+  if (!isNaN(numValue)) {
+    return formatBytes(numValue)
+  }
+
+  return memory
+}
+
 // Format memory
 export function formatMemory(memory: string | number): string {
   if (typeof memory === 'number') {
