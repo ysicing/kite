@@ -49,7 +49,7 @@ export function SiteHeader() {
                   className="hidden sm:flex"
                 >
                   <a
-                    href="https://github.com/zxh326/kite"
+                    href="https://github.com/ysicing/kite"
                     aria-label="GitHub"
                     target="_blank"
                     className="dark:text-foreground"
