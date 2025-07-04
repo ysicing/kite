@@ -12,6 +12,7 @@ import {
 import * as yaml from 'js-yaml'
 import { Node } from 'kubernetes-types/core/v1'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 import {
   cordonNode,
@@ -51,6 +52,21 @@ import { YamlEditor } from '@/components/yaml-editor'
 
 export function NodeDetail(props: { name: string }) {
   const { name } = props
+  const { t } = useTranslation()
+
+  // Function to translate condition messages
+  const translateConditionMessage = (message: string) => {
+    // Common condition messages mapping
+    const messageMap: { [key: string]: string } = {
+      'kubelet has sufficient memory available': 'nodes.conditionMessages.kubeletHasSufficientMemoryAvailable',
+      'kubelet has no disk pressure': 'nodes.conditionMessages.kubeletHasNoDiskPressure', 
+      'kubelet has sufficient PID available': 'nodes.conditionMessages.kubeletHasSufficientPIDAvailable',
+      'kubelet is posting ready status': 'nodes.conditionMessages.kubeletIsPostingReadyStatus'
+    }
+    
+    const translationKey = messageMap[message]
+    return translationKey ? t(translationKey) : message
+  }
   const [yamlContent, setYamlContent] = useState('')
   const [isSavingYaml, setIsSavingYaml] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
@@ -121,15 +137,15 @@ export function NodeDetail(props: { name: string }) {
   const handleDrain = async () => {
     try {
       await drainNode(name, drainOptions)
-      toast.success(`Node ${name} drained successfully`)
+      toast.success(t('nodes.drainSuccess', { name }))
       setIsDrainPopoverOpen(false)
       handleRefresh()
     } catch (error) {
       console.error('Failed to drain node:', error)
       toast.error(
-        `Failed to drain node: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        t('nodes.drainError', { 
+          error: error instanceof Error ? error.message : t('nodes.unknownError')
+        })
       )
     }
   }
@@ -137,15 +153,15 @@ export function NodeDetail(props: { name: string }) {
   const handleCordon = async () => {
     try {
       await cordonNode(name)
-      toast.success(`Node ${name} cordoned successfully`)
+      toast.success(t('nodes.cordonSuccess', { name }))
       setIsCordonPopoverOpen(false)
       handleRefresh()
     } catch (error) {
       console.error('Failed to cordon node:', error)
       toast.error(
-        `Failed to cordon node: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        t('nodes.cordonError', { 
+          error: error instanceof Error ? error.message : t('nodes.unknownError')
+        })
       )
     }
   }
@@ -153,37 +169,37 @@ export function NodeDetail(props: { name: string }) {
   const handleUncordon = async () => {
     try {
       await uncordonNode(name)
-      toast.success(`Node ${name} uncordoned successfully`)
+      toast.success(t('nodes.uncordonSuccess', { name }))
       setIsCordonPopoverOpen(false)
       handleRefresh()
     } catch (error) {
       console.error('Failed to uncordon node:', error)
       toast.error(
-        `Failed to uncordon node: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        t('nodes.uncordonError', { 
+          error: error instanceof Error ? error.message : t('nodes.unknownError')
+        })
       )
     }
   }
 
   const handleTaint = async () => {
     if (!taintData.key.trim()) {
-      toast.error('Taint key is required')
+      toast.error(t('nodes.taintKeyRequired'))
       return
     }
 
     try {
       await taintNode(name, taintData)
-      toast.success(`Node ${name} tainted successfully`)
+      toast.success(t('nodes.taintSuccess', { name }))
       setIsTaintPopoverOpen(false)
       setTaintData({ key: '', value: '', effect: 'NoSchedule' })
       handleRefresh()
     } catch (error) {
       console.error('Failed to taint node:', error)
       toast.error(
-        `Failed to taint node: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        t('nodes.taintError', { 
+          error: error instanceof Error ? error.message : t('nodes.unknownError')
+        })
       )
     }
   }
@@ -191,21 +207,21 @@ export function NodeDetail(props: { name: string }) {
   const handleUntaint = async (key?: string) => {
     const taintKey = key || untaintKey
     if (!taintKey.trim()) {
-      toast.error('Taint key is required')
+      toast.error(t('nodes.taintKeyRequired'))
       return
     }
 
     try {
       await untaintNode(name, taintKey)
-      toast.success(`Taint removed from node ${name} successfully`)
+      toast.success(t('nodes.untaintSuccess', { name }))
       if (!key) setUntaintKey('')
       handleRefresh()
     } catch (error) {
       console.error('Failed to remove taint:', error)
       toast.error(
-        `Failed to remove taint: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        t('nodes.untaintError', { 
+          error: error instanceof Error ? error.message : t('nodes.unknownError')
+        })
       )
     }
   }
@@ -227,7 +243,7 @@ export function NodeDetail(props: { name: string }) {
           <CardContent className="pt-6">
             <div className="flex items-center justify-center gap-2">
               <IconLoader className="animate-spin" />
-              <span>Loading node details...</span>
+              <span>{t('nodes.loadingDetails')}</span>
             </div>
           </CardContent>
         </Card>
@@ -241,7 +257,7 @@ export function NodeDetail(props: { name: string }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
-              Error loading node details: {error?.message || `Node not found`}
+              {t('common.error')}: {error?.message || t('nodes.noNodesFound')}
             </div>
           </CardContent>
         </Card>
@@ -264,7 +280,7 @@ export function NodeDetail(props: { name: string }) {
             onClick={handleManualRefresh}
           >
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
 
           {/* Drain Node Popover */}
@@ -275,15 +291,15 @@ export function NodeDetail(props: { name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconDroplet className="w-4 h-4" />
-                Drain
+                {t('nodes.drain')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80">
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium">Drain Node</h4>
+                  <h4 className="font-medium">{t('nodes.drainNode')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Safely evict all pods from this node.
+                    {t('nodes.drainDescription')}
                   </p>
                 </div>
                 <div className="space-y-3">
@@ -300,7 +316,7 @@ export function NodeDetail(props: { name: string }) {
                       }
                     />
                     <Label htmlFor="force" className="text-sm">
-                      Force drain
+                      {t('nodes.forceDrain')}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -316,7 +332,7 @@ export function NodeDetail(props: { name: string }) {
                       }
                     />
                     <Label htmlFor="deleteLocalData" className="text-sm">
-                      Delete local data
+                      {t('nodes.deleteLocalData')}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -332,12 +348,12 @@ export function NodeDetail(props: { name: string }) {
                       }
                     />
                     <Label htmlFor="ignoreDaemonsets" className="text-sm">
-                      Ignore DaemonSets
+                      {t('nodes.ignoreDaemonsets')}
                     </Label>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="gracePeriod" className="text-sm">
-                      Grace Period (seconds)
+                      {t('nodes.gracePeriod')}
                     </Label>
                     <Input
                       id="gracePeriod"
@@ -355,14 +371,14 @@ export function NodeDetail(props: { name: string }) {
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleDrain} size="sm" variant="destructive">
-                    Drain Node
+                    {t('nodes.drainNode')}
                   </Button>
                   <Button
                     onClick={() => setIsDrainPopoverOpen(false)}
                     size="sm"
                     variant="outline"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </div>
@@ -373,7 +389,7 @@ export function NodeDetail(props: { name: string }) {
           {data.spec?.unschedulable ? (
             <Button onClick={handleUncordon} variant="outline" size="sm">
               <IconReload className="w-4 h-4" />
-              Uncordon
+              {t('nodes.uncordon')}
             </Button>
           ) : (
             <Popover
@@ -383,15 +399,15 @@ export function NodeDetail(props: { name: string }) {
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm">
                   <IconBan className="w-4 h-4" />
-                  Cordon
+                  {t('nodes.cordon')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-medium">Cordon Node</h4>
+                    <h4 className="font-medium">{t('nodes.cordonNode')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Mark this node as unschedulable.
+                      {t('nodes.cordonDescription')}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -400,14 +416,14 @@ export function NodeDetail(props: { name: string }) {
                       size="sm"
                       variant="destructive"
                     >
-                      Cordon Node
+                      {t('nodes.cordonNode')}
                     </Button>
                     <Button
                       onClick={() => setIsCordonPopoverOpen(false)}
                       size="sm"
                       variant="outline"
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -423,21 +439,21 @@ export function NodeDetail(props: { name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconLock className="w-4 h-4" />
-                Taint
+                {t('nodes.taint')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80">
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium">Taint Node</h4>
+                  <h4 className="font-medium">{t('nodes.taintNode')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Add a taint to prevent pods from being scheduled.
+                    {t('nodes.taintDescription')}
                   </p>
                 </div>
                 <div className="space-y-3">
                   <div className="space-y-2">
                     <Label htmlFor="taintKey" className="text-sm">
-                      Key *
+                      {t('nodes.taintKey')}
                     </Label>
                     <Input
                       id="taintKey"
@@ -445,12 +461,12 @@ export function NodeDetail(props: { name: string }) {
                       onChange={(e) =>
                         setTaintData({ ...taintData, key: e.target.value })
                       }
-                      placeholder="e.g., node.kubernetes.io/maintenance"
+                      placeholder={t('nodes.taintKeyPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="taintValue" className="text-sm">
-                      Value
+                      {t('nodes.taintValue')}
                     </Label>
                     <Input
                       id="taintValue"
@@ -458,12 +474,12 @@ export function NodeDetail(props: { name: string }) {
                       onChange={(e) =>
                         setTaintData({ ...taintData, value: e.target.value })
                       }
-                      placeholder="Optional value"
+                      placeholder={t('nodes.taintValuePlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="taintEffect" className="text-sm">
-                      Effect
+                      {t('nodes.taintEffect')}
                     </Label>
                     <Select
                       value={taintData.effect}
@@ -475,25 +491,25 @@ export function NodeDetail(props: { name: string }) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="NoSchedule">NoSchedule</SelectItem>
+                        <SelectItem value="NoSchedule">{t('nodes.noSchedule')}</SelectItem>
                         <SelectItem value="PreferNoSchedule">
-                          PreferNoSchedule
+                          {t('nodes.preferNoSchedule')}
                         </SelectItem>
-                        <SelectItem value="NoExecute">NoExecute</SelectItem>
+                        <SelectItem value="NoExecute">{t('nodes.noExecute')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleTaint} size="sm" variant="destructive">
-                    Add Taint
+                    {t('nodes.addTaint')}
                   </Button>
                   <Button
                     onClick={() => setIsTaintPopoverOpen(false)}
                     size="sm"
                     variant="outline"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </div>
@@ -506,13 +522,13 @@ export function NodeDetail(props: { name: string }) {
         tabs={[
           {
             value: 'overview',
-            label: 'Overview',
+            label: t('nav.overview'),
             content: (
               <div className="space-y-6">
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Status Overview</CardTitle>
+                    <CardTitle>{t('nodes.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -528,49 +544,49 @@ export function NodeDetail(props: { name: string }) {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">
-                            Status
+                            {t('common.status')}
                           </p>
                           <p className="text-sm font-medium">
                             {data.status?.conditions?.find(
                               (c) => c.type === 'Ready' && c.status === 'True'
                             )
-                              ? 'Ready'
-                              : 'Not Ready'}
+                              ? t('nodes.ready')
+                              : t('nodes.notReady')}
                             {data.spec?.unschedulable
-                              ? ' (SchedulingDisabled)'
+                              ? ` (${t('nodes.schedulingDisabled')})`
                               : ''}
                           </p>
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-xs text-muted-foreground">Role</p>
+                        <p className="text-xs text-muted-foreground">{t('nodes.role')}</p>
                         <p className="text-sm">
                           {Object.keys(data.metadata?.labels || {})
                             .find((key) =>
                               key.startsWith('node-role.kubernetes.io/')
                             )
-                            ?.replace('node-role.kubernetes.io/', '') || 'N/A'}
+                            ?.replace('node-role.kubernetes.io/', '') || t('nodes.unavailable')}
                         </p>
                       </div>
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Internal IP
+                          {t('nodes.internalIP')}
                         </p>
                         <p className="text-sm font-medium">
                           {data.status?.addresses?.find(
                             (addr) => addr.type === 'InternalIP'
-                          )?.address || 'N/A'}
+                          )?.address || t('nodes.unavailable')}
                         </p>
                       </div>
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Pod CIDR
+                          {t('nodes.podCIDR')}
                         </p>
                         <p className="text-sm font-medium">
-                          {data.spec?.podCIDR || 'N/A'}
+                          {data.spec?.podCIDR || t('nodes.unavailable')}
                         </p>
                       </div>
                     </div>
@@ -580,13 +596,13 @@ export function NodeDetail(props: { name: string }) {
                 {/* Node Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Node Information</CardTitle>
+                    <CardTitle>{t('nodes.nodeInformation')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Created
+                          {t('common.created')}
                         </Label>
                         <p className="text-sm">
                           {formatDate(
@@ -597,71 +613,71 @@ export function NodeDetail(props: { name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Kubelet Version
+                          {t('nodes.kubeletVersion')}
                         </Label>
                         <p className="text-sm">
-                          {data.status?.nodeInfo?.kubeletVersion || 'N/A'}
+                          {data.status?.nodeInfo?.kubeletVersion || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Hostname
+                          {t('nodes.hostname')}
                         </Label>
                         <p className="text-sm">
                           {data.status?.addresses?.find(
                             (addr) => addr.type === 'Hostname'
-                          )?.address || 'N/A'}
+                          )?.address || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          External IP
+                          {t('nodes.externalIP')}
                         </Label>
                         <p className="text-sm">
                           {data.status?.addresses?.find(
                             (addr) => addr.type === 'ExternalIP'
-                          )?.address || 'N/A'}
+                          )?.address || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          OS Image
+                          {t('nodes.osImage')}
                         </Label>
                         <p className="text-sm">
-                          {data.status?.nodeInfo?.osImage || 'N/A'}
+                          {data.status?.nodeInfo?.osImage || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Kernel Version
+                          {t('nodes.kernelVersion')}
                         </Label>
                         <p className="text-sm">
-                          {data.status?.nodeInfo?.kernelVersion || 'N/A'}
+                          {data.status?.nodeInfo?.kernelVersion || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Architecture
+                          {t('nodes.architecture')}
                         </Label>
                         <p className="text-sm">
-                          {data.status?.nodeInfo?.architecture || 'N/A'}
+                          {data.status?.nodeInfo?.architecture || t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Container Runtime
+                          {t('nodes.containerRuntime')}
                         </Label>
                         <p className="text-sm">
                           {data.status?.nodeInfo?.containerRuntimeVersion ||
-                            'N/A'}
+                            t('nodes.unavailable')}
                         </p>
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Kube Proxy Version
+                          {t('nodes.kubeProxyVersion')}
                         </Label>
                         <p className="text-sm">
-                          {data.status?.nodeInfo?.kubeProxyVersion || 'N/A'}
+                          {data.status?.nodeInfo?.kubeProxyVersion || t('nodes.unavailable')}
                         </p>
                       </div>
                     </div>
@@ -675,54 +691,54 @@ export function NodeDetail(props: { name: string }) {
                 {/* Resource Capacity & Allocation */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Resource Capacity</CardTitle>
+                    <CardTitle>{t('nodes.resourceCapacity')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="text-sm font-medium mb-3">
-                          CPU & Memory
+                          {t('nodes.cpuMemory')}
                         </h4>
                         <div className="space-y-3">
                           <div className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
                               <p className="text-sm font-medium">CPU</p>
                               <p className="text-xs text-muted-foreground">
-                                Capacity:{' '}
+                                {t('nodes.capacity')}:{' '}
                                 {data.status?.capacity?.cpu
                                   ? formatCPU(data.status.capacity.cpu)
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-medium">
                                 {data.status?.allocatable?.cpu
                                   ? formatCPU(data.status.allocatable.cpu)
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                Allocatable
+                                {t('nodes.allocatable')}
                               </p>
                             </div>
                           </div>
                           <div className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
-                              <p className="text-sm font-medium">Memory</p>
+                              <p className="text-sm font-medium">{t('nodes.memory')}</p>
                               <p className="text-xs text-muted-foreground">
-                                Capacity:{' '}
+                                {t('nodes.capacity')}:{' '}
                                 {data.status?.capacity?.memory
                                   ? formatMemory(data.status.capacity.memory)
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-medium">
                                 {data.status?.allocatable?.memory
                                   ? formatMemory(data.status.allocatable.memory)
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                Allocatable
+                                {t('nodes.allocatable')}
                               </p>
                             </div>
                           </div>
@@ -731,35 +747,35 @@ export function NodeDetail(props: { name: string }) {
 
                       <div>
                         <h4 className="text-sm font-medium mb-3">
-                          Pods & Storage
+                          {t('nodes.podsStorage')}
                         </h4>
                         <div className="space-y-3">
                           <div className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
-                              <p className="text-sm font-medium">Pods</p>
+                              <p className="text-sm font-medium">{t('nav.pods')}</p>
                               <p className="text-xs text-muted-foreground">
-                                Capacity: {data.status?.capacity?.pods || 'N/A'}
+                                {t('nodes.capacity')}: {data.status?.capacity?.pods || t('nodes.unavailable')}
                               </p>
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-medium">
-                                {data.status?.allocatable?.pods || 'N/A'}
+                                {data.status?.allocatable?.pods || t('nodes.unavailable')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                Allocatable
+                                {t('nodes.allocatable')}
                               </p>
                             </div>
                           </div>
                           <div className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
-                              <p className="text-sm font-medium">Storage</p>
+                              <p className="text-sm font-medium">{t('nodes.storage')}</p>
                               <p className="text-xs text-muted-foreground">
-                                Capacity:{' '}
+                                {t('nodes.capacity')}:{' '}
                                 {data.status?.capacity?.['ephemeral-storage']
                                   ? formatMemory(
                                       data.status.capacity['ephemeral-storage']
                                     )
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                             </div>
                             <div className="text-right">
@@ -770,10 +786,10 @@ export function NodeDetail(props: { name: string }) {
                                         'ephemeral-storage'
                                       ]
                                     )
-                                  : 'N/A'}
+                                  : t('nodes.unavailable')}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                Allocatable
+                                {t('nodes.allocatable')}
                               </p>
                             </div>
                           </div>
@@ -787,7 +803,7 @@ export function NodeDetail(props: { name: string }) {
                 {data.spec?.taints && data.spec.taints.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Node Taints</CardTitle>
+                      <CardTitle>{t('nodes.nodeTaints')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 gap-2">
@@ -815,7 +831,7 @@ export function NodeDetail(props: { name: string }) {
                               size="sm"
                               onClick={() => handleUntaint(taint.key)}
                             >
-                              Remove
+                              {t('common.remove')}
                             </Button>
                           </div>
                         ))}
@@ -829,7 +845,7 @@ export function NodeDetail(props: { name: string }) {
                   data.status.conditions.length > 0 && (
                     <Card>
                       <CardHeader>
-                        <CardTitle>Node Conditions</CardTitle>
+                        <CardTitle>{t('nodes.nodeConditions')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -856,14 +872,15 @@ export function NodeDetail(props: { name: string }) {
                                   }
                                   className="text-xs"
                                 >
-                                  {condition.type}
+                                  {t(`nodes.conditions.${condition.type}`, { defaultValue: condition.type })}
                                 </Badge>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs text-muted-foreground truncate">
-                                  {condition.message ||
-                                    condition.reason ||
-                                    'No message'}
+                                  {condition.message 
+                                    ? translateConditionMessage(condition.message)
+                                    : condition.reason ||
+                                      t('common.noMessage')}
                                 </p>
                               </div>
                               <Badge variant="outline" className="text-xs">
@@ -880,13 +897,13 @@ export function NodeDetail(props: { name: string }) {
           },
           {
             value: 'yaml',
-            label: 'YAML',
+            label: t('nav.yaml'),
             content: (
               <div className="space-y-4">
                 <YamlEditor<'nodes'>
                   key={refreshKey}
                   value={yamlContent}
-                  title="YAML Configuration"
+                  title={t('nodes.yamlConfiguration')}
                   onSave={handleSaveYaml}
                   onChange={handleYamlChange}
                   isSaving={isSavingYaml}
@@ -900,7 +917,7 @@ export function NodeDetail(props: { name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      Pods{' '}
+                      {t('nav.pods')}{' '}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -918,12 +935,12 @@ export function NodeDetail(props: { name: string }) {
             : []),
           {
             value: 'monitor',
-            label: 'Monitor',
+            label: t('nav.monitor'),
             content: <NodeMonitoring name={name} />,
           },
           {
             value: 'Terminal',
-            label: 'Terminal',
+            label: t('nav.terminal'),
             content: (
               <div className="space-y-6">
                 <Terminal type="node" namespace={name} />
@@ -932,7 +949,7 @@ export function NodeDetail(props: { name: string }) {
           },
           {
             value: 'events',
-            label: 'Events',
+            label: t('nav.events'),
             content: (
               <EventTable
                 resource={'nodes'}
