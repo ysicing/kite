@@ -54,12 +54,12 @@ jobs:
       - name: Build
         run: |
           go install github.com/go-task/task/v3/cmd/task@latest
-          task web
+          task cross-compile
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile.action
+          file: Dockerfile.action
           push: true
           pull: true
           cache-from: type=gha
