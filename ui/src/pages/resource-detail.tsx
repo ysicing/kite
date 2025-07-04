@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { ResourceType } from '@/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 
+import { CloneSetDetail } from './cloneset-detail'
 import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
 import { NodeDetail } from './node-detail'
@@ -29,6 +30,8 @@ export function ResourceDetail() {
   switch (resource) {
     case 'deployments':
       return <DeploymentDetail namespace={namespace!} name={name} />
+    case 'clonesets':
+      return <CloneSetDetail namespace={namespace!} name={name} />
     case 'pods':
       return <PodDetail namespace={namespace!} name={name} />
     case 'daemonsets':

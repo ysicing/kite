@@ -2,6 +2,15 @@ FROM gcr.io/distroless/static:nonroot
 
 ARG TARGETARCH
 
+LABEL org.opencontainers.image.source=https://github.com/ysicing/kite
+LABEL org.opencontainers.image.description="Kite is a modern, intuitive Kubernetes dashboard"
+LABEL org.opencontainers.image.licenses=MIT
+LABEL org.opencontainers.image.authors=ysicing
+LABEL org.opencontainers.image.vendor=ysicing
+LABEL org.opencontainers.image.version=1.0.0
+LABEL org.opencontainers.image.url=https://github.com/ysicing/kite
+LABEL org.opencontainers.image.documentation=https://github.com/ysicing/kite/blob/main/README.md
+
 WORKDIR /app
 
 COPY bin/kite-$TARGETARCH /app/kite

@@ -25,6 +25,8 @@ func GuessSearchResources(query string) (string, string) {
 			guessSearchResources = "secrets"
 		case "dep", "deploy", "deployment", "deployments":
 			guessSearchResources = "deployments"
+		case "cs", "cloneset", "clonesets":
+			guessSearchResources = "clonesets"
 		case "ds", "daemonset", "daemonsets":
 			guessSearchResources = "daemonsets"
 		case "statefulset", "statefulsets":

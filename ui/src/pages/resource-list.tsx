@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 
 import { ResourceType } from '@/types/api'
 
+import { CloneSetListPage } from './cloneset-list-page'
 import { ConfigMapListPage } from './configmap-list-page'
 import { CRDListPage } from './crd-list-page'
 import { DaemonSetListPage } from './daemonset-list-page'
@@ -31,6 +32,8 @@ export function ResourceList() {
       return <IngressListPage />
     case 'deployments':
       return <DeploymentListPage />
+    case 'clonesets':
+      return <CloneSetListPage />
     case 'services':
       return <ServiceListPage />
     case 'jobs':

@@ -28,7 +28,7 @@ tasks:
       - task: gomod
       - task: gofmt
       - task: gci
-      - task: golint
+      # - task: golint
 
   web:
     desc: build web

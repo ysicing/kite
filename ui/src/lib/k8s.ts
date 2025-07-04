@@ -2,7 +2,7 @@ import { Deployment } from 'kubernetes-types/apps/v1'
 import { Pod, Service } from 'kubernetes-types/core/v1'
 import { ObjectMeta } from 'kubernetes-types/meta/v1'
 
-import { DeploymentStatusType } from '@/types/k8s'
+import { DeploymentStatusType, CloneSet, CloneSetStatusType } from '@/types/k8s'
 
 // This function retrieves the status of a Pod in Kubernetes.
 // @see https://github.com/kubernetes/kubernetes/blob/master/pkg/printers/internalversion/printers.go#L881
@@ -332,4 +332,47 @@ export function getServiceExternalIP(service: Service): string {
     default:
       return '-'
   }
+}
+
+export function getCloneSetStatus(
+  cloneSet: CloneSet
+): CloneSetStatusType {
+  if (!cloneSet.status) {
+    return 'Unknown'
+  }
+
+  const status = cloneSet.status
+  const spec = cloneSet.spec
+
+  // Check if cloneSet is being deleted
+  if (cloneSet.metadata?.deletionTimestamp) {
+    return 'Terminating'
+  }
+
+  // Get replica counts
+  const replicas = status.replicas || 0
+  if (replicas === 0) {
+    return 'Scaled Down'
+  }
+  const desiredReplicas = spec?.replicas || 0
+  const actualReplicas = status.replicas || 0
+  const availableReplicas = status.availableReplicas || 0
+  const readyReplicas = status.readyReplicas || 0
+
+  if (desiredReplicas !== actualReplicas) {
+    return 'Progressing'
+  }
+  if (availableReplicas != actualReplicas || readyReplicas != actualReplicas) {
+    return 'Progressing'
+  }
+
+  // All replicas are ready and available
+  if (
+    readyReplicas === desiredReplicas &&
+    availableReplicas === desiredReplicas
+  ) {
+    return 'Available'
+  }
+
+  return 'Unknown'
 }

@@ -22,6 +22,8 @@ import {
 import { Ingress } from 'kubernetes-types/networking/v1'
 import { StorageClass } from 'kubernetes-types/storage/v1'
 
+import { CloneSet } from '@/types/k8s'
+
 // Cluster types
 export interface Cluster {
   name: string
@@ -83,6 +85,7 @@ export type ResourceType =
   | 'storageclasses'
   | 'podmetrics'
   | 'replicasets'
+  | 'clonesets'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -180,6 +183,10 @@ export interface ResourcesTypeMap {
     items: ReplicaSet[]
     metadata?: listMetadataType
   }
+  clonesets: {
+    items: CloneSet[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -222,6 +229,7 @@ export interface ResourceTypeMap {
   storageclasses: StorageClass
   replicasets: ReplicaSet
   podmetrics: PodMetrics
+  clonesets: CloneSet
 }
 
 export interface RecentEvent {

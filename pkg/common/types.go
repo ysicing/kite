@@ -17,7 +17,7 @@ const (
 
 type WebhookRequest struct {
 	Action    Action `json:"action" binding:"required,oneof=restart updateImage"`
-	Resource  string `json:"resource" binding:"required,oneof=deployments statefulsets daemonsets"`
+	Resource  string `json:"resource" binding:"required,oneof=deployments statefulsets daemonsets clonesets"`
 	Name      string `json:"name" binding:"required"` // Name of the resource to act upon
 	Namespace string `json:"namespace"`
 
