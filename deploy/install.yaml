@@ -38,8 +38,8 @@ spec:
     spec:
       serviceAccountName: kite
       containers:
-        - image: ghcr.io/zxh326/kite:latest
-          imagePullPolicy: IfNotPresent
+        - image: ghcr.io/ysicing/kite:latest
+          imagePullPolicy: Always
           name: kite
           resources:
             limits:
