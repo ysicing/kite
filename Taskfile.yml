@@ -1,0 +1,59 @@
+version: '3'
+
+tasks:
+
+  gofmt:
+    cmds:
+      - go install golang.org/x/tools/cmd/goimports@latest
+      - gofmt -s -w .
+      - goimports -w .
+
+  golint:
+    cmds:
+      - command -v golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - golangci-lint run -v ./...
+
+  gci:
+    cmds:
+      - command -v gci || go install github.com/daixiang0/gci@v0.13.1
+      - gci write --skip-generated --custom-order -s standard -s default -s "prefix(github.com/zxh326/kite)" -s blank -s dot -s alias .
+
+  gomod:
+    cmds:
+      - go mod tidy
+
+  lint:
+    desc: lint code
+    cmds:
+      - task: gomod
+      - task: gofmt
+      - task: gci
+      - task: golint
+
+  web:
+    desc: build web
+    dir: ui
+    cmds:
+      - pnpm install --frozen-lockfile
+      - pnpm run build
+    status:
+      - test -f ../static/index.html
+
+  backend:
+    desc: build backend
+    deps:
+      - web
+    cmds:
+      - go mod tidy
+      - go build -o bin/kite .
+
+  clean:
+    desc: clean
+    cmds:
+      - rm -rf bin/kite
+      - rm -rf static/index.html
+
+  docker:
+    desc: build docker image
+    cmds:
+      - docker buildx build --pull --push --platform linux/amd64 -t ttl.sh/ysicing/kite .

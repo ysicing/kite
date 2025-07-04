@@ -50,6 +50,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const shouldShowClusterSelector = !isLoading && clusters.length > 1
 
   const menus = {
+    [t('nav.cluster')]: [
+      {
+        title: t('nav.nodes'),
+        url: '/nodes',
+        icon: IconServer2,
+      },
+    ],
     [t('nav.workloads')]: [
       {
         title: t('nav.pods'),
@@ -128,11 +135,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.namespaces'),
         url: '/namespaces',
         icon: IconBoxMultiple,
-      },
-      {
-        title: t('nav.nodes'),
-        url: '/nodes',
-        icon: IconServer2,
       },
       {
         title: 'Events',

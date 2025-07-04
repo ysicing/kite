@@ -22,6 +22,7 @@
   },
   "nav": {
     "overview": "Overview",
+    "cluster": "Cluster",
     "workloads": "Workloads",
     "pods": "Pods",
     "deployments": "Deployments",
@@ -74,7 +75,10 @@
   },
   "nodes": {
     "title": "Nodes",
+    "list": "Node List",
+    "role": "Role",
     "roles": "Roles",
+    "controlPlane": "Control Plane",
     "version": "Version",
     "internalIP": "Internal IP",
     "externalIP": "External IP",

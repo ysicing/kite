@@ -9,6 +9,7 @@ import { DeploymentListPage } from './deployment-list-page'
 import { IngressListPage } from './ingress-list-page'
 import { JobListPage } from './job-list-page'
 import { NamespaceListPage } from './namespace-list-page'
+import { NodeListPage } from './node-list-page'
 import { PodListPage } from './pod-list-page'
 import { PVCListPage } from './pvc-list-page'
 import { SecretListPage } from './secret-list-page'
@@ -24,6 +25,8 @@ export function ResourceList() {
       return <PodListPage />
     case 'namespaces':
       return <NamespaceListPage />
+    case 'nodes':
+      return <NodeListPage />
     case 'ingresses':
       return <IngressListPage />
     case 'deployments':

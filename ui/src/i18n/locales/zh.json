@@ -22,6 +22,7 @@
   },
   "nav": {
     "overview": "概览",
+    "cluster": "集群",
     "workloads": "工作负载",
     "pods": "容器组",
     "deployments": "部署",
@@ -74,7 +75,10 @@
   },
   "nodes": {
     "title": "节点",
+    "list": "节点列表",
+    "role": "角色",
     "roles": "角色",
+    "controlPlane": "控制节点",
     "version": "版本",
     "internalIP": "内部IP",
     "externalIP": "外部IP",
