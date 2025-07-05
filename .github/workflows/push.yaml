@@ -62,8 +62,8 @@ jobs:
           file: Dockerfile.action
           push: true
           pull: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
           build-args: |
             KITE_VERSION=${{ github.sha }}
