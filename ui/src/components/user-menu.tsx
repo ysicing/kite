@@ -1,5 +1,7 @@
 import { useAuth } from '@/contexts/auth-context'
-import { LogOut } from 'lucide-react'
+import { Info, LogOut } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -13,6 +15,7 @@ import {
 
 export function UserMenu() {
   const { user, logout } = useAuth()
+  const { t } = useTranslation()
 
   if (!user || user.provider === 'none') return null
 
@@ -61,6 +64,13 @@ export function UserMenu() {
           </div>
         </div>
 
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/version-test" className="cursor-pointer">
+            <Info className="mr-2 h-4 w-4" />
+            <span>{t('version.title')}</span>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}

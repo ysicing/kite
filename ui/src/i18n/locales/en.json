@@ -487,5 +487,19 @@
       "title": "Pod Unavailable Budgets",
       "description": "Protect pod availability in various disruption scenarios"
     }
+  },
+  "version": {
+    "title": "Version Information",
+    "current": "Current Version",
+    "latest": "Latest Version",
+    "loading": "Loading...",
+    "unknown": "Unknown",
+    "updateAvailable": "Update Available",
+    "updateDescription": "New version {{latest}} is available, current version is {{current}}",
+    "releaseDate": "Release Date: {{date}}",
+    "viewRelease": "View Release Notes",
+    "viewCommit": "View Commit",
+    "checkForUpdates": "Check for Updates",
+    "lastCheck": "Last Check: {{time}}"
   }
 }

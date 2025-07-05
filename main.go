@@ -67,6 +67,11 @@ func setupAPIRouter(r *gin.Engine, cm *cluster.ClusterManager) {
 		})
 	})
 
+	// Version endpoints (no auth required)
+	versionHandler := handlers.NewVersionHandler()
+	r.GET("/api/v1/version", versionHandler.GetVersionInfo)
+	r.GET("/api/v1/version/current", versionHandler.GetCurrentVersion)
+
 	// Auth routes (no auth required)
 	authHandler := auth.NewAuthHandler()
 	authGroup := r.Group("/api/auth")

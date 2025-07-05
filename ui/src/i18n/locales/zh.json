@@ -484,5 +484,19 @@
       "title": "Pod不可用预算",
       "description": "防护Pod在多种中断场景下的可用性"
     }
+  },
+  "version": {
+    "title": "版本信息",
+    "current": "当前版本",
+    "latest": "最新版本",
+    "loading": "加载中...",
+    "unknown": "未知",
+    "updateAvailable": "有新版本可用",
+    "updateDescription": "新版本 {{latest}} 已发布，当前版本为 {{current}}",
+    "releaseDate": "发布日期: {{date}}",
+    "viewRelease": "查看发布说明",
+    "viewCommit": "查看提交",
+    "checkForUpdates": "检查更新",
+    "lastCheck": "上次检查: {{time}}"
   }
 }

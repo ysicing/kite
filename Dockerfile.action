@@ -2,6 +2,8 @@ FROM gcr.io/distroless/static:nonroot
 
 ARG TARGETARCH
 
+ARG KITE_VERSION
+
 LABEL org.opencontainers.image.source=https://github.com/ysicing/kite
 LABEL org.opencontainers.image.description="Kite is a modern, intuitive Kubernetes dashboard"
 LABEL org.opencontainers.image.licenses=MIT
@@ -14,6 +16,8 @@ LABEL org.opencontainers.image.documentation=https://github.com/ysicing/kite/blo
 WORKDIR /app
 
 COPY bin/kite-$TARGETARCH /app/kite
+
+ENV KITE_VERSION=${KITE_VERSION}
 
 EXPOSE 8080
 

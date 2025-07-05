@@ -14,6 +14,7 @@ import { LanguageToggle } from './language-toggle'
 import { ModeToggle } from './mode-toggle'
 import { Search } from './search'
 import { UserMenu } from './user-menu'
+import { VersionIndicator } from './version-indicator'
 
 export function SiteHeader() {
   const isMobile = useIsMobile()
@@ -64,6 +65,7 @@ export function SiteHeader() {
                 <ColorThemeToggle />
                 <LanguageToggle />
                 <ModeToggle />
+                <VersionIndicator />
                 <UserMenu />
               </>
             )}

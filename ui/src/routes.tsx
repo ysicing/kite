@@ -8,6 +8,7 @@ import { OpenKruisePage } from './pages/openkruise-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
+import { VersionTestPage } from './pages/version-test'
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: 'openkruise',
         element: <OpenKruisePage />,
+      },
+      {
+        path: 'version-test',
+        element: <VersionTestPage />,
       },
       {
         path: 'crds/:crd',

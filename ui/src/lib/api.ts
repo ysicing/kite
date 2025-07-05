@@ -1102,3 +1102,34 @@ export const useOpenKruiseStatus = () => {
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
   })
 }
+
+// Version API
+export interface VersionInfo {
+  current: string
+  latest: string
+  hasUpdate: boolean
+  releaseUrl?: string
+  releaseDate?: string
+  updatedAt: string
+}
+
+export const useVersionInfo = () => {
+  return useQuery<VersionInfo>({
+    queryKey: ['version-info'],
+    queryFn: async () => {
+      return await apiClient.get<VersionInfo>('/version')
+    },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    refetchInterval: 60 * 60 * 1000, // Refetch every hour
+  })
+}
+
+export const useCurrentVersion = () => {
+  return useQuery<{ version: string }>({
+    queryKey: ['current-version'],
+    queryFn: async () => {
+      return await apiClient.get<{ version: string }>('/version/current')
+    },
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+  })
+}
