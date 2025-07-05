@@ -505,7 +505,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 	// We pass nil as the k8sClient parameter since handlers will get it from context
 	handlers = map[string]resourceHandler{
 		"namespaces":             NewGenericResourceHandler[*corev1.Namespace, *corev1.NamespaceList]("namespaces", true, false),
-		"nodes":                  NewGenericResourceHandler[*corev1.Node, *corev1.NodeList]("nodes", true, true),
+		"nodes":                  NewNodeHandler(),
 		"persistentvolumes":      NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, false),
 		"persistentvolumeclaims": NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
 		"configmaps":             NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, false),
