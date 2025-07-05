@@ -8,6 +8,7 @@ import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
 import { NodeDetail } from './node-detail'
 import { PodDetail } from './pod-detail'
+import { ProxyClassDetail } from './proxyclass-detail'
 import { SimpleResourceDetail } from './simple-resource-detail'
 import { StatefulSetDetail } from './statefulset-detail'
 
@@ -40,6 +41,8 @@ export function ResourceDetail() {
       return <StatefulSetDetail namespace={namespace!} name={name} />
     case 'nodes':
       return <NodeDetail name={name} />
+    case 'proxyclasses':
+      return <ProxyClassDetail name={name} />
     default:
       return (
         <SimpleResourceDetail

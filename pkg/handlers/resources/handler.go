@@ -45,6 +45,23 @@ type OpenKruiseStatus struct {
 	Workloads []OpenKruiseWorkload `json:"workloads"`
 }
 
+// TailscaleWorkload represents a supported Tailscale workload
+type TailscaleWorkload struct {
+	Name        string `json:"name"`
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Available   bool   `json:"available"`
+	Count       int    `json:"count"`
+	Description string `json:"description"`
+}
+
+// TailscaleStatus represents the status of Tailscale Operator installation
+type TailscaleStatus struct {
+	Installed bool                `json:"installed"`
+	Version   string              `json:"version,omitempty"`
+	Workloads []TailscaleWorkload `json:"workloads"`
+}
+
 // GetOpenKruiseStatus checks if OpenKruise is installed in the cluster
 func GetOpenKruiseStatus(c *gin.Context) {
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
@@ -190,6 +207,71 @@ func GetOpenKruiseStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, status)
 }
 
+// GetTailscaleStatus checks if Tailscale Operator is installed in the cluster
+func GetTailscaleStatus(c *gin.Context) {
+	cs := c.MustGet("cluster").(*cluster.ClientSet)
+	ctx := c.Request.Context()
+
+	status := &TailscaleStatus{
+		Installed: false,
+		Workloads: []TailscaleWorkload{},
+	}
+
+	// Check supported workloads
+	workloads := []TailscaleWorkload{
+		// Core Resources
+		{
+			Name:        "connectors",
+			Kind:        "Connector",
+			APIVersion:  "tailscale.com/v1alpha1",
+			Description: "Connector manages subnet routers, exit nodes, and app connectors",
+		},
+		{
+			Name:        "proxyclasses",
+			Kind:        "ProxyClass",
+			APIVersion:  "tailscale.com/v1alpha1",
+			Description: "ProxyClass customizes proxy configuration",
+		},
+		{
+			Name:        "proxygroups",
+			Kind:        "ProxyGroup",
+			APIVersion:  "tailscale.com/v1alpha1",
+			Description: "ProxyGroup manages high-availability proxy groups",
+		},
+	}
+
+	// Check each workload availability and count
+	for i, workload := range workloads {
+		available, count := checkTailscaleWorkloadAvailability(ctx, cs, workload)
+		workloads[i].Available = available
+		workloads[i].Count = count
+
+		if available {
+			status.Installed = true
+		}
+	}
+
+	// Try to get version from tailscale-operator deployment
+	if status.Installed {
+		var deployment appsv1.Deployment
+		if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+			Name:      "tailscale-operator",
+			Namespace: "tailscale",
+		}, &deployment); err == nil {
+			// Extract version from image tag if possible
+			for _, container := range deployment.Spec.Template.Spec.Containers {
+				if container.Name == "operator" {
+					status.Version = extractVersionFromImage(container.Image)
+					break
+				}
+			}
+		}
+	}
+
+	status.Workloads = workloads
+	c.JSON(http.StatusOK, status)
+}
+
 // checkWorkloadAvailability checks if a specific workload type is available and returns count
 func checkWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload OpenKruiseWorkload) (bool, int) {
 	// First check if the CRD exists
@@ -255,8 +337,52 @@ func checkWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workl
 	}
 }
 
+// checkTailscaleWorkloadAvailability checks if a specific Tailscale workload type is available and returns count
+func checkTailscaleWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload TailscaleWorkload) (bool, int) {
+	// First check if the CRD exists
+	crdName := getTailscaleCRDName(workload.Kind)
+	if crdName == "" {
+		return false, 0
+	}
+
+	var crd apiextensionsv1.CustomResourceDefinition
+	if err := cs.K8sClient.Get(ctx, types.NamespacedName{Name: crdName}, &crd); err != nil {
+		// CRD doesn't exist, workload not available
+		return false, 0
+	}
+
+	// CRD exists, now try to list resources using unstructured list
+	return checkTailscaleUnstructuredWorkload(ctx, cs, workload)
+}
+
 // checkUnstructuredWorkload checks workload availability using unstructured list
 func checkUnstructuredWorkload(ctx context.Context, cs *cluster.ClientSet, workload OpenKruiseWorkload) (bool, int) {
+	// Parse the API version
+	parts := strings.Split(workload.APIVersion, "/")
+	if len(parts) != 2 {
+		return false, 0
+	}
+
+	group := parts[0]
+	version := parts[1]
+
+	// Try to list resources using dynamic client
+	list := &unstructured.UnstructuredList{}
+	list.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   group,
+		Version: version,
+		Kind:    workload.Kind + "List",
+	})
+
+	if err := cs.K8sClient.List(ctx, list); err != nil {
+		return true, 0 // CRD exists but listing failed, still consider available
+	}
+
+	return true, len(list.Items)
+}
+
+// checkTailscaleUnstructuredWorkload checks workload availability using unstructured list
+func checkTailscaleUnstructuredWorkload(ctx context.Context, cs *cluster.ClientSet, workload TailscaleWorkload) (bool, int) {
 	// Parse the API version
 	parts := strings.Split(workload.APIVersion, "/")
 	if len(parts) != 2 {
@@ -329,6 +455,20 @@ func getCRDName(kind string) string {
 	}
 }
 
+// getTailscaleCRDName returns the CRD name for a given Tailscale workload kind
+func getTailscaleCRDName(kind string) string {
+	switch kind {
+	case "Connector":
+		return "connectors.tailscale.com"
+	case "ProxyClass":
+		return "proxyclasses.tailscale.com"
+	case "ProxyGroup":
+		return "proxygroups.tailscale.com"
+	default:
+		return ""
+	}
+}
+
 // extractVersionFromImage extracts version from container image
 func extractVersionFromImage(image string) string {
 	parts := strings.Split(image, ":")
@@ -364,20 +504,18 @@ func RegisterRoutes(group *gin.RouterGroup) {
 	// Note: All handlers now get the k8s client from gin context instead of being passed it during initialization
 	// We pass nil as the k8sClient parameter since handlers will get it from context
 	handlers = map[string]resourceHandler{
-		"pods":                   NewGenericResourceHandler[*corev1.Pod, *corev1.PodList]("pods", false, true),
 		"namespaces":             NewGenericResourceHandler[*corev1.Namespace, *corev1.NamespaceList]("namespaces", true, false),
-		"nodes":                  NewNodeHandler(),
+		"nodes":                  NewGenericResourceHandler[*corev1.Node, *corev1.NodeList]("nodes", true, true),
+		"persistentvolumes":      NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, false),
+		"persistentvolumeclaims": NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
+		"configmaps":             NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, false),
+		"secrets":                NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, false),
 		"services":               NewGenericResourceHandler[*corev1.Service, *corev1.ServiceList]("services", false, true),
 		"endpoints":              NewGenericResourceHandler[*corev1.Endpoints, *corev1.EndpointsList]("endpoints", false, false),
 		"endpointslices":         NewGenericResourceHandler[*discoveryv1.EndpointSlice, *discoveryv1.EndpointSliceList]("endpointslices", false, false),
-		"configmaps":             NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, true),
-		"secrets":                NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, true),
-		"persistentvolumes":      NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, true),
-		"persistentvolumeclaims": NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, true),
-		"serviceaccounts":        NewGenericResourceHandler[*corev1.ServiceAccount, *corev1.ServiceAccountList]("serviceaccounts", false, false),
-		"crds":                   NewGenericResourceHandler[*apiextensionsv1.CustomResourceDefinition, *apiextensionsv1.CustomResourceDefinitionList]("crds", true, false),
-		"events":                 NewEventHandler(),
-		"deployments":            NewDeploymentHandler(),
+		"pods":                   NewGenericResourceHandler[*corev1.Pod, *corev1.PodList]("pods", false, true),
+		"events":                 NewGenericResourceHandler[*corev1.Event, *corev1.EventList]("events", false, false),
+		"deployments":            NewGenericResourceHandler[*appsv1.Deployment, *appsv1.DeploymentList]("deployments", false, true),
 		"replicasets":            NewGenericResourceHandler[*appsv1.ReplicaSet, *appsv1.ReplicaSetList]("replicasets", false, false),
 		"statefulsets":           NewGenericResourceHandler[*appsv1.StatefulSet, *appsv1.StatefulSetList]("statefulsets", false, false),
 		"daemonsets":             NewGenericResourceHandler[*appsv1.DaemonSet, *appsv1.DaemonSetList]("daemonsets", false, true),
@@ -408,6 +546,11 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"persistentpodstates":      NewGenericResourceHandler[*kruiseappsv1alpha1.PersistentPodState, *kruiseappsv1alpha1.PersistentPodStateList]("persistentpodstates", false, false),
 		"podprobemarkers":          NewGenericResourceHandler[*kruiseappsv1alpha1.PodProbeMarker, *kruiseappsv1alpha1.PodProbeMarkerList]("podprobemarkers", false, false),
 		"podunavailablebudgets":    NewGenericResourceHandler[*kruisepolicyv1alpha1.PodUnavailableBudget, *kruisepolicyv1alpha1.PodUnavailableBudgetList]("podunavailablebudgets", false, false),
+
+		// Tailscale resources (cluster-scoped)
+		"connectors":   NewTailscaleResourceHandler("connectors", "connectors.tailscale.com", "Connector", "tailscale.com", "v1alpha1"),
+		"proxyclasses": NewTailscaleResourceHandler("proxyclasses", "proxyclasses.tailscale.com", "ProxyClass", "tailscale.com", "v1alpha1"),
+		"proxygroups":  NewTailscaleResourceHandler("proxygroups", "proxygroups.tailscale.com", "ProxyGroup", "tailscale.com", "v1alpha1"),
 	}
 
 	for name, handler := range handlers {
@@ -426,6 +569,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 
 	// OpenKruise detection endpoint
 	group.GET("/openkruise/status", GetOpenKruiseStatus)
+
+	// Tailscale detection endpoint
+	group.GET("/tailscale/status", GetTailscaleStatus)
 
 	crHandler := NewCRHandler()
 	otherGroup := group.Group("/:crd")

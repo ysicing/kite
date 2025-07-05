@@ -9,6 +9,7 @@ import {
   IconCode,
   IconDatabase,
   IconFileDatabase,
+  IconHttpConnect,
   IconLayoutDashboard,
   IconLock,
   IconMap,
@@ -26,7 +27,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useCluster } from '@/hooks/use-cluster'
-import { useOpenKruiseStatus } from '@/lib/api'
+import { useOpenKruiseStatus, useTailscaleStatus } from '@/lib/api'
 import {
   Sidebar,
   SidebarContent,
@@ -50,6 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isMobile, setOpenMobile } = useSidebar()
   const { clusters, isLoading } = useCluster()
   const { data: openKruiseStatus } = useOpenKruiseStatus()
+  const { data: tailscaleStatus } = useTailscaleStatus()
   const shouldShowClusterSelector = !isLoading && clusters.length > 1
 
   const menus = {
@@ -64,6 +66,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.openkruise'),
         url: '/openkruise',
         icon: IconStack3,
+      },
+      // Always show Tailscale in cluster group
+      {
+        title: t('nav.tailscale'),
+        url: '/tailscale',
+        icon: IconNetwork,
       },
     ],
     [t('nav.workloads')]: [
@@ -140,6 +148,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: '/nodeimages',
           icon: IconServer2,
         },
+      ]
+    } : {}),
+    ...(tailscaleStatus?.installed ? {
+      [t('nav.tailscale')]: [
+        {
+          title: t('nav.overview'),
+          url: '/tailscale-overview',
+          icon: IconLayoutDashboard,
+        },
+        {
+          title: t('nav.connectors'),
+          url: '/connectors',
+          icon: IconHttpConnect,
+        },
+        {
+          title: t('nav.proxyclasses'),
+          url: '/proxyclasses',
+          icon: IconRouter,
+        },
+        // ProxyGroups 默认隐藏，可以通过直接访问 URL 使用
+        // {
+        //   title: t('nav.proxygroups'),
+        //   url: '/proxygroups',
+        //   icon: IconNetwork,
+        // },
       ]
     } : {}),
     Traffic: [

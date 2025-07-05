@@ -1103,6 +1103,33 @@ export const useOpenKruiseStatus = () => {
   })
 }
 
+// Tailscale API
+export interface TailscaleWorkload {
+  name: string
+  kind: string
+  apiVersion: string
+  available: boolean
+  count: number
+  description: string
+}
+
+export interface TailscaleStatus {
+  installed: boolean
+  version?: string
+  workloads: TailscaleWorkload[]
+}
+
+export const useTailscaleStatus = () => {
+  return useQuery<TailscaleStatus>({
+    queryKey: ['tailscale-status'],
+    queryFn: async () => {
+      return await apiClient.get<TailscaleStatus>('/tailscale/status')
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+  })
+}
+
 // Version API
 export interface VersionInfo {
   current: string

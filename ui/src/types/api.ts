@@ -87,6 +87,9 @@ export type ResourceType =
   | 'replicasets'
   | 'clonesets'
   | 'nodeimages'
+  | 'connectors'
+  | 'proxyclasses'
+  | 'proxygroups'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -96,6 +99,9 @@ export const clusterScopeResources: ResourceType[] = [
   'events',
   'storageclasses',
   'nodeimages',
+  'connectors',
+  'proxyclasses',
+  'proxygroups',
 ]
 
 type listMetadataType = {
@@ -193,6 +199,18 @@ export interface ResourcesTypeMap {
     items: CustomResource[]
     metadata?: listMetadataType
   }
+  connectors: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
+  proxyclasses: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
+  proxygroups: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -237,6 +255,9 @@ export interface ResourceTypeMap {
   podmetrics: PodMetrics
   clonesets: CloneSet
   nodeimages: CustomResource
+  connectors: CustomResource
+  proxyclasses: CustomResource
+  proxygroups: CustomResource
 }
 
 export interface RecentEvent {

@@ -5,6 +5,10 @@ import { ProtectedRoute } from './components/protected-route'
 import { CRListPage } from './pages/cr-list-page'
 import { LoginPage } from './pages/login'
 import { OpenKruisePage } from './pages/openkruise-page'
+import { TailscalePage } from './pages/tailscale-page'
+import ConnectorListPage from './pages/connector-list-page'
+import ProxyClassListPage from './pages/proxyclass-list-page'
+import TailscaleOverviewPage from './pages/tailscale-overview-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
@@ -34,6 +38,22 @@ export const router = createBrowserRouter([
       {
         path: 'openkruise',
         element: <OpenKruisePage />,
+      },
+      {
+        path: 'tailscale',
+        element: <TailscalePage />,
+      },
+      {
+        path: 'tailscale-overview',
+        element: <TailscaleOverviewPage />,
+      },
+      {
+        path: 'connectors',
+        element: <ConnectorListPage />,
+      },
+      {
+        path: 'proxyclasses',
+        element: <ProxyClassListPage />,
       },
       {
         path: 'version-test',

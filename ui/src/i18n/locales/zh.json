@@ -34,13 +34,16 @@
     "effect": "效果",
     "noMessage": "无消息",
     "labels": "标签",
-    "annotations": "注解"
+    "annotations": "注解",
+    "services": "服务",
+    "events": "事件"
   },
   "nav": {
     "overview": "概览",
     "cluster": "集群",
     "workloads": "工作负载",
     "openkruise": "OpenKruise",
+    "tailscale": "Tailscale",
     "pods": "容器组",
     "deployments": "无状态副本集",
     "statefulsets": "有状态副本集",
@@ -67,7 +70,10 @@
     "advancedcronjobs": "高级定时任务",
     "sidecarsets": "边车集",
     "imagepulljobs": "镜像拉取任务",
-    "nodeimages": "节点镜像"
+    "nodeimages": "节点镜像",
+    "connectors": "连接器",
+    "proxyclasses": "代理类",
+    "proxygroups": "代理组"
   },
   "overview": {
     "title": "概览",
@@ -483,6 +489,85 @@
     "podunavailablebudgets": {
       "title": "Pod不可用预算",
       "description": "防护Pod在多种中断场景下的可用性"
+    }
+  },
+  "tailscale": {
+    "title": "Tailscale",
+    "description": "Tailscale 是一个开源的网络解决方案，提供安全、可靠的网络连接。",
+    "notInstalled": "集群未安装 Tailscale Operator",
+    "notInstalledDescription": "Tailscale Kubernetes Operator 为 Kubernetes 集群提供安全网络和连接解决方案。",
+    "installGuide": "安装指南",
+    "learnMore": "了解更多",
+    "version": "版本",
+    "summary": "总览",
+    "availableWorkloads": "可用工作负载",
+    "totalResources": "总资源数",
+    "totalInstances": "总实例数",
+    "supportedTypes": "支持类型",
+    "workloads": "工作负载",
+    "management": "管理",
+    "availability": "可用性",
+    "categories": "类型",
+    "connectors": {
+      "title": "连接器",
+      "description": "管理子网路由器、出口节点和应用连接器以实现安全网络访问",
+      "list": "连接器列表",
+      "empty": "未找到连接器",
+      "type": "类型",
+      "hostname": "主机名",
+      "routes": "路由",
+      "proxyClass": "代理类",
+      "tags": "标签",
+      "types": {
+        "subnetRouter": "子网路由器",
+        "exitNode": "出口节点",
+        "appConnector": "应用连接器",
+        "unknown": "未知"
+      },
+      "status": {
+        "ready": "就绪",
+        "notReady": "未就绪",
+        "unknown": "未知"
+      },
+      "stats": {
+        "total": "总数",
+        "ready": "就绪",
+        "subnetRouters": "子网路由器",
+        "exitNodes": "出口节点",
+        "appConnectors": "应用连接器"
+      }
+    },
+    "proxyclasses": {
+      "title": "代理类",
+      "description": "为 Tailscale 资源定义自定义代理配置",
+      "list": "代理类列表",
+      "empty": "未找到代理类",
+      "features": "功能",
+      "customLabels": "自定义标签",
+      "image": "镜像",
+      "resources": "资源",
+      "defaultImage": "默认",
+      "featuresTypes": {
+        "metrics": "指标",
+        "resources": "资源",
+        "security": "安全",
+        "nodeSelector": "节点选择器"
+      },
+      "stats": {
+        "total": "总数",
+        "withMetrics": "启用指标",
+        "withResources": "配置资源",
+        "withSecurity": "安全配置",
+        "withNodeSelector": "节点选择器"
+      },
+      "deleteSuccess": "代理类删除成功",
+      "deleteError": "删除代理类失败",
+      "yamlSaveSuccess": "YAML 保存成功",
+      "yamlSaveError": "保存 YAML 失败"
+    },
+    "proxygroups": {
+      "title": "代理组",
+      "description": "管理高可用性代理组以增强可靠性"
     }
   },
   "version": {

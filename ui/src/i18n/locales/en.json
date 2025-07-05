@@ -34,13 +34,16 @@
     "effect": "Effect",
     "noMessage": "No message",
     "labels": "Labels",
-    "annotations": "Annotations"
+    "annotations": "Annotations",
+    "services": "Services",
+    "events": "Events"
   },
   "nav": {
     "overview": "Overview",
     "cluster": "Cluster",
     "workloads": "Workloads",
     "openkruise": "OpenKruise",
+    "tailscale": "Tailscale",
     "pods": "Pods",
     "deployments": "Deployments",
     "statefulsets": "StatefulSets",
@@ -67,7 +70,10 @@
     "advancedcronjobs": "Advanced CronJobs",
     "sidecarsets": "Sidecar Sets",
     "imagepulljobs": "Image Pull Jobs",
-    "nodeimages": "Node Images"
+    "nodeimages": "Node Images",
+    "connectors": "Connectors",
+    "proxyclasses": "Proxy Classes",
+    "proxygroups": "Proxy Groups"
   },
   "overview": {
     "title": "Overview",
@@ -486,6 +492,85 @@
     "podunavailablebudgets": {
       "title": "Pod Unavailable Budgets",
       "description": "Protect pod availability in various disruption scenarios"
+    }
+  },
+  "tailscale": {
+    "title": "Tailscale",
+    "description": "Tailscale is an open-source network solution that provides secure and reliable network connectivity.",
+    "notInstalled": "Tailscale Operator is not installed in this cluster",
+    "notInstalledDescription": "Tailscale Kubernetes Operator provides secure networking and connectivity solutions for Kubernetes clusters.",
+    "installGuide": "Installation Guide",
+    "learnMore": "Learn More",
+    "version": "Version",
+    "summary": "Summary",
+    "availableWorkloads": "Available Workloads",
+    "totalResources": "Total Resources",
+    "totalInstances": "Total Instances",
+    "supportedTypes": "Supported Types",
+    "workloads": "Workloads",
+    "management": "Management",
+    "availability": "Availability",
+    "categories": "Categories",
+    "connectors": {
+      "title": "Connectors",
+      "description": "Manage subnet routers, exit nodes, and app connectors for secure network access",
+      "list": "Connector List",
+      "empty": "No connectors found",
+      "type": "Type",
+      "hostname": "Hostname",
+      "routes": "Routes",
+      "proxyClass": "Proxy Class",
+      "tags": "Tags",
+      "types": {
+        "subnetRouter": "Subnet Router",
+        "exitNode": "Exit Node",
+        "appConnector": "App Connector",
+        "unknown": "Unknown"
+      },
+      "status": {
+        "ready": "Ready",
+        "notReady": "Not Ready",
+        "unknown": "Unknown"
+      },
+      "stats": {
+        "total": "Total",
+        "ready": "Ready",
+        "subnetRouters": "Subnet Routers",
+        "exitNodes": "Exit Nodes",
+        "appConnectors": "App Connectors"
+      }
+    },
+    "proxyclasses": {
+      "title": "Proxy Classes",
+      "description": "Define custom proxy configurations for Tailscale resources",
+      "list": "Proxy Class List",
+      "empty": "No proxy classes found",
+      "features": "Features",
+      "customLabels": "Custom Labels",
+      "image": "Image",
+      "resources": "Resources",
+      "defaultImage": "Default",
+      "featuresTypes": {
+        "metrics": "Metrics",
+        "resources": "Resources",
+        "security": "Security",
+        "nodeSelector": "Node Selector"
+      },
+      "stats": {
+        "total": "Total",
+        "withMetrics": "With Metrics",
+        "withResources": "With Resources",
+        "withSecurity": "With Security",
+        "withNodeSelector": "With Node Selector"
+      },
+      "deleteSuccess": "ProxyClass deleted successfully",
+      "deleteError": "Failed to delete ProxyClass",
+      "yamlSaveSuccess": "YAML saved successfully",
+      "yamlSaveError": "Failed to save YAML"
+    },
+    "proxygroups": {
+      "title": "Proxy Groups",
+      "description": "Manage high-availability proxy groups for enhanced reliability"
     }
   },
   "version": {
