@@ -34,7 +34,7 @@ export function PodListPage() {
       }),
       columnHelper.accessor((row) => row.status?.containerStatuses, {
         id: 'containers',
-        header: t('pods.ready'),
+        header: t('common.ready'),
         cell: ({ row }) => {
           const containerStatuses = row.original.status?.containerStatuses || []
           return (

@@ -242,7 +242,7 @@ export function OpenKruisePage() {
                       {isAvailable ? (
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                            {t('openkruise.available')}
+                            {t('common.available')}
                           </Badge>
                           {count > 0 && (
                             <Badge variant="outline">
@@ -251,7 +251,7 @@ export function OpenKruisePage() {
                           )}
                         </div>
                       ) : (
-                        <Badge variant="outline">{t('openkruise.unavailable')}</Badge>
+                        <Badge variant="outline">{t('common.unavailable')}</Badge>
                       )}
                     </CardTitle>
                   </CardHeader>

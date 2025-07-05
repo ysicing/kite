@@ -86,6 +86,7 @@ export type ResourceType =
   | 'podmetrics'
   | 'replicasets'
   | 'clonesets'
+  | 'nodeimages'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -94,6 +95,7 @@ export const clusterScopeResources: ResourceType[] = [
   'nodes',
   'events',
   'storageclasses',
+  'nodeimages',
 ]
 
 type listMetadataType = {
@@ -187,6 +189,10 @@ export interface ResourcesTypeMap {
     items: CloneSet[]
     metadata?: listMetadataType
   }
+  nodeimages: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -230,6 +236,7 @@ export interface ResourceTypeMap {
   replicasets: ReplicaSet
   podmetrics: PodMetrics
   clonesets: CloneSet
+  nodeimages: CustomResource
 }
 
 export interface RecentEvent {

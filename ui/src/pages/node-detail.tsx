@@ -550,7 +550,7 @@ export function NodeDetail(props: { name: string }) {
                             {data.status?.conditions?.find(
                               (c) => c.type === 'Ready' && c.status === 'True'
                             )
-                              ? t('nodes.ready')
+                              ? t('common.ready')
                               : t('nodes.notReady')}
                             {data.spec?.unschedulable
                               ? ` (${t('nodes.schedulingDisabled')})`

@@ -38,7 +38,7 @@ export function DeploymentListPage() {
       }),
       columnHelper.accessor((row) => row.status, {
         id: 'ready',
-        header: t('deployments.ready'),
+        header: t('common.ready'),
         cell: ({ row }) => {
           const status = row.original.status
           const ready = status?.readyReplicas || 0

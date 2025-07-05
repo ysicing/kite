@@ -121,11 +121,11 @@ export function NodeListPage() {
           return (
             <div className="flex justify-center">
               <div className="flex items-center gap-2">
-                <Badge 
+                <Badge
                   variant={isReady ? 'default' : 'destructive'}
                   className="text-xs"
                 >
-                  {isReady ? t('nodes.ready') : t('nodes.notReady')}
+                  {isReady ? t('common.ready') : t('common.notReady')}
                 </Badge>
                 {!isSchedulable && (
                   <Badge variant="secondary" className="text-xs">
@@ -253,11 +253,11 @@ export function NodeListPage() {
           
           return (
             <div className="flex items-center gap-2">
-              <Badge 
+              <Badge
                 variant={isReady ? 'default' : 'destructive'}
                 className="text-xs"
               >
-                {isReady ? t('nodes.ready') : t('nodes.notReady')}
+                {isReady ? t('common.ready') : t('common.notReady')}
               </Badge>
               {!isSchedulable && (
                 <Badge variant="secondary" className="text-xs">

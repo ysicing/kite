@@ -273,7 +273,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
           <CardContent className="pt-6">
             <div className="flex items-center justify-center gap-2">
               <IconLoader className="animate-spin" />
-              <span>{t('openkruise.clonesets.loading')}</span>
+              <span>{t('common.loading')}</span>
             </div>
           </CardContent>
         </Card>
@@ -287,8 +287,8 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
-              {t('openkruise.clonesets.errorLoading')}:{' '}
-              {cloneSetError?.message || t('openkruise.clonesets.notFound')}
+              {t('common.errorLoading')}:{' '}
+              {cloneSetError?.message || t('common.notFound')}
             </div>
           </CardContent>
         </Card>
@@ -313,7 +313,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh}>
             <IconRefresh className="w-4 h-4" />
-            {t('openkruise.clonesets.refresh')}
+            {t('common.refresh')}
           </Button>
           <Popover
             open={isScalePopoverOpen}
@@ -322,7 +322,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconScale className="w-4 h-4" />
-                {t('openkruise.clonesets.scale')}
+                {t('common.scale')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -369,7 +369,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 </div>
                 <Button onClick={handleScale} className="w-full">
                   <IconScale className="w-4 h-4 mr-2" />
-                  {t('openkruise.clonesets.scale')}
+                  {t('common.scale')}
                 </Button>
               </div>
             </PopoverContent>
@@ -381,7 +381,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconReload className="w-4 h-4" />
-                {t('openkruise.clonesets.restart')}
+                {t('common.restart')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -398,7 +398,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                     onClick={() => setIsRestartPopoverOpen(false)}
                     className="flex-1"
                   >
-                    {t('openkruise.clonesets.cancel')}
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -408,7 +408,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                     className="flex-1"
                   >
                     <IconReload className="w-4 h-4 mr-2" />
-                    {t('openkruise.clonesets.restart')}
+                    {t('common.restart')}
                   </Button>
                 </div>
               </div>
@@ -421,7 +421,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             disabled={isDeleting}
           >
             <IconTrash className="w-4 h-4" />
-            {t('openkruise.clonesets.delete')}
+            {t('common.delete')}
           </Button>
         </div>
       </div>
@@ -431,7 +431,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
         tabs={[
           {
             value: 'overview',
-            label: t('openkruise.clonesets.overview'),
+            label: t('common.overview'),
             content: (
               <div className="space-y-4">
                 {/* Status Overview */}
@@ -613,7 +613,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'yaml',
-            label: t('openkruise.clonesets.yaml'),
+            label: t('nav.yaml'),
             content: (
               <YamlEditor<'clonesets'>
                 key={refreshKey}
@@ -631,7 +631,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      {t('openkruise.clonesets.pods')}{' '}
+                      {t('nav.pods')}{' '}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -646,7 +646,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'logs',
-                  label: t('openkruise.clonesets.logs'),
+                  label: t('nav.logs'),
                   content: (
                     <div className="space-y-6">
                       <LogViewer
@@ -666,7 +666,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'terminal',
-                  label: t('openkruise.clonesets.terminal'),
+                  label: t('nav.terminal'),
                   content: (
                     <div className="space-y-6">
                       {relatedPods && relatedPods.length > 0 && (
@@ -731,7 +731,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             : []),
           {
             value: 'events',
-            label: t('openkruise.clonesets.events'),
+            label: t('nav.events'),
             content: (
               <EventTable
                 resource="clonesets"
@@ -742,7 +742,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'monitor',
-            label: t('openkruise.clonesets.monitor'),
+            label: t('nav.monitor'),
             content: (
               <PodMonitoring
                 namespace={namespace}
