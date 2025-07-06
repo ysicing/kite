@@ -469,8 +469,8 @@
       "title": "Image Pull Jobs",
       "description": "Pre-pull images on nodes"
     },
-    "containerrecreaterequest": {
-      "title": "Container Recreate Request",
+    "containerrecreaterequests": {
+      "title": "Container Recreate Requests",
       "description": "Restart containers in running pods"
     },
     "resourcedistributions": {

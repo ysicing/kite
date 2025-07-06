@@ -466,7 +466,7 @@
       "title": "镜像拉取任务",
       "description": "在节点上预拉取镜像"
     },
-    "containerrecreaterequest": {
+    "containerrecreaterequests": {
       "title": "容器重建请求",
       "description": "重启运行中Pod的容器"
     },

@@ -27,7 +27,7 @@ export function OpenKruisePage() {
     // Additional resources that are not in sidebar but still clickable
     'uniteddeployments': '/uniteddeployments',
     'workloadspreads': '/workloadspreads',
-    'containerrecreaterequest': '/containerrecreaterequest',
+    'containerrecreaterequests': '/containerrecreaterequests',
     'resourcedistributions': '/resourcedistributions',
     'persistentpodstates': '/persistentpodstates',
     'podprobemarkers': '/podprobemarkers',
@@ -135,7 +135,7 @@ export function OpenKruisePage() {
     },
     {
       title: t('openkruise.categories.enhancedOperations'),
-      workloads: ['imagepulljobs', 'containerrecreaterequest', 'resourcedistributions', 'persistentpodstates', 'podprobemarkers', 'nodeimages'],
+      workloads: ['imagepulljobs', 'containerrecreaterequests', 'resourcedistributions', 'persistentpodstates', 'podprobemarkers', 'nodeimages'],
     },
     {
       title: t('openkruise.categories.applicationProtection'),
