@@ -260,3 +260,15 @@ export interface AdvancedDaemonSet {
     collisionCount?: number
   }
 }
+export type PodStatus = {
+  readyContainers: number
+  totalContainers: number
+  reason: string
+  restartString: string
+}
+
+export type SimpleContainer = Array<{
+  name: string
+  image: string
+  init?: boolean
+}>

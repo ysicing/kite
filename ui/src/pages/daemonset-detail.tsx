@@ -20,6 +20,7 @@ import {
   useResource,
   useResources,
 } from '@/lib/api'
+import { toSimpleContainer } from '@/lib/k8s'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -185,27 +186,43 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
     }
   }
 
-  const handleContainerUpdate = async (updatedContainer: Container) => {
+  const handleContainerUpdate = async (
+    updatedContainer: Container,
+    init = false
+  ) => {
     try {
       // Create a deep copy of the daemonset to avoid modifying the original
       const updatedDaemonSet = JSON.parse(
         JSON.stringify(daemonset)
       ) as DaemonSet
 
-      // Update the specific container in the daemonset spec
-      if (updatedDaemonSet.spec?.template?.spec?.containers) {
-        const containerIndex =
-          updatedDaemonSet.spec.template.spec.containers.findIndex(
-            (c) => c.name === updatedContainer.name
-          )
-        if (containerIndex !== -1) {
-          updatedDaemonSet.spec.template.spec.containers[containerIndex] =
-            updatedContainer
-          await updateResource('daemonsets', name, namespace, updatedDaemonSet)
-          toast.success('Container updated successfully')
-          setRefreshInterval(1000) // Set a short refresh interval to see changes
+      if (init) {
+        if (updatedDaemonSet.spec?.template?.spec?.initContainers) {
+          const containerIndex =
+            updatedDaemonSet.spec.template.spec.initContainers.findIndex(
+              (c) => c.name === updatedContainer.name
+            )
+          if (containerIndex !== -1) {
+            updatedDaemonSet.spec.template.spec.initContainers[containerIndex] =
+              updatedContainer
+          }
+        }
+      } else {
+        if (updatedDaemonSet.spec?.template?.spec?.containers) {
+          const containerIndex =
+            updatedDaemonSet.spec.template.spec.containers.findIndex(
+              (c) => c.name === updatedContainer.name
+            )
+          if (containerIndex !== -1) {
+            updatedDaemonSet.spec.template.spec.containers[containerIndex] =
+              updatedContainer
+          }
         }
       }
+
+      await updateResource('daemonsets', name, namespace, updatedDaemonSet)
+      toast.success('Container updated successfully')
+      setRefreshInterval(1000) // Set a short refresh interval to see changes
     } catch (error) {
       console.error('Failed to update container:', error)
       toast.error(
@@ -422,6 +439,29 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                   </CardContent>
                 </Card>
 
+                {/* Init Containers */}
+                {spec?.template?.spec?.initContainers && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Init Containers</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {spec.template.spec.initContainers.map((container) => (
+                          <ContainerTable
+                            key={container.name}
+                            container={container}
+                            onContainerUpdate={(updatedContainer) =>
+                              handleContainerUpdate(updatedContainer, true)
+                            }
+                            init
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Containers */}
                 {spec?.template?.spec?.containers && (
                   <Card>
@@ -430,15 +470,15 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {spec.template.spec.containers.map(
-                          (container, index) => (
-                            <ContainerTable
-                              key={index}
-                              container={container}
-                              onContainerUpdate={handleContainerUpdate}
-                            />
-                          )
-                        )}
+                        {spec.template.spec.containers.map((container) => (
+                          <ContainerTable
+                            key={container.name}
+                            container={container}
+                            onContainerUpdate={(updatedContainer) =>
+                              handleContainerUpdate(updatedContainer, false)
+                            }
+                          />
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -490,14 +530,10 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                       <LogViewer
                         namespace={namespace}
                         pods={relatedPods}
-                        containers={
-                          relatedPods?.[0]?.spec?.containers?.map(
-                            (container) => ({
-                              name: container.name,
-                              image: container.image || '',
-                            })
-                          ) || []
-                        }
+                        containers={toSimpleContainer(
+                          spec?.template.spec?.initContainers,
+                          spec?.template.spec?.containers
+                        )}
                       />
                     </div>
                   ),
@@ -511,14 +547,10 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                         <Terminal
                           namespace={namespace}
                           pods={relatedPods}
-                          containers={
-                            relatedPods[0].spec?.containers?.map(
-                              (container) => ({
-                                name: container.name,
-                                image: container.image || '',
-                              })
-                            ) || []
-                          }
+                          containers={toSimpleContainer(
+                            spec?.template.spec?.initContainers,
+                            spec?.template.spec?.containers
+                          )}
                         />
                       )}
                     </div>
@@ -582,7 +614,10 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
               <PodMonitoring
                 namespace={namespace}
                 pods={relatedPods}
-                containers={relatedPods?.[0]?.spec?.containers || []}
+                containers={toSimpleContainer(
+                  spec?.template.spec?.initContainers,
+                  spec?.template.spec?.containers
+                )}
                 defaultQueryName={relatedPods?.[0]?.metadata?.generateName}
                 labelSelector={labelSelector}
               />

@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react'
 import { Pod } from 'kubernetes-types/core/v1'
 
+import { SimpleContainer } from '@/types/k8s'
 import { LOG_THEMES, LogTheme } from '@/types/themes'
 import { ansiStateToCss, parseAnsi, stripAnsi } from '@/lib/ansi-parser'
 import { useLogsStream } from '@/lib/api'
@@ -47,7 +48,7 @@ interface LogViewerProps {
   namespace: string
   podName?: string
   pods?: Pod[]
-  containers: Array<{ name: string; image: string }>
+  containers: SimpleContainer
   onClose?: () => void
 }
 

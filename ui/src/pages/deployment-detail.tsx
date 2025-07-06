@@ -21,7 +21,7 @@ import {
   useResource,
   useResources,
 } from '@/lib/api'
-import { getDeploymentStatus } from '@/lib/k8s'
+import { getDeploymentStatus, toSimpleContainer } from '@/lib/k8s'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -194,37 +194,49 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
     }
   }
 
-  const handleContainerUpdate = async (updatedContainer: Container) => {
+  const handleContainerUpdate = async (
+    updatedContainer: Container,
+    init = false
+  ) => {
     if (!deployment) return
 
     try {
       // Create a deep copy of the deployment
       const updatedDeployment = { ...deployment }
 
-      // Update the specific container in the deployment spec
-      if (updatedDeployment.spec?.template?.spec?.containers) {
-        const containerIndex =
-          updatedDeployment.spec.template.spec.containers.findIndex(
-            (c) => c.name === updatedContainer.name
-          )
+      if (init) {
+        // Update the specific container in the deployment spec
+        if (updatedDeployment.spec?.template?.spec?.initContainers) {
+          const containerIndex =
+            updatedDeployment.spec.template.spec.initContainers.findIndex(
+              (c) => c.name === updatedContainer.name
+            )
 
-        if (containerIndex >= 0) {
-          updatedDeployment.spec.template.spec.containers[containerIndex] =
-            updatedContainer
+          if (containerIndex >= 0) {
+            updatedDeployment.spec.template.spec.initContainers[
+              containerIndex
+            ] = updatedContainer
+          }
+        }
+      } else {
+        // Update the specific container in the deployment spec
+        if (updatedDeployment.spec?.template?.spec?.containers) {
+          const containerIndex =
+            updatedDeployment.spec.template.spec.containers.findIndex(
+              (c) => c.name === updatedContainer.name
+            )
 
-          // Call the update API
-          await updateResource(
-            'deployments',
-            name,
-            namespace,
-            updatedDeployment
-          )
-          toast.success(
-            `Container ${updatedContainer.name} updated successfully`
-          )
-          setRefreshInterval(1000)
+          if (containerIndex >= 0) {
+            updatedDeployment.spec.template.spec.containers[containerIndex] =
+              updatedContainer
+          }
         }
       }
+
+      // Call the update API
+      await updateResource('deployments', name, namespace, updatedDeployment)
+      toast.success(`Container ${updatedContainer.name} updated successfully`)
+      setRefreshInterval(1000)
     } catch (error) {
       console.error('Failed to update container:', error)
       toast.error(
@@ -516,6 +528,42 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                   </CardContent>
                 </Card>
 
+                {deployment.spec?.template.spec?.initContainers?.length &&
+                  deployment.spec?.template.spec?.initContainers?.length >
+                    0 && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>
+                          Init Containers (
+                          {
+                            deployment.spec?.template?.spec?.initContainers
+                              ?.length
+                          }
+                          )
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-6">
+                          <div className="space-y-4">
+                            {deployment.spec?.template?.spec?.initContainers?.map(
+                              (container) => (
+                                <ContainerTable
+                                  key={container.name}
+                                  container={container}
+                                  onContainerUpdate={(updatedContainer) =>
+                                    handleContainerUpdate(
+                                      updatedContainer,
+                                      true
+                                    )
+                                  }
+                                />
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                 <Card>
                   <CardHeader>
                     <CardTitle>
@@ -532,7 +580,9 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                             <ContainerTable
                               key={container.name}
                               container={container}
-                              onContainerUpdate={handleContainerUpdate}
+                              onContainerUpdate={(updatedContainer) =>
+                                handleContainerUpdate(updatedContainer)
+                              }
                             />
                           )
                         )}
@@ -622,14 +672,10 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                       <LogViewer
                         namespace={namespace}
                         pods={relatedPods}
-                        containers={
-                          relatedPods?.[0]?.spec?.containers?.map(
-                            (container) => ({
-                              name: container.name,
-                              image: container.image || '',
-                            })
-                          ) || []
-                        }
+                        containers={toSimpleContainer(
+                          deployment.spec?.template?.spec?.initContainers,
+                          deployment.spec?.template?.spec?.containers
+                        )}
                       />
                     </div>
                   ),
@@ -643,14 +689,10 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                         <Terminal
                           namespace={namespace}
                           pods={relatedPods}
-                          containers={
-                            relatedPods[0].spec?.containers?.map(
-                              (container) => ({
-                                name: container.name,
-                                image: container.image || '',
-                              })
-                            ) || []
-                          }
+                          containers={toSimpleContainer(
+                            deployment.spec?.template?.spec?.initContainers,
+                            deployment.spec?.template?.spec?.containers
+                          )}
                         />
                       )}
                     </div>
@@ -685,7 +727,10 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                     <VolumeTable
                       namespace={namespace}
                       volumes={deployment.spec?.template?.spec?.volumes}
-                      containers={deployment.spec?.template?.spec?.containers}
+                      containers={toSimpleContainer(
+                        deployment.spec?.template?.spec?.initContainers,
+                        deployment.spec?.template?.spec?.containers
+                      )}
                       isLoading={isLoadingDeployment}
                     />
                   ),
@@ -710,7 +755,10 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
               <PodMonitoring
                 namespace={namespace}
                 pods={relatedPods}
-                containers={relatedPods?.[0]?.spec?.containers || []}
+                containers={toSimpleContainer(
+                  deployment.spec?.template?.spec?.initContainers,
+                  deployment.spec?.template?.spec?.containers
+                )}
                 labelSelector={labelSelector}
               />
             ),
