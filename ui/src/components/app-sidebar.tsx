@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useCluster } from '@/hooks/use-cluster'
-import { useOpenKruiseStatus, useTailscaleStatus } from '@/lib/api'
+import { useOpenKruiseStatus, useTailscaleStatus, useTraefikStatus } from '@/lib/api'
 import {
   Sidebar,
   SidebarContent,
@@ -52,6 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { clusters, isLoading } = useCluster()
   const { data: openKruiseStatus } = useOpenKruiseStatus()
   const { data: tailscaleStatus } = useTailscaleStatus()
+  const { data: traefikStatus } = useTraefikStatus()
   const shouldShowClusterSelector = !isLoading && clusters.length > 1
 
   const menus = {
@@ -72,6 +73,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.tailscale'),
         url: '/tailscale',
         icon: IconNetwork,
+      },
+      // Always show Traefik in traffic group
+      {
+        title: t('nav.traefik'),
+        url: '/traefik',
+        icon: IconLayoutDashboard,
       },
     ],
     [t('nav.workloads')]: [
@@ -186,6 +193,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/services',
         icon: IconNetwork,
       },
+    ...(traefikStatus?.installed ? [
+        {
+          title: t('nav.ingressroutes'),
+          url: '/ingressroutes',
+          icon: IconRouter,
+        },
+        {
+          title: t('nav.middlewares'),
+          url: '/middlewares',
+          icon: IconCode,
+        },
+        {
+          title: t('nav.traefikservices'),
+          url: '/traefikservices',
+          icon: IconNetwork,
+        },
+      ]:[]),
     ],
     Storage: [
       {

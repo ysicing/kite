@@ -44,13 +44,14 @@
     "workloads": "工作负载",
     "openkruise": "OpenKruise",
     "tailscale": "Tailscale",
+    "traefik": "Traefik",
     "pods": "容器组",
     "deployments": "无状态副本集",
     "statefulsets": "有状态副本集",
     "daemonsets": "守护进程集",
     "jobs": "任务",
     "services": "服务",
-    "ingresses": "入口",
+    "ingresses": "入口路由",
     "configMaps": "配置映射",
     "secrets": "密钥",
     "persistentVolumeClaims": "持久卷声明",
@@ -73,7 +74,16 @@
     "nodeimages": "节点镜像",
     "connectors": "连接器",
     "proxyclasses": "代理类",
-    "proxygroups": "代理组"
+    "proxygroups": "代理组",
+    "ingressroutes": "Traefik入口路由",
+    "ingressroutetcps": "TraefikTCP入口路由",
+    "ingressrouteudps": "TraefikUDP入口路由",
+    "middlewares": "Traefik中间件",
+    "middlewaretcps": "TraefikTCP中间件",
+    "tlsoptions": "TraefikTLS选项",
+    "tlsstores": "TraefikTLS存储",
+    "traefikservices": "Traefik服务",
+    "serverstransports": "服务器传输"
   },
   "overview": {
     "title": "概览",
@@ -568,6 +578,98 @@
     "proxygroups": {
       "title": "代理组",
       "description": "管理高可用性代理组以增强可靠性"
+    }
+  },
+  "traefik": {
+    "title": "Traefik",
+    "description": "Traefik 是一个现代的反向代理和负载均衡器，为容器化应用提供动态服务发现。",
+    "notInstalled": "集群未安装 Traefik",
+    "notInstalledDescription": "Traefik 是一个开源的边缘路由器，可以为您的服务发布、负载均衡和服务发现提供解决方案。",
+    "installGuide": "安装指南",
+    "learnMore": "了解更多",
+    "version": "版本",
+    "summary": "总览",
+    "availableWorkloads": "可用工作负载",
+    "totalResources": "总资源数",
+    "totalInstances": "总实例数",
+    "supportedTypes": "支持类型",
+    "workloads": "工作负载",
+    "management": "管理",
+    "availability": "可用性",
+    "categories": "类型",
+    "installInstructions": "请参考官方文档安装 Traefik 到您的 Kubernetes 集群。",
+    "ingressroutes": {
+      "title": "入口路由",
+      "description": "管理 HTTP/HTTPS 路由规则",
+      "list": "入口路由列表",
+      "empty": "未找到入口路由",
+      "entryPoints": "入口点",
+      "hosts": "主机",
+      "paths": "路径",
+      "services": "服务",
+      "middlewares": "中间件",
+      "tls": "TLS"
+    },
+    "ingressroutetcps": {
+      "title": "TCP入口路由",
+      "description": "管理 TCP 路由规则",
+      "list": "TCP入口路由列表",
+      "empty": "未找到TCP入口路由"
+    },
+    "ingressrouteudps": {
+      "title": "UDP入口路由",
+      "description": "管理 UDP 路由规则",
+      "list": "UDP入口路由列表",
+      "empty": "未找到UDP入口路由"
+    },
+    "middlewares": {
+      "title": "中间件",
+      "description": "定义请求/响应处理规则",
+      "list": "中间件列表",
+      "empty": "未找到中间件",
+      "type": "类型",
+      "configuration": "配置"
+    },
+    "middlewaretcps": {
+      "title": "TCP中间件",
+      "description": "定义 TCP 处理规则",
+      "list": "TCP中间件列表",
+      "empty": "未找到TCP中间件"
+    },
+    "tlsoptions": {
+      "title": "TLS选项",
+      "description": "定义 TLS 配置选项",
+      "list": "TLS选项列表",
+      "empty": "未找到TLS选项",
+      "minVersion": "最小版本",
+      "maxVersion": "最大版本",
+      "cipherSuites": "密码套件",
+      "curvePreferences": "曲线偏好"
+    },
+    "tlsstores": {
+      "title": "TLS存储",
+      "description": "定义 TLS 证书存储",
+      "list": "TLS存储列表",
+      "empty": "未找到TLS存储",
+      "defaultCertificate": "默认证书"
+    },
+    "traefikservices": {
+      "title": "Traefik服务",
+      "description": "定义负载均衡和服务发现",
+      "list": "Traefik服务列表",
+      "empty": "未找到Traefik服务",
+      "weighted": "加权",
+      "mirroring": "镜像",
+      "failover": "故障转移"
+    },
+    "serverstransports": {
+      "title": "服务器传输",
+      "description": "定义后端服务器的传输配置",
+      "list": "服务器传输列表",
+      "empty": "未找到服务器传输",
+      "serverName": "服务器名称",
+      "insecureSkipVerify": "跳过验证",
+      "rootCAs": "根CA"
     }
   },
   "version": {

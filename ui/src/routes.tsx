@@ -6,6 +6,7 @@ import { CRListPage } from './pages/cr-list-page'
 import { LoginPage } from './pages/login'
 import { OpenKruisePage } from './pages/openkruise-page'
 import { TailscalePage } from './pages/tailscale-page'
+import { TraefikPage } from './pages/traefik-page'
 import ConnectorListPage from './pages/connector-list-page'
 import ProxyClassListPage from './pages/proxyclass-list-page'
 import TailscaleOverviewPage from './pages/tailscale-overview-page'
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path: 'tailscale-overview',
         element: <TailscaleOverviewPage />,
+      },
+      {
+        path: 'traefik',
+        element: <TraefikPage />,
       },
       {
         path: 'connectors',

@@ -62,6 +62,23 @@ type TailscaleStatus struct {
 	Workloads []TailscaleWorkload `json:"workloads"`
 }
 
+// TraefikWorkload represents a supported Traefik workload
+type TraefikWorkload struct {
+	Name        string `json:"name"`
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Available   bool   `json:"available"`
+	Count       int    `json:"count"`
+	Description string `json:"description"`
+}
+
+// TraefikStatus represents the status of Traefik installation
+type TraefikStatus struct {
+	Installed bool              `json:"installed"`
+	Version   string            `json:"version,omitempty"`
+	Workloads []TraefikWorkload `json:"workloads"`
+}
+
 // GetOpenKruiseStatus checks if OpenKruise is installed in the cluster
 func GetOpenKruiseStatus(c *gin.Context) {
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
@@ -272,6 +289,123 @@ func GetTailscaleStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, status)
 }
 
+// GetTraefikStatus checks if Traefik is installed in the cluster
+func GetTraefikStatus(c *gin.Context) {
+	cs := c.MustGet("cluster").(*cluster.ClientSet)
+	ctx := c.Request.Context()
+
+	status := &TraefikStatus{
+		Installed: false,
+		Workloads: []TraefikWorkload{},
+	}
+
+	// Check supported workloads
+	workloads := []TraefikWorkload{
+		// Core Resources
+		{
+			Name:        "ingressroutes",
+			Kind:        "IngressRoute",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "IngressRoute manages HTTP/HTTPS routing rules",
+		},
+		{
+			Name:        "ingressroutetcps",
+			Kind:        "IngressRouteTCP",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "IngressRouteTCP manages TCP routing rules",
+		},
+		{
+			Name:        "ingressrouteudps",
+			Kind:        "IngressRouteUDP",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "IngressRouteUDP manages UDP routing rules",
+		},
+		{
+			Name:        "middlewares",
+			Kind:        "Middleware",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "Middleware defines request/response processing rules",
+		},
+		{
+			Name:        "middlewaretcps",
+			Kind:        "MiddlewareTCP",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "MiddlewareTCP defines TCP processing rules",
+		},
+		{
+			Name:        "tlsoptions",
+			Kind:        "TLSOption",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "TLSOption defines TLS configuration options",
+		},
+		{
+			Name:        "tlsstores",
+			Kind:        "TLSStore",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "TLSStore defines TLS certificate stores",
+		},
+		{
+			Name:        "traefikservices",
+			Kind:        "TraefikService",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "TraefikService defines load balancing and service discovery",
+		},
+		{
+			Name:        "serverstransports",
+			Kind:        "ServersTransport",
+			APIVersion:  "traefik.io/v1alpha1",
+			Description: "ServersTransport defines transport configuration for backend servers",
+		},
+	}
+
+	// Check each workload availability and count
+	for i, workload := range workloads {
+		available, count := checkTraefikWorkloadAvailability(ctx, cs, workload)
+		workloads[i].Available = available
+		workloads[i].Count = count
+
+		if available {
+			status.Installed = true
+		}
+	}
+
+	// Try to get version from traefik deployment
+	if status.Installed {
+		var deployment appsv1.Deployment
+		if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+			Name:      "traefik",
+			Namespace: "traefik-system",
+		}, &deployment); err == nil {
+			// Extract version from image tag if possible
+			for _, container := range deployment.Spec.Template.Spec.Containers {
+				if container.Name == "traefik" {
+					status.Version = extractVersionFromImage(container.Image)
+					break
+				}
+			}
+		} else {
+			// Try common namespace alternatives
+			for _, ns := range []string{"traefik", "kube-system", "default"} {
+				if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+					Name:      "traefik",
+					Namespace: ns,
+				}, &deployment); err == nil {
+					for _, container := range deployment.Spec.Template.Spec.Containers {
+						if container.Name == "traefik" {
+							status.Version = extractVersionFromImage(container.Image)
+							break
+						}
+					}
+					break
+				}
+			}
+		}
+	}
+
+	status.Workloads = workloads
+	c.JSON(http.StatusOK, status)
+}
+
 // checkWorkloadAvailability checks if a specific workload type is available and returns count
 func checkWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload OpenKruiseWorkload) (bool, int) {
 	// First check if the CRD exists
@@ -407,6 +541,50 @@ func checkTailscaleUnstructuredWorkload(ctx context.Context, cs *cluster.ClientS
 	return true, len(list.Items)
 }
 
+// checkTraefikWorkloadAvailability checks if a specific Traefik workload type is available and returns count
+func checkTraefikWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload TraefikWorkload) (bool, int) {
+	// First check if the CRD exists
+	crdName := getTraefikCRDName(workload.Kind)
+	if crdName == "" {
+		return false, 0
+	}
+
+	var crd apiextensionsv1.CustomResourceDefinition
+	if err := cs.K8sClient.Get(ctx, types.NamespacedName{Name: crdName}, &crd); err != nil {
+		// CRD doesn't exist, workload not available
+		return false, 0
+	}
+
+	// CRD exists, now try to list resources using unstructured list
+	return checkTraefikUnstructuredWorkload(ctx, cs, workload)
+}
+
+// checkTraefikUnstructuredWorkload checks workload availability using unstructured list
+func checkTraefikUnstructuredWorkload(ctx context.Context, cs *cluster.ClientSet, workload TraefikWorkload) (bool, int) {
+	// Parse the API version
+	parts := strings.Split(workload.APIVersion, "/")
+	if len(parts) != 2 {
+		return false, 0
+	}
+
+	group := parts[0]
+	version := parts[1]
+
+	// Try to list resources using dynamic client
+	list := &unstructured.UnstructuredList{}
+	list.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   group,
+		Version: version,
+		Kind:    workload.Kind + "List",
+	})
+
+	if err := cs.K8sClient.List(ctx, list); err != nil {
+		return true, 0 // CRD exists but listing failed, still consider available
+	}
+
+	return true, len(list.Items)
+}
+
 // getCRDName returns the CRD name for a given workload kind
 func getCRDName(kind string) string {
 	switch kind {
@@ -464,6 +642,32 @@ func getTailscaleCRDName(kind string) string {
 		return "proxyclasses.tailscale.com"
 	case "ProxyGroup":
 		return "proxygroups.tailscale.com"
+	default:
+		return ""
+	}
+}
+
+// getTraefikCRDName returns the CRD name for a given Traefik workload kind
+func getTraefikCRDName(kind string) string {
+	switch kind {
+	case "IngressRoute":
+		return "ingressroutes.traefik.io"
+	case "IngressRouteTCP":
+		return "ingressroutetcps.traefik.io"
+	case "IngressRouteUDP":
+		return "ingressrouteudps.traefik.io"
+	case "Middleware":
+		return "middlewares.traefik.io"
+	case "MiddlewareTCP":
+		return "middlewaretcps.traefik.io"
+	case "TLSOption":
+		return "tlsoptions.traefik.io"
+	case "TLSStore":
+		return "tlsstores.traefik.io"
+	case "TraefikService":
+		return "traefikservices.traefik.io"
+	case "ServersTransport":
+		return "serverstransports.traefik.io"
 	default:
 		return ""
 	}
@@ -528,9 +732,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"nodemetrics":            NewGenericResourceHandler[*metricsv1.NodeMetrics, *metricsv1.NodeMetricsList]("nodemetrics", true, false),
 		"crds":                   NewGenericResourceHandler[*apiextensionsv1.CustomResourceDefinition, *apiextensionsv1.CustomResourceDefinitionList]("crds", true, false),
 
-		"events":                 NewEventHandler(),
-		"deployments":            NewDeploymentHandler(),
-		"nodes":                  NewNodeHandler(),
+		"events":      NewEventHandler(),
+		"deployments": NewDeploymentHandler(),
+		"nodes":       NewNodeHandler(),
 
 		// OpenKruise resources
 		"clonesets":                 NewGenericResourceHandler[*kruiseappsv1alpha1.CloneSet, *kruiseappsv1alpha1.CloneSetList]("clonesets", false, true),
@@ -553,6 +757,17 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"connectors":   NewTailscaleResourceHandler("connectors", "connectors.tailscale.com", "Connector", "tailscale.com", "v1alpha1"),
 		"proxyclasses": NewTailscaleResourceHandler("proxyclasses", "proxyclasses.tailscale.com", "ProxyClass", "tailscale.com", "v1alpha1"),
 		"proxygroups":  NewTailscaleResourceHandler("proxygroups", "proxygroups.tailscale.com", "ProxyGroup", "tailscale.com", "v1alpha1"),
+
+		// Traefik resources (namespace-scoped)
+		"ingressroutes":     NewTraefikResourceHandler("ingressroutes", "ingressroutes.traefik.io", "IngressRoute", "traefik.io", "v1alpha1"),
+		"ingressroutetcps":  NewTraefikResourceHandler("ingressroutetcps", "ingressroutetcps.traefik.io", "IngressRouteTCP", "traefik.io", "v1alpha1"),
+		"ingressrouteudps":  NewTraefikResourceHandler("ingressrouteudps", "ingressrouteudps.traefik.io", "IngressRouteUDP", "traefik.io", "v1alpha1"),
+		"middlewares":       NewTraefikResourceHandler("middlewares", "middlewares.traefik.io", "Middleware", "traefik.io", "v1alpha1"),
+		"middlewaretcps":    NewTraefikResourceHandler("middlewaretcps", "middlewaretcps.traefik.io", "MiddlewareTCP", "traefik.io", "v1alpha1"),
+		"tlsoptions":        NewTraefikResourceHandler("tlsoptions", "tlsoptions.traefik.io", "TLSOption", "traefik.io", "v1alpha1"),
+		"tlsstores":         NewTraefikResourceHandler("tlsstores", "tlsstores.traefik.io", "TLSStore", "traefik.io", "v1alpha1"),
+		"traefikservices":   NewTraefikResourceHandler("traefikservices", "traefikservices.traefik.io", "TraefikService", "traefik.io", "v1alpha1"),
+		"serverstransports": NewTraefikResourceHandler("serverstransports", "serverstransports.traefik.io", "ServersTransport", "traefik.io", "v1alpha1"),
 	}
 
 	for name, handler := range handlers {
@@ -574,6 +789,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 
 	// Tailscale detection endpoint
 	group.GET("/tailscale/status", GetTailscaleStatus)
+
+	// Traefik detection endpoint
+	group.GET("/traefik/status", GetTraefikStatus)
 
 	crHandler := NewCRHandler()
 	otherGroup := group.Group("/:crd")

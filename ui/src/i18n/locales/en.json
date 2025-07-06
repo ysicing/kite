@@ -44,6 +44,7 @@
     "workloads": "Workloads",
     "openkruise": "OpenKruise",
     "tailscale": "Tailscale",
+    "traefik": "Traefik",
     "pods": "Pods",
     "deployments": "Deployments",
     "statefulsets": "StatefulSets",
@@ -73,7 +74,16 @@
     "nodeimages": "Node Images",
     "connectors": "Connectors",
     "proxyclasses": "Proxy Classes",
-    "proxygroups": "Proxy Groups"
+    "proxygroups": "Proxy Groups",
+    "ingressroutes": "Ingress Routes",
+    "ingressroutetcps": "TCP Ingress Routes",
+    "ingressrouteudps": "UDP Ingress Routes",
+    "middlewares": "Middlewares",
+    "middlewaretcps": "TCP Middlewares",
+    "tlsoptions": "TLS Options",
+    "tlsstores": "TLS Stores",
+    "traefikservices": "Traefik Services",
+    "serverstransports": "Servers Transports"
   },
   "overview": {
     "title": "Overview",
@@ -571,6 +581,98 @@
     "proxygroups": {
       "title": "Proxy Groups",
       "description": "Manage high-availability proxy groups for enhanced reliability"
+    }
+  },
+  "traefik": {
+    "title": "Traefik",
+    "description": "Traefik is a modern reverse proxy and load balancer that provides dynamic service discovery for containerized applications.",
+    "notInstalled": "Traefik is not installed in this cluster",
+    "notInstalledDescription": "Traefik is an open-source edge router that provides solutions for publishing, load balancing, and service discovery for your services.",
+    "installGuide": "Installation Guide",
+    "learnMore": "Learn More",
+    "version": "Version",
+    "summary": "Summary",
+    "availableWorkloads": "Available Workloads",
+    "totalResources": "Total Resources",
+    "totalInstances": "Total Instances",
+    "supportedTypes": "Supported Types",
+    "workloads": "Workloads",
+    "management": "Management",
+    "availability": "Availability",
+    "categories": "Categories",
+    "installInstructions": "Please refer to the official documentation to install Traefik in your Kubernetes cluster.",
+    "ingressroutes": {
+      "title": "Ingress Routes",
+      "description": "Manage HTTP/HTTPS routing rules",
+      "list": "Ingress Route List",
+      "empty": "No ingress routes found",
+      "entryPoints": "Entry Points",
+      "hosts": "Hosts",
+      "paths": "Paths",
+      "services": "Services",
+      "middlewares": "Middlewares",
+      "tls": "TLS"
+    },
+    "ingressroutetcps": {
+      "title": "TCP Ingress Routes",
+      "description": "Manage TCP routing rules",
+      "list": "TCP Ingress Route List",
+      "empty": "No TCP ingress routes found"
+    },
+    "ingressrouteudps": {
+      "title": "UDP Ingress Routes",
+      "description": "Manage UDP routing rules",
+      "list": "UDP Ingress Route List",
+      "empty": "No UDP ingress routes found"
+    },
+    "middlewares": {
+      "title": "Middlewares",
+      "description": "Define request/response processing rules",
+      "list": "Middleware List",
+      "empty": "No middlewares found",
+      "type": "Type",
+      "configuration": "Configuration"
+    },
+    "middlewaretcps": {
+      "title": "TCP Middlewares",
+      "description": "Define TCP processing rules",
+      "list": "TCP Middleware List",
+      "empty": "No TCP middlewares found"
+    },
+    "tlsoptions": {
+      "title": "TLS Options",
+      "description": "Define TLS configuration options",
+      "list": "TLS Options List",
+      "empty": "No TLS options found",
+      "minVersion": "Min Version",
+      "maxVersion": "Max Version",
+      "cipherSuites": "Cipher Suites",
+      "curvePreferences": "Curve Preferences"
+    },
+    "tlsstores": {
+      "title": "TLS Stores",
+      "description": "Define TLS certificate stores",
+      "list": "TLS Store List",
+      "empty": "No TLS stores found",
+      "defaultCertificate": "Default Certificate"
+    },
+    "traefikservices": {
+      "title": "Traefik Services",
+      "description": "Define load balancing and service discovery",
+      "list": "Traefik Service List",
+      "empty": "No Traefik services found",
+      "weighted": "Weighted",
+      "mirroring": "Mirroring",
+      "failover": "Failover"
+    },
+    "serverstransports": {
+      "title": "Servers Transports",
+      "description": "Define transport configuration for backend servers",
+      "list": "Servers Transport List",
+      "empty": "No servers transports found",
+      "serverName": "Server Name",
+      "insecureSkipVerify": "Skip Verify",
+      "rootCAs": "Root CAs"
     }
   },
   "version": {

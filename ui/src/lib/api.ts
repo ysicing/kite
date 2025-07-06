@@ -1160,3 +1160,30 @@ export const useCurrentVersion = () => {
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   })
 }
+
+// Traefik API
+export interface TraefikWorkload {
+  name: string
+  kind: string
+  apiVersion: string
+  available: boolean
+  count: number
+  description: string
+}
+
+export interface TraefikStatus {
+  installed: boolean
+  version?: string
+  workloads: TraefikWorkload[]
+}
+
+export const useTraefikStatus = () => {
+  return useQuery<TraefikStatus>({
+    queryKey: ['traefik-status'],
+    queryFn: async () => {
+      return await apiClient.get<TraefikStatus>('/traefik/status')
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+  })
+}
