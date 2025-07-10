@@ -438,3 +438,10 @@ export interface UpgradePlan extends CustomResource {
     }>
   }
 }
+
+export interface RelatedResources {
+  type: ResourceType
+  name: string
+  namespace?: string
+  apiVersion?: string
+}

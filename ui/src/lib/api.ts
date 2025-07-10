@@ -10,6 +10,7 @@ import {
   NodeDetailList,
   OverviewData,
   PodMetrics,
+  RelatedResources,
   ResourcesTypeMap,
   ResourceType,
   ResourceTypeMap,
@@ -348,9 +349,6 @@ export const useResources = <T extends ResourceType>(
     enabled: !options?.disable,
     select: (data: ResourcesTypeMap[T]): ResourcesItems<T> => data.items,
     placeholderData: (prevData) => prevData,
-    retry(failureCount, error) {
-      return failureCount < 3 && (error as unknown as Response).status > 500
-    },
     refetchInterval: options?.refreshInterval || 0,
     staleTime: options?.staleTime || (resource === 'crds' ? 5000 : 1000),
   })
@@ -1212,5 +1210,29 @@ export const useSystemUpgradeStatus = () => {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+  })
+}
+
+export async function getRelatedResources(
+  resource: ResourceType,
+  name: string,
+  namespace?: string
+) {
+  const resp = await apiClient.get<RelatedResources[]>(
+    `/${resource}/${namespace ? namespace : '_all'}/${name}/related`
+  )
+  return resp
+}
+
+export function useRelatedResources(
+  resource: ResourceType,
+  name: string,
+  namespace?: string
+) {
+  return useQuery({
+    queryKey: ['related-resources', resource, name, namespace],
+    queryFn: () => getRelatedResources(resource, name, namespace),
+    staleTime: 60 * 1000, // 1 min
+    placeholderData: (prev) => prev,
   })
 }

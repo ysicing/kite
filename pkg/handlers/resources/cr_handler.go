@@ -167,6 +167,12 @@ func (h *CRHandler) Get(c *gin.Context) {
 		return
 	}
 
+	cr.SetManagedFields(nil)
+	anno := cr.GetAnnotations()
+	if anno != nil {
+		delete(anno, common.KubectlAnnotation)
+	}
+	cr.SetAnnotations(anno)
 	c.JSON(http.StatusOK, cr)
 }
 
