@@ -79,6 +79,23 @@ type TraefikStatus struct {
 	Workloads []TraefikWorkload `json:"workloads"`
 }
 
+// SystemUpgradeWorkload represents a supported System Upgrade Controller workload
+type SystemUpgradeWorkload struct {
+	Name        string `json:"name"`
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Available   bool   `json:"available"`
+	Count       int    `json:"count"`
+	Description string `json:"description"`
+}
+
+// SystemUpgradeStatus represents the status of System Upgrade Controller installation
+type SystemUpgradeStatus struct {
+	Installed bool                    `json:"installed"`
+	Version   string                  `json:"version,omitempty"`
+	Workloads []SystemUpgradeWorkload `json:"workloads"`
+}
+
 // GetOpenKruiseStatus checks if OpenKruise is installed in the cluster
 func GetOpenKruiseStatus(c *gin.Context) {
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
@@ -406,6 +423,81 @@ func GetTraefikStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, status)
 }
 
+// GetSystemUpgradeStatus checks if System Upgrade Controller is installed in the cluster
+func GetSystemUpgradeStatus(c *gin.Context) {
+	cs := c.MustGet("cluster").(*cluster.ClientSet)
+	ctx := c.Request.Context()
+
+	status := &SystemUpgradeStatus{
+		Installed: false,
+		Workloads: []SystemUpgradeWorkload{},
+	}
+
+	// Check supported workloads
+	workloads := []SystemUpgradeWorkload{
+		// Core Resources
+		{
+			Name:        "plans",
+			Kind:        "Plan",
+			APIVersion:  "upgrade.cattle.io/v1",
+			Description: "Plan defines upgrade specifications for nodes",
+		},
+		{
+			Name:        "jobs",
+			Kind:        "Job",
+			APIVersion:  "batch/v1",
+			Description: "Job executes upgrade operations on target nodes",
+		},
+	}
+
+	// Check each workload availability and count
+	for i, workload := range workloads {
+		available, count := checkSystemUpgradeWorkloadAvailability(ctx, cs, workload)
+		workloads[i].Available = available
+		workloads[i].Count = count
+
+		if available {
+			status.Installed = true
+		}
+	}
+
+	// Try to get version from system-upgrade-controller deployment
+	if status.Installed {
+		var deployment appsv1.Deployment
+		if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+			Name:      "system-upgrade-controller",
+			Namespace: "system-upgrade",
+		}, &deployment); err == nil {
+			// Extract version from image tag if possible
+			for _, container := range deployment.Spec.Template.Spec.Containers {
+				if container.Name == "system-upgrade-controller" {
+					status.Version = extractVersionFromImage(container.Image)
+					break
+				}
+			}
+		} else {
+			// Try common namespace alternatives
+			for _, ns := range []string{"cattle-system", "kube-system", "default"} {
+				if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+					Name:      "system-upgrade-controller",
+					Namespace: ns,
+				}, &deployment); err == nil {
+					for _, container := range deployment.Spec.Template.Spec.Containers {
+						if container.Name == "system-upgrade-controller" {
+							status.Version = extractVersionFromImage(container.Image)
+							break
+						}
+					}
+					break
+				}
+			}
+		}
+	}
+
+	status.Workloads = workloads
+	c.JSON(http.StatusOK, status)
+}
+
 // checkWorkloadAvailability checks if a specific workload type is available and returns count
 func checkWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload OpenKruiseWorkload) (bool, int) {
 	// First check if the CRD exists
@@ -559,6 +651,59 @@ func checkTraefikWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet
 	return checkTraefikUnstructuredWorkload(ctx, cs, workload)
 }
 
+// checkSystemUpgradeWorkloadAvailability checks if a specific System Upgrade Controller workload type is available and returns count
+func checkSystemUpgradeWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload SystemUpgradeWorkload) (bool, int) {
+	// Special case for Job resources - they are native Kubernetes resources
+	if workload.Kind == "Job" {
+		var list batchv1.JobList
+		if err := cs.K8sClient.List(ctx, &list); err != nil {
+			return false, 0 // Jobs should always be available in Kubernetes
+		}
+		return true, len(list.Items)
+	}
+
+	// For Plan resources, first check if the CRD exists
+	crdName := getSystemUpgradeCRDName(workload.Kind)
+	if crdName == "" {
+		return false, 0
+	}
+
+	var crd apiextensionsv1.CustomResourceDefinition
+	if err := cs.K8sClient.Get(ctx, types.NamespacedName{Name: crdName}, &crd); err != nil {
+		// CRD doesn't exist, workload not available
+		return false, 0
+	}
+
+	// CRD exists, now try to list resources using unstructured list
+	return checkSystemUpgradeUnstructuredWorkload(ctx, cs, workload)
+}
+
+// checkSystemUpgradeUnstructuredWorkload checks workload availability using unstructured list
+func checkSystemUpgradeUnstructuredWorkload(ctx context.Context, cs *cluster.ClientSet, workload SystemUpgradeWorkload) (bool, int) {
+	// Parse the API version
+	parts := strings.Split(workload.APIVersion, "/")
+	if len(parts) != 2 {
+		return false, 0
+	}
+
+	group := parts[0]
+	version := parts[1]
+
+	// Try to list resources using dynamic client
+	list := &unstructured.UnstructuredList{}
+	list.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   group,
+		Version: version,
+		Kind:    workload.Kind + "List",
+	})
+
+	if err := cs.K8sClient.List(ctx, list); err != nil {
+		return true, 0 // CRD exists but listing failed, still consider available
+	}
+
+	return true, len(list.Items)
+}
+
 // checkTraefikUnstructuredWorkload checks workload availability using unstructured list
 func checkTraefikUnstructuredWorkload(ctx context.Context, cs *cluster.ClientSet, workload TraefikWorkload) (bool, int) {
 	// Parse the API version
@@ -642,6 +787,16 @@ func getTailscaleCRDName(kind string) string {
 		return "proxyclasses.tailscale.com"
 	case "ProxyGroup":
 		return "proxygroups.tailscale.com"
+	default:
+		return ""
+	}
+}
+
+// getSystemUpgradeCRDName returns the CRD name for a given System Upgrade Controller workload kind
+func getSystemUpgradeCRDName(kind string) string {
+	switch kind {
+	case "Plan":
+		return "plans.upgrade.cattle.io"
 	default:
 		return ""
 	}
@@ -758,6 +913,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"proxyclasses": NewTailscaleResourceHandler("proxyclasses", "proxyclasses.tailscale.com", "ProxyClass", "tailscale.com", "v1alpha1"),
 		"proxygroups":  NewTailscaleResourceHandler("proxygroups", "proxygroups.tailscale.com", "ProxyGroup", "tailscale.com", "v1alpha1"),
 
+		// System Upgrade Controller resources (cluster-scoped)
+		"plans": NewSystemUpgradeResourceHandler("plans", "plans.upgrade.cattle.io", "Plan", "upgrade.cattle.io", "v1"),
+
 		// Traefik resources (namespace-scoped)
 		"ingressroutes":     NewTraefikResourceHandler("ingressroutes", "ingressroutes.traefik.io", "IngressRoute", "traefik.io", "v1alpha1"),
 		"ingressroutetcps":  NewTraefikResourceHandler("ingressroutetcps", "ingressroutetcps.traefik.io", "IngressRouteTCP", "traefik.io", "v1alpha1"),
@@ -789,6 +947,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 
 	// Tailscale detection endpoint
 	group.GET("/tailscale/status", GetTailscaleStatus)
+
+	// System Upgrade Controller detection endpoint
+	group.GET("/system-upgrade/status", GetSystemUpgradeStatus)
 
 	// Traefik detection endpoint
 	group.GET("/traefik/status", GetTraefikStatus)

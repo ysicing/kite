@@ -90,6 +90,7 @@ export type ResourceType =
   | 'connectors'
   | 'proxyclasses'
   | 'proxygroups'
+  | 'plans'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -102,6 +103,7 @@ export const clusterScopeResources: ResourceType[] = [
   'connectors',
   'proxyclasses',
   'proxygroups',
+  'plans',
 ]
 
 type listMetadataType = {
@@ -211,6 +213,10 @@ export interface ResourcesTypeMap {
     items: CustomResource[]
     metadata?: listMetadataType
   }
+  plans: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -258,6 +264,7 @@ export interface ResourceTypeMap {
   connectors: CustomResource
   proxyclasses: CustomResource
   proxygroups: CustomResource
+  plans: CustomResource
 }
 
 export interface RecentEvent {
@@ -382,4 +389,52 @@ export interface NodeDetailInfo extends Node {
 
 export interface NodeDetailList {
   items: NodeDetailInfo[]
+}
+
+// System Upgrade Controller Types
+export interface UpgradePlan extends CustomResource {
+  spec: {
+    concurrency?: number
+    nodeSelector?: {
+      matchLabels?: Record<string, string>
+      matchExpressions?: Array<{
+        key: string
+        operator: string
+        values?: string[]
+      }>
+    }
+    serviceAccountName?: string
+    upgrade: {
+      image: string
+      command?: string[]
+      args?: string[]
+      envs?: Array<{
+        name: string
+        value?: string
+        valueFrom?: any
+      }>
+    }
+    drain?: {
+      enabled?: boolean
+      timeout?: string
+      ignoreDaemonSets?: boolean
+      deleteLocalData?: boolean
+    }
+    version?: string
+    channel?: string
+  }
+  status?: {
+    conditions?: Array<{
+      type: string
+      status: string
+      lastUpdateTime: string
+      reason?: string
+      message?: string
+    }>
+    applying?: Array<{
+      name: string
+      image: string
+      phase: string
+    }>
+  }
 }

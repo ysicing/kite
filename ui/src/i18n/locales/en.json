@@ -36,7 +36,30 @@
     "labels": "Labels",
     "annotations": "Annotations",
     "services": "Services",
-    "events": "Events"
+    "events": "Events",
+    "yes": "Yes",
+    "no": "No",
+    "basicInfo": "Basic Information",
+    "labelsAndAnnotations": "Labels and Annotations",
+    "configuration": "Configuration",
+    "createdTime": "Created Time",
+    "age": "Age",
+    "timeUnits": {
+      "days": "d",
+      "hours": "h",
+      "minutes": "m",
+      "seconds": "s"
+    }
+  },
+  "actions": {
+    "refresh": "Refresh",
+    "download": "Download",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "updateSuccess": "Update successful",
+    "deleteSuccess": "Delete successful"
   },
   "nav": {
     "overview": "Overview",
@@ -45,6 +68,7 @@
     "openkruise": "OpenKruise",
     "tailscale": "Tailscale",
     "traefik": "Traefik",
+    "systemUpgrade": "System Upgrade",
     "pods": "Pods",
     "deployments": "Deployments",
     "statefulsets": "StatefulSets",
@@ -83,7 +107,8 @@
     "tlsoptions": "TLS Options",
     "tlsstores": "TLS Stores",
     "traefikservices": "Traefik Services",
-    "serverstransports": "Servers Transports"
+    "serverstransports": "Servers Transports",
+    "plans": "Upgrade Plans"
   },
   "overview": {
     "title": "Overview",
@@ -688,5 +713,97 @@
     "viewCommit": "View Commit",
     "checkForUpdates": "Check for Updates",
     "lastCheck": "Last Check: {{time}}"
+  },
+  "systemUpgrade": {
+    "title": "System Upgrade Controller",
+    "description": "System Upgrade Controller provides automated upgrade management and orchestration for Kubernetes nodes.",
+    "notInstalled": "System Upgrade Controller not installed in cluster",
+    "notInstalledDescription": "System Upgrade Controller is a controller for managing Kubernetes node upgrades.",
+    "installInstructions": "Please refer to the official documentation to install System Upgrade Controller to your Kubernetes cluster.",
+    "installGuide": "Installation Guide",
+    "version": "Version",
+    "categories": "Resource Categories",
+    "summary": "Summary Statistics",
+    "availableWorkloads": "Available Workloads",
+    "totalInstances": "Total Instances",
+    "supportedTypes": "Supported Types",
+    "upgradeDevices": "Upgrade Plans",
+    "upgradeDevicesDescription": "Manage and view system upgrade plans",
+    "createPlan": "Create Plan",
+    "deletePlan": "Delete Upgrade Plan",
+    "deletePlanConfirm": "Are you sure you want to delete upgrade plan \"{{name}}\"? This action cannot be undone.",
+    "planDetail": "Upgrade Plan Details",
+    "searchPlans": "Search upgrade plans",
+    "noPlans": "No upgrade plans",
+    "noPlansDescription": "Create upgrade plans to start managing your Kubernetes node upgrades",
+    "overview": "Overview",
+    "basicInfo": "Basic Information",
+    "image": "Upgrade Image",
+    "concurrency": "Concurrency",
+    "nodeSelector": "Node Selector",
+    "channel": "Channel",
+    "labelsAnnotations": "Labels & Annotations",
+    "statusInfo": "Status Information",
+    "conditions": "Conditions",
+    "tolerations": "Tolerations",
+    "totalPlans": "Total Plans",
+    "readyPlans": "Ready Plans",
+    "executablePlans": "Executable Plans",
+    "inProgress": "In Progress",
+    "upgradeingNodes": "Upgrading Nodes",
+    "drainEnabled": "Drain Enabled",
+    "drainConfigured": "Drain Configured",
+    "recentPlans": "Recent Plans",
+    "viewAll": "View All",
+    "viewPlans": "View Plans",
+    "status": {
+      "unknown": "Unknown",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "ready": "Ready",
+      "notReady": "Not Ready"
+    },
+    "plans": {
+      "title": "Upgrade Plans",
+      "description": "Manage and view system upgrade plans",
+      "detailDescription": "Upgrade plan details and configuration",
+      "image": "Upgrade Image",
+      "version": "Version",
+      "concurrency": "Concurrency",
+      "nodeSelector": "Node Selector",
+      "serviceAccount": "Service Account",
+      "applying": "Applying",
+      "drainConfig": "Drain Configuration",
+      "noNodeSelector": "No node selector configured",
+      "notFound": "Upgrade plan not found",
+      "deleteTitle": "Delete Upgrade Plan",
+      "deleteDescription": "Are you sure you want to delete upgrade plan \"{{name}}\"? This action cannot be undone.",
+      "deleteSuccess": "Upgrade plan deleted successfully",
+      "deleteError": "Failed to delete upgrade plan",
+      "yamlSaveSuccess": "YAML configuration saved successfully",
+      "yamlSaveError": "Failed to save YAML configuration",
+      "status": {
+        "ready": "Ready",
+        "notReady": "Not Ready",
+        "unknown": "Unknown"
+      }
+    },
+    "jobs": {
+      "title": "Upgrade Jobs",
+      "description": "View system upgrade job execution status and logs"
+    }
+  },
+  "errors": {
+    "loadFailed": "Load failed",
+    "notFound": "Not found",
+    "forbidden": "Permission denied",
+    "serverError": "Server error",
+    "operationFailed": "Operation failed: {{message}}",
+    "unknownError": "Unknown error"
+  },
+  "validation": {
+    "yamlRequired": "YAML content cannot be empty"
   }
 }

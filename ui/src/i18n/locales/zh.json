@@ -36,7 +36,30 @@
     "labels": "标签",
     "annotations": "注解",
     "services": "服务",
-    "events": "事件"
+    "events": "事件",
+    "yes": "是",
+    "no": "否",
+    "basicInfo": "基本信息",
+    "labelsAndAnnotations": "标签和注解",
+    "configuration": "配置",
+    "createdTime": "创建时间",
+    "age": "存在时间",
+    "timeUnits": {
+      "days": "天",
+      "hours": "小时",
+      "minutes": "分钟",
+      "seconds": "秒"
+    }
+  },
+  "actions": {
+    "refresh": "刷新",
+    "download": "下载",
+    "edit": "编辑",
+    "cancel": "取消",
+    "delete": "删除",
+    "save": "保存",
+    "updateSuccess": "更新成功",
+    "deleteSuccess": "删除成功"
   },
   "nav": {
     "overview": "概览",
@@ -45,6 +68,7 @@
     "openkruise": "OpenKruise",
     "tailscale": "Tailscale",
     "traefik": "Traefik",
+    "systemUpgrade": "系统升级",
     "pods": "容器组",
     "deployments": "无状态副本集",
     "statefulsets": "有状态副本集",
@@ -83,7 +107,8 @@
     "tlsoptions": "TraefikTLS选项",
     "tlsstores": "TraefikTLS存储",
     "traefikservices": "Traefik服务",
-    "serverstransports": "服务器传输"
+    "serverstransports": "服务器传输",
+    "plans": "升级计划"
   },
   "overview": {
     "title": "概览",
@@ -685,5 +710,97 @@
     "viewCommit": "查看提交",
     "checkForUpdates": "检查更新",
     "lastCheck": "上次检查: {{time}}"
+  },
+  "systemUpgrade": {
+    "title": "系统升级控制器",
+    "description": "System Upgrade Controller 提供 Kubernetes 节点的自动化升级管理和协调。",
+    "notInstalled": "集群未安装 System Upgrade Controller",
+    "notInstalledDescription": "System Upgrade Controller 是一个用于管理 Kubernetes 节点升级的控制器。",
+    "installInstructions": "请参考官方文档安装 System Upgrade Controller 到您的 Kubernetes 集群。",
+    "installGuide": "安装指南",
+    "version": "版本",
+    "categories": "资源类别",
+    "summary": "统计概览",
+    "availableWorkloads": "可用工作负载",
+    "totalInstances": "总实例数",
+    "supportedTypes": "支持类型",
+    "upgradeDevices": "升级计划",
+    "upgradeDevicesDescription": "管理和查看系统升级计划",
+    "createPlan": "创建计划",
+    "deletePlan": "删除升级计划",
+    "deletePlanConfirm": "确定要删除升级计划 \"{{name}}\" 吗？此操作不可逆。",
+    "planDetail": "升级计划详情",
+    "searchPlans": "搜索升级计划",
+    "noPlans": "暂无升级计划",
+    "noPlansDescription": "创建升级计划来开始管理您的 Kubernetes 节点升级",
+    "overview": "概览",
+    "basicInfo": "基本信息",
+    "image": "升级镜像",
+    "concurrency": "并发数",
+    "nodeSelector": "节点选择器",
+    "channel": "频道",
+    "labelsAnnotations": "标签和注解",
+    "statusInfo": "状态信息",
+    "conditions": "条件",
+    "tolerations": "容忍度",
+    "totalPlans": "总计划数",
+    "readyPlans": "就绪计划",
+    "executablePlans": "可执行计划",
+    "inProgress": "执行中",
+    "upgradeingNodes": "正在升级的节点",
+    "drainEnabled": "启用清空",
+    "drainConfigured": "配置节点清空",
+    "recentPlans": "最近的升级计划",
+    "viewAll": "查看全部",
+    "viewPlans": "查看升级计划",
+    "status": {
+      "unknown": "未知",
+      "pending": "等待中",
+      "inProgress": "执行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "ready": "就绪",
+      "notReady": "未就绪"
+    },
+    "plans": {
+      "title": "升级计划",
+      "description": "管理和查看系统升级计划",
+      "detailDescription": "升级计划详细信息和配置",
+      "image": "升级镜像",
+      "version": "版本",
+      "concurrency": "并发数",
+      "nodeSelector": "节点选择器",
+      "serviceAccount": "服务账户",
+      "applying": "执行中",
+      "drainConfig": "节点清空配置",
+      "noNodeSelector": "未配置节点选择器",
+      "notFound": "未找到升级计划",
+      "deleteTitle": "删除升级计划",
+      "deleteDescription": "确定要删除升级计划 \"{{name}}\" 吗？此操作不可逆。",
+      "deleteSuccess": "升级计划删除成功",
+      "deleteError": "删除升级计划失败",
+      "yamlSaveSuccess": "YAML 配置保存成功",
+      "yamlSaveError": "保存 YAML 配置失败",
+      "status": {
+        "ready": "就绪",
+        "notReady": "未就绪",
+        "unknown": "未知"
+      }
+    },
+    "jobs": {
+      "title": "升级任务",
+      "description": "查看系统升级任务的执行状态和日志"
+    }
+  },
+  "errors": {
+    "loadFailed": "加载失败",
+    "notFound": "未找到",
+    "forbidden": "权限不足",
+    "serverError": "服务器错误",
+    "operationFailed": "操作失败：{{message}}",
+    "unknownError": "未知错误"
+  },
+  "validation": {
+    "yamlRequired": "YAML内容不能为空"
   }
 }

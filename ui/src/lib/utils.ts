@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { toast } from 'sonner'
 
 import { PodMetrics } from '@/types/api'
 
@@ -213,4 +214,46 @@ export function formatPodMetrics(metric: PodMetrics): {
   })
 
   return { cpu, memory }
+}
+
+// Download resource as YAML file
+export function downloadResource(resource: any, filename: string) {
+  const yamlContent = resource.yaml || JSON.stringify(resource, null, 2)
+  const blob = new Blob([yamlContent], { type: 'text/yaml' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
+// Handle resource API errors with toast messages
+export function handleResourceError(error: any, t: (key: string, options?: any) => string) {
+  console.error('Resource operation error:', error)
+  
+  if (error?.response) {
+    const status = error.response.status
+    const message = error.response.data?.message || error.message
+    
+    switch (status) {
+      case 404:
+        toast.error(t('errors.notFound'))
+        break
+      case 403:
+        toast.error(t('errors.forbidden'))
+        break
+      case 500:
+        toast.error(t('errors.serverError'))
+        break
+      default:
+        toast.error(t('errors.operationFailed', { message }))
+    }
+  } else if (error?.message) {
+    toast.error(t('errors.operationFailed', { message: error.message }))
+  } else {
+    toast.error(t('errors.unknownError'))
+  }
 }

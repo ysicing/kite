@@ -11,6 +11,7 @@ import { PodDetail } from './pod-detail'
 import { ProxyClassDetail } from './proxyclass-detail'
 import { SimpleResourceDetail } from './simple-resource-detail'
 import { StatefulSetDetail } from './statefulset-detail'
+import UpgradePlanDetail from './upgrade-plan-detail'
 
 export function ResourceDetail() {
   const { resource, namespace, name } = useParams()
@@ -43,6 +44,8 @@ export function ResourceDetail() {
       return <NodeDetail name={name} />
     case 'proxyclasses':
       return <ProxyClassDetail name={name} />
+    case 'plans':
+      return <UpgradePlanDetail />
     default:
       return (
         <SimpleResourceDetail

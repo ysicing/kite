@@ -6,6 +6,7 @@ import { Cluster } from '@/types/api'
 interface ClusterContextType {
   clusters: Cluster[]
   currentCluster: string | null
+  selectedCluster: string | null // 别名，与currentCluster相同
   setCurrentCluster: (clusterName: string) => void
   isLoading: boolean
   error: Error | null
@@ -74,6 +75,7 @@ export const ClusterProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: ClusterContextType = {
     clusters,
     currentCluster,
+    selectedCluster: currentCluster, // 别名，与currentCluster相同
     setCurrentCluster,
     isLoading,
     error: error as Error | null,

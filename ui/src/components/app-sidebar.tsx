@@ -21,13 +21,14 @@ import {
   IconStack2,
   IconStack3,
   IconTopologyBus,
+  IconArrowUp,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useCluster } from '@/hooks/use-cluster'
-import { useOpenKruiseStatus, useTailscaleStatus, useTraefikStatus } from '@/lib/api'
+import { useOpenKruiseStatus, useTailscaleStatus, useTraefikStatus, useSystemUpgradeStatus } from '@/lib/api'
 import {
   Sidebar,
   SidebarContent,
@@ -53,6 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: openKruiseStatus } = useOpenKruiseStatus()
   const { data: tailscaleStatus } = useTailscaleStatus()
   const { data: traefikStatus } = useTraefikStatus()
+  const { data: systemUpgradeStatus } = useSystemUpgradeStatus()
   const shouldShowClusterSelector = !isLoading && clusters.length > 1
 
   const menus = {
@@ -79,6 +81,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.traefik'),
         url: '/traefik',
         icon: IconLayoutDashboard,
+      },
+      // Always show System Upgrade Controller in cluster group
+      {
+        title: t('nav.systemUpgrade'),
+        url: '/system-upgrade',
+        icon: IconArrowUp,
       },
     ],
     [t('nav.workloads')]: [
@@ -180,6 +188,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         //   url: '/proxygroups',
         //   icon: IconNetwork,
         // },
+      ]
+    } : {}),
+    ...(systemUpgradeStatus?.installed ? {
+      [t('nav.systemUpgrade')]: [
+        {
+          title: t('nav.overview'),
+          url: '/system-upgrade-overview',
+          icon: IconLayoutDashboard,
+        },
+        {
+          title: t('nav.plans'),
+          url: '/plans',
+          icon: IconArrowUp,
+        },
       ]
     } : {}),
     Traffic: [

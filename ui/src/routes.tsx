@@ -7,9 +7,12 @@ import { LoginPage } from './pages/login'
 import { OpenKruisePage } from './pages/openkruise-page'
 import { TailscalePage } from './pages/tailscale-page'
 import { TraefikPage } from './pages/traefik-page'
+import { SystemUpgradePage } from './pages/system-upgrade-page'
 import ConnectorListPage from './pages/connector-list-page'
 import ProxyClassListPage from './pages/proxyclass-list-page'
 import TailscaleOverviewPage from './pages/tailscale-overview-page'
+import SystemUpgradeOverviewPage from './pages/system-upgrade-overview-page'
+import UpgradePlansListPage from './pages/upgrade-plans-list-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
@@ -53,8 +56,20 @@ export const router = createBrowserRouter([
         element: <TraefikPage />,
       },
       {
+        path: 'system-upgrade',
+        element: <SystemUpgradePage />,
+      },
+      {
+        path: 'system-upgrade-overview',
+        element: <SystemUpgradeOverviewPage />,
+      },
+      {
         path: 'connectors',
         element: <ConnectorListPage />,
+      },
+      {
+        path: 'plans',
+        element: <UpgradePlansListPage />,
       },
       {
         path: 'proxyclasses',

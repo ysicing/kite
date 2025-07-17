@@ -1187,3 +1187,30 @@ export const useTraefikStatus = () => {
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
   })
 }
+
+// System Upgrade Controller API
+export interface SystemUpgradeWorkload {
+  name: string
+  kind: string
+  apiVersion: string
+  available: boolean
+  count: number
+  description: string
+}
+
+export interface SystemUpgradeStatus {
+  installed: boolean
+  version?: string
+  workloads: SystemUpgradeWorkload[]
+}
+
+export const useSystemUpgradeStatus = () => {
+  return useQuery<SystemUpgradeStatus>({
+    queryKey: ['system-upgrade-status'],
+    queryFn: async () => {
+      return await apiClient.get<SystemUpgradeStatus>('/system-upgrade/status')
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+  })
+}
