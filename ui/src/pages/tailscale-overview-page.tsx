@@ -242,7 +242,7 @@ const TailscaleOverviewPage: React.FC = () => {
       <div>
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <IconNetwork className="h-5 w-5" />
-          {t('tailscale.connectors.title')} Statistics
+          {t('tailscale.connectors.title')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <Card>
@@ -306,7 +306,7 @@ const TailscaleOverviewPage: React.FC = () => {
       <div>
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <IconRouter className="h-5 w-5" />
-          {t('tailscale.proxyclasses.title')} Statistics
+          {t('tailscale.proxyclasses.title')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
@@ -363,10 +363,10 @@ const TailscaleOverviewPage: React.FC = () => {
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <IconNetwork className="h-5 w-5" />
-                Recent Connectors
+                {t('tailscale.connectors.title')}
               </span>
               <Button variant="ghost" size="sm" onClick={() => navigate('/connectors')}>
-                View All
+                {t('common.viewAll')}
                 <IconArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </CardTitle>
@@ -413,10 +413,10 @@ const TailscaleOverviewPage: React.FC = () => {
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <IconRouter className="h-5 w-5" />
-                Recent Proxy Classes
+                {t('tailscale.proxyclasses.title')}
               </span>
               <Button variant="ghost" size="sm" onClick={() => navigate('/proxyclasses')}>
-                View All
+                {t('common.viewAll')}
                 <IconArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </CardTitle>

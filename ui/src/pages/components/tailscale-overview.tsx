@@ -264,7 +264,7 @@ const TailscaleOverview: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconNetwork className="h-5 w-5" />
-              {t('tailscale.connectors.title')} Statistics
+              {t('tailscale.connectors.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -302,7 +302,7 @@ const TailscaleOverview: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconRouter className="h-5 w-5" />
-              {t('tailscale.proxyclasses.title')} Statistics
+              {t('tailscale.proxyclasses.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -337,13 +337,13 @@ const TailscaleOverview: React.FC = () => {
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <IconNetwork className="h-5 w-5" />
-                Recent Connectors
+                {t('tailscale.connectors.title')}
               </span>
               <Button variant="ghost" size="sm" onClick={() => {
                 updateActiveTab('tailscale')
                 navigate('/connectors')
               }}>
-                View All
+                {t('common.viewAll')}
                 <IconArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </CardTitle>
@@ -398,13 +398,13 @@ const TailscaleOverview: React.FC = () => {
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <IconRouter className="h-5 w-5" />
-                Recent Proxy Classes
+                {t('tailscale.proxyclasses.title')}
               </span>
               <Button variant="ghost" size="sm" onClick={() => {
                 updateActiveTab('tailscale')
                 navigate('/proxyclasses')
               }}>
-                View All
+                {t('common.viewAll')}
                 <IconArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </CardTitle>

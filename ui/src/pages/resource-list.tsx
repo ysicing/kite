@@ -8,6 +8,8 @@ import { ConfigMapListPage } from './configmap-list-page'
 import { CRDListPage } from './crd-list-page'
 import { DaemonSetListPage } from './daemonset-list-page'
 import { DeploymentListPage } from './deployment-list-page'
+import { GatewayListPage } from './gateway-list-page'
+import { HTTPRouteListPage } from './httproute-list-page'
 import { IngressListPage } from './ingress-list-page'
 import { JobListPage } from './job-list-page'
 import { NamespaceListPage } from './namespace-list-page'
@@ -65,6 +67,10 @@ export function ResourceList() {
       return <MiddlewareListPage />
     case 'ingressroutes':
       return <IngressRouteListPage />
+    case 'gateways':
+      return <GatewayListPage />
+    case 'httproutes':
+      return <HTTPRouteListPage />
     default:
       return <SimpleListPage resourceType={resource as ResourceType} />
   }

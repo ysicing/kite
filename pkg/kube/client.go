@@ -23,6 +23,7 @@ import (
 	metricsclient "k8s.io/metrics/pkg/client/clientset/versioned"
 	ctrllog "sigs.k8s.io/controller-runtime/pkg/log"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	gatewayapiv1 "sigs.k8s.io/gateway-api/apis/v1"
 )
 
 var runtimeScheme = runtime.NewScheme()
@@ -31,6 +32,7 @@ func init() {
 	ctrllog.SetLogger(klog.NewKlogr())
 	_ = scheme.AddToScheme(runtimeScheme)
 	_ = apiextensionsv1.AddToScheme(runtimeScheme)
+	_ = gatewayapiv1.Install(runtimeScheme)
 	_ = metricsv1.AddToScheme(runtimeScheme)
 	// Add OpenKruise schemes
 	_ = kruiseappsv1alpha1.AddToScheme(runtimeScheme)

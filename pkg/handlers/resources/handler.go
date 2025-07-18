@@ -25,6 +25,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metricsv1 "k8s.io/metrics/pkg/apis/metrics/v1beta1"
+	gatewayapiv1 "sigs.k8s.io/gateway-api/apis/v1"
 )
 
 // OpenKruiseWorkload represents a supported OpenKruise workload
@@ -916,8 +917,6 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"rolebindings":           NewGenericResourceHandler[*rbacv1.RoleBinding, *rbacv1.RoleBindingList]("rolebindings", false, false),
 		"clusterroles":           NewGenericResourceHandler[*rbacv1.ClusterRole, *rbacv1.ClusterRoleList]("clusterroles", true, false),
 		"clusterrolebindings":    NewGenericResourceHandler[*rbacv1.ClusterRoleBinding, *rbacv1.ClusterRoleBindingList]("clusterrolebindings", true, false),
-		"podmetrics":             NewGenericResourceHandler[*metricsv1.PodMetrics, *metricsv1.PodMetricsList]("podmetrics", false, false),
-		"nodemetrics":            NewGenericResourceHandler[*metricsv1.NodeMetrics, *metricsv1.NodeMetricsList]("nodemetrics", true, false),
 		"crds":                   NewGenericResourceHandler[*apiextensionsv1.CustomResourceDefinition, *apiextensionsv1.CustomResourceDefinitionList]("crds", true, false),
 
 		"events":      NewEventHandler(),
@@ -959,6 +958,11 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"tlsstores":         NewTraefikResourceHandler("tlsstores", "tlsstores.traefik.io", "TLSStore", "traefik.io", "v1alpha1"),
 		"traefikservices":   NewTraefikResourceHandler("traefikservices", "traefikservices.traefik.io", "TraefikService", "traefik.io", "v1alpha1"),
 		"serverstransports": NewTraefikResourceHandler("serverstransports", "serverstransports.traefik.io", "ServersTransport", "traefik.io", "v1alpha1"),
+
+		"podmetrics":             NewGenericResourceHandler[*metricsv1.PodMetrics, *metricsv1.PodMetricsList]("metrics.k8s.io", false, false),
+		"nodemetrics":            NewGenericResourceHandler[*metricsv1.NodeMetrics, *metricsv1.NodeMetricsList]("metrics.k8s.io", false, false),
+		"gateways":               NewGenericResourceHandler[*gatewayapiv1.Gateway, *gatewayapiv1.GatewayList]("gateways", false, true),
+		"httproutes":             NewGenericResourceHandler[*gatewayapiv1.HTTPRoute, *gatewayapiv1.HTTPRouteList]("httproutes", false, true),
 	}
 
 	for name, handler := range handlers {
@@ -1005,7 +1009,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 	}
 
 	// Register related resources route for supported resource types
-	supportedRelatedResourceTypes := []string{"pods", "deployments", "statefulsets", "daemonsets", "advanceddaemonsets", "configmaps", "secrets", "persistentvolumeclaims"}
+	supportedRelatedResourceTypes := []string{"pods", "deployments", "statefulsets", "daemonsets", "configmaps", "secrets", "persistentvolumeclaims", "httproutes"}
 	for _, resourceType := range supportedRelatedResourceTypes {
 		if handler, exists := handlers[resourceType]; exists && !handler.IsClusterScoped() {
 			g := group.Group("/" + resourceType)

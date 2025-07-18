@@ -106,7 +106,7 @@ const SystemUpgradeOverview: React.FC = () => {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-gray-600">
-            Total Plans
+            {t('systemUpgrade.totalPlans')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -120,13 +120,13 @@ const SystemUpgradeOverview: React.FC = () => {
           <CardTitle className="flex items-center justify-between">
             <span className="flex items-center gap-2">
               <IconArrowUp className="h-5 w-5" />
-              Recent Upgrade Plans
+              {t('systemUpgrade.recentPlans')}
             </span>
             <Button variant="ghost" size="sm" onClick={() => {
               updateActiveTab('systemupgrade')
               navigate('/plans')
             }}>
-              View All
+             {t('common.viewAll')}
               <IconArrowRight className="h-4 w-4 ml-1" />
             </Button>
           </CardTitle>
