@@ -5,14 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"k8s.io/apimachinery/pkg/api/resource"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/common"
 
 	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type OverviewData struct {
