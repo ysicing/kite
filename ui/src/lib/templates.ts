@@ -223,6 +223,22 @@ data:
 stringData:
   database-url: "postgresql://user:pass@localhost:5432/mydb"`,
   },
+  {
+    name: 'PersistentVolumeClaim',
+    description: 'A PersistentVolumeClaim to request storage',
+    yaml: `apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: local-path`,
+  },
 ]
 
 export const getTemplateByName = (

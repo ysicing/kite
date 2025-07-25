@@ -10,6 +10,7 @@ import { DeploymentDetail } from './deployment-detail'
 import { NodeDetail } from './node-detail'
 import { PodDetail } from './pod-detail'
 import { ProxyClassDetail } from './proxyclass-detail'
+import { PVDetailPage } from './pv-detail-page'
 import { SimpleResourceDetail } from './simple-resource-detail'
 import { StatefulSetDetail } from './statefulset-detail'
 import UpgradePlanDetail from './upgrade-plan-detail'
@@ -49,6 +50,8 @@ export function ResourceDetail() {
       return <ProxyClassDetail name={name} />
     case 'plans':
       return <UpgradePlanDetail />
+    case 'persistentvolumes':
+      return <PVDetailPage name={name} />
     default:
       return (
         <SimpleResourceDetail
