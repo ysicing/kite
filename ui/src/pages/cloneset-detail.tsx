@@ -17,7 +17,7 @@ import {
   useResource,
   useResources,
 } from '@/lib/api'
-import { getCloneSetStatus } from '@/lib/k8s'
+import { getCloneSetStatus, toSimpleContainer } from '@/lib/k8s'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -747,7 +747,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
               <PodMonitoring
                 namespace={namespace}
                 pods={relatedPods}
-                containers={relatedPods?.[0]?.spec?.containers || []}
+                containers={toSimpleContainer(relatedPods?.[0]?.spec?.initContainers, relatedPods?.[0]?.spec?.containers)}
                 labelSelector={labelSelector}
               />
             ),
