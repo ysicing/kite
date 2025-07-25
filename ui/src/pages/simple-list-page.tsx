@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import {
   clusterScopeResources,
@@ -21,12 +22,12 @@ export function SimpleListPage<T extends keyof ResourceTypeMap>({
   const columnHelper = createColumnHelper<ResourceTypeMap[T]>()
   const isClusterScope =
     resourceType && clusterScopeResources.includes(resourceType)
-
+  const { t } = useTranslation()
   // Define columns for the service table
   const columns = useMemo(
     () => [
       columnHelper.accessor((row) => row.metadata?.name, {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -38,7 +39,7 @@ export function SimpleListPage<T extends keyof ResourceTypeMap>({
         ),
       }),
       columnHelper.accessor((row) => row.metadata?.creationTimestamp, {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 

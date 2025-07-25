@@ -101,12 +101,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconRocket,
       },
       {
-        title: 'StatefulSets',
+        title: t('nav.statefulsets'),
         url: '/statefulsets',
         icon: IconStack2,
       },
       {
-        title: 'DaemonSets',
+        title: t('nav.daemonsets'),
         url: '/daemonsets',
         icon: IconTopologyBus,
       },
@@ -116,7 +116,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconPlayerPlay,
       },
       {
-        title: 'CronJobs',
+        title: t('nav.cronjobs'),
         url: '/cronjobs',
         icon: IconClockHour4,
       },
@@ -153,16 +153,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: '/sidecarsets',
           icon: IconBox,
         },
-        {
-          title: t('nav.imagepulljobs'),
-          url: '/imagepulljobs',
-          icon: IconDatabase,
-        },
-        {
-          title: t('nav.nodeimages'),
-          url: '/nodeimages',
-          icon: IconServer2,
-        },
+        // {
+        //   title: t('nav.imagepulljobs'),
+        //   url: '/imagepulljobs',
+        //   icon: IconDatabase,
+        // },
+        // {
+        //   title: t('nav.nodeimages'),
+        //   url: '/nodeimages',
+        //   icon: IconServer2,
+        // },
       ]
     } : {}),
     ...(tailscaleStatus?.installed ? {
@@ -204,16 +204,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
       ]
     } : {}),
-    Traffic: [
-      {
-        title: t('nav.ingresses'),
-        url: '/ingresses',
-        icon: IconRouter,
-      },
+    [t('nav.traffic')]: [
       {
         title: t('nav.services'),
         url: '/services',
         icon: IconNetwork,
+      },
+      {
+        title: t('nav.ingresses'),
+        url: '/ingresses',
+        icon: IconRouter,
       },
     ...(traefikStatus?.installed ? [
         {
@@ -226,31 +226,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: '/middlewares',
           icon: IconCode,
         },
-        {
-          title: t('nav.traefikservices'),
-          url: '/traefikservices',
-          icon: IconNetwork,
-        },
       ]:[]),
     ],
-    Storage: [
+    [t('nav.storage')]: [
       {
-        title: 'PVCs',
+        title: t('nav.storageClasses'),
+        url: '/storageclasses',
+        icon: IconFileDatabase,
+      },
+      {
+        title: t('nav.persistentVolumeClaims'),
         url: '/persistentvolumeclaims',
         icon: IconFileDatabase,
       },
       {
-        title: 'PVs',
+        title: t('nav.persistentVolumes'),
         url: '/persistentvolumes',
         icon: IconDatabase,
       },
-      {
-        title: 'Storage Classes',
-        url: '/storageclasses',
-        icon: IconFileDatabase,
-      },
     ],
-    Config: [
+    [t('nav.config')]: [
       {
         title: t('nav.configMaps'),
         url: '/configmaps',
@@ -262,7 +257,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconLock,
       },
     ],
-    Other: [
+    [t('common.other')]: [
       {
         title: t('nav.namespaces'),
         url: '/namespaces',
@@ -307,7 +302,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link to="/" onClick={handleMenuItemClick}>
                 <img src={Icon} alt="Kite Logo" className="ml-1 h-8 w-8" />
-                <span className="text-base font-semibold">Kite</span>
+                <span className="text-base font-semibold">Kite+</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
