@@ -57,7 +57,7 @@ func (session *TerminalSession) Start(ctx context.Context, subResource string) e
 	// Set up exec parameters
 	req.VersionedParams(&corev1.PodExecOptions{
 		Container: session.container,
-		Command:   []string{"sh", "-c", "bash || sh"},
+		Command:   []string{"sh", "-c", "for shell in bash ash sh; do if command -v $shell >/dev/null 2>&1; then exec $shell; fi; done; echo 'No compatible shell found' && exit 1"},
 		Stdin:     true,
 		Stdout:    true,
 		Stderr:    true,
