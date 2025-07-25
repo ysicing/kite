@@ -613,7 +613,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'yaml',
-            label: t('nav.yaml'),
+            label: t('common.yaml'),
             content: (
               <YamlEditor<'clonesets'>
                 key={refreshKey}
@@ -631,7 +631,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      {t('nav.pods')}{' '}
+                      {t('common.pods')}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -646,7 +646,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'logs',
-                  label: t('nav.logs'),
+                  label: t('common.logs'),
                   content: (
                     <div className="space-y-6">
                       <LogViewer
@@ -666,7 +666,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'terminal',
-                  label: t('nav.terminal'),
+                  label: t('common.terminal'),
                   content: (
                     <div className="space-y-6">
                       {relatedPods && relatedPods.length > 0 && (
@@ -712,7 +712,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                   value: 'volumes',
                   label: (
                     <>
-                      {t('openkruise.clonesets.volumes')}{' '}
+                       {t('common.volumes')}
                       <Badge variant="secondary">
                         {cloneSet.spec.template.spec.volumes.length}
                       </Badge>
@@ -731,7 +731,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             : []),
           {
             value: 'events',
-            label: t('nav.events'),
+            label: t('common.events'),
             content: (
               <EventTable
                 resource="clonesets"
@@ -742,7 +742,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'monitor',
-            label: t('nav.monitor'),
+            label: t('common.monitor'),
             content: (
               <PodMonitoring
                 namespace={namespace}

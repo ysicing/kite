@@ -522,7 +522,7 @@ export function NodeDetail(props: { name: string }) {
         tabs={[
           {
             value: 'overview',
-            label: t('nav.overview'),
+            label: t('common.overview'),
             content: (
               <div className="space-y-6">
                 {/* Status Overview */}
@@ -752,7 +752,7 @@ export function NodeDetail(props: { name: string }) {
                         <div className="space-y-3">
                           <div className="flex justify-between items-center p-3 border rounded-lg">
                             <div>
-                              <p className="text-sm font-medium">{t('nav.pods')}</p>
+                              <p className="text-sm font-medium">{t('common.pods')}</p>
                               <p className="text-xs text-muted-foreground">
                                 {t('nodes.capacity')}: {data.status?.capacity?.pods || t('nodes.unavailable')}
                               </p>
@@ -897,7 +897,7 @@ export function NodeDetail(props: { name: string }) {
           },
           {
             value: 'yaml',
-            label: t('nav.yaml'),
+            label: t('common.yaml'),
             content: (
               <div className="space-y-4">
                 <YamlEditor<'nodes'>
@@ -917,7 +917,7 @@ export function NodeDetail(props: { name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      {t('nav.pods')}{' '}
+                      {t('common.pods')}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -935,12 +935,12 @@ export function NodeDetail(props: { name: string }) {
             : []),
           {
             value: 'monitor',
-            label: t('nav.monitor'),
+            label: t('common.monitor'),
             content: <NodeMonitoring name={name} />,
           },
           {
             value: 'Terminal',
-            label: t('nav.terminal'),
+            label: t('common.terminal'),
             content: (
               <div className="space-y-6">
                 <Terminal type="node" namespace={name} />
@@ -949,7 +949,7 @@ export function NodeDetail(props: { name: string }) {
           },
           {
             value: 'events',
-            label: t('nav.events'),
+            label: t('common.events'),
             content: (
               <EventTable
                 resource={'nodes'}

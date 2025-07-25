@@ -19,9 +19,9 @@
     "created": "创建时间",
     "actions": "操作",
     "refresh": "刷新",
-    "ready":"就绪",
+    "ready": "就绪",
     "notReady": "未就绪",
-    "restart":"重启",
+    "restart": "重启",
     "scale": "扩缩容",
     "overview": "概览",
     "available": "可用",
@@ -37,6 +37,12 @@
     "annotations": "注解",
     "services": "服务",
     "events": "事件",
+    "yaml": "YAML",
+    "logs": "日志",
+    "monitor": "监控",
+    "terminal": "终端",
+    "volumes": "存储卷",
+    "pods": "Pods",
     "yes": "是",
     "no": "否",
     "basicInfo": "基本信息",
@@ -44,6 +50,20 @@
     "configuration": "配置",
     "createdTime": "创建时间",
     "age": "存在时间",
+    "owner": "所有者",
+    "noOwner": "无所有者",
+    "resourceInformation": "{{resource}} 信息",
+    "loadingResourceDetails": "正在加载 {{resource}} 详情...",
+    "errorLoadingResource": "加载 {{resource}} 时出错",
+    "resourceNotFound": "未找到 {{resource}}",
+    "resourceDeleted": "{{resource}} 删除成功",
+    "deleteResourceError": "删除 {{resource}} 失败",
+    "yamlSaved": "YAML 保存成功",
+    "saveYamlError": "保存 YAML 失败",
+    "yamlConfiguration": "YAML 配置",
+    "related": "关联资源",
+    "uid": "UID",
+    "statistics": "统计信息",
     "timeUnits": {
       "days": "天",
       "hours": "小时",
@@ -62,7 +82,6 @@
     "deleteSuccess": "删除成功"
   },
   "nav": {
-    "overview": "概览",
     "cluster": "集群",
     "workloads": "工作负载",
     "openkruise": "OpenKruise",
@@ -83,11 +102,6 @@
     "namespaces": "命名空间",
     "customResources": "自定义资源",
     "customResourceDefinitions": "自定义资源定义",
-    "yaml": "YAML",
-    "logs": "日志",
-    "monitor": "监控",
-    "terminal": "终端",
-    "events": "事件",
     "clonesets": "CloneSets",
     "advancedstatefulsets": "高级有状态副本集",
     "advanceddaemonsets": "高级守护进程集",
@@ -123,8 +137,7 @@
     "restarts": "重启次数",
     "age": "运行时间",
     "node": "节点",
-    "containerDetails": "容器详情",
-    "terminal": "终端"
+    "containerDetails": "容器详情"
   },
   "deployments": {
     "title": "无状态副本集",
@@ -242,9 +255,9 @@
       "kubeletHasSufficientMemoryAvailable": "kubelet有足够的内存可用",
       "kubeletHasNoDiskPressure": "kubelet没有磁盘压力",
       "kubeletHasSufficientPIDAvailable": "kubelet有足够的PID可用",
-              "kubeletIsPostingReadyStatus": "kubelet就绪"
-      }
-    },
+      "kubeletIsPostingReadyStatus": "kubelet就绪"
+    }
+  },
   "events": {
     "title": "事件",
     "type": "类型",
@@ -466,8 +479,7 @@
       "containers": "容器",
       "conditions": "条件",
       "yamlConfiguration": "YAML 配置",
-      "services": "服务",
-      "volumes": "卷"
+      "services": "服务"
     },
     "advancedstatefulsets": {
       "title": "高级有状态副本集",
@@ -475,7 +487,34 @@
     },
     "advanceddaemonsets": {
       "title": "高级守护进程集",
-      "description": "增强版的守护进程集，支持原地升级和灵活的发布策略"
+      "description": "增强版的守护进程集，支持原地升级和灵活的发布策略",
+      "yamlSaveSuccess": "高级守护进程集 YAML 保存成功",
+      "restartSuccess": "高级守护进程集重启已启动",
+      "deleteSuccess": "高级守护进程集删除成功",
+      "containerUpdateSuccess": "容器更新成功",
+      "loadingDetails": "正在加载高级守护进程集详情...",
+      "errorLoading": "加载高级守护进程集时出错:",
+      "notFound": "未找到高级守护进程集",
+      "refresh": "刷新",
+      "restart": "重启",
+      "delete": "删除",
+      "status": "状态",
+      "statusPending": "等待中",
+      "statusAvailable": "可用",
+      "statusInProgress": "进行中",
+      "readyReplicas": "就绪副本",
+      "currentScheduled": "当前调度",
+      "desiredScheduled": "期望调度",
+      "information": "高级守护进程集信息",
+      "created": "创建时间",
+      "strategy": "策略",
+      "containers": "容器",
+      "configuration": "高级守护进程集配置",
+      "restartDialogTitle": "重启高级守护进程集",
+      "restartDialogDescription": "这将重启由此高级守护进程集管理的所有Pod。此操作无法撤销。",
+      "restartDialogCancel": "取消",
+      "deleteDialogTitle": "删除高级守护进程集",
+      "deleteDialogDescription": "您确定要删除此高级守护进程集吗？此操作无法撤销。"
     },
     "broadcastjobs": {
       "title": "广播任务",
@@ -733,7 +772,6 @@
     "searchPlans": "搜索升级计划",
     "noPlans": "暂无升级计划",
     "noPlansDescription": "创建升级计划来开始管理您的 Kubernetes 节点升级",
-    "overview": "概览",
     "basicInfo": "基本信息",
     "image": "升级镜像",
     "concurrency": "并发数",

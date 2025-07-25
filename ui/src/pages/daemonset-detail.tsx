@@ -7,6 +7,7 @@ import {
   IconReload,
   IconTrash,
 } from '@tabler/icons-react'
+import { useTranslation } from 'react-i18next'
 import * as yaml from 'js-yaml'
 import { DaemonSet } from 'kubernetes-types/apps/v1'
 import { Container } from 'kubernetes-types/core/v1'
@@ -52,6 +53,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [refreshInterval, setRefreshInterval] = useState<number>(0)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Fetch daemonset data
   const {
@@ -330,7 +332,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
         tabs={[
           {
             value: 'overview',
-            label: 'Overview',
+            label: t('common.overview'),
             content: (
               <div className="space-y-6">
                 {/* Status Overview */}
@@ -466,7 +468,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      Pods{' '}
+                      {t('common.pods')}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -482,7 +484,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'logs',
-                  label: 'Logs',
+                  label: t('common.logs'),
                   content: (
                     <div className="space-y-6">
                       <LogViewer
@@ -502,7 +504,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 },
                 {
                   value: 'terminal',
-                  label: 'Terminal',
+                  label: t('common.terminal'),
                   content: (
                     <div className="space-y-6">
                       {relatedPods && relatedPods.length > 0 && (
@@ -530,7 +532,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                   value: 'volumes',
                   label: (
                     <>
-                      Volumes
+                      {t('common.volumes')}
                       {spec.template.spec.volumes && (
                         <Badge variant="secondary">
                           {spec.template.spec.volumes.length}
@@ -553,7 +555,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
             : []),
           {
             value: 'Related',
-            label: 'Related',
+            label: t('common.related'),
             content: (
               <RelatedResourcesTable
                 resource={'daemonsets'}
@@ -564,7 +566,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'events',
-            label: 'Events',
+            label: t('common.events'),
             content: (
               <EventTable
                 resource="daemonsets"
@@ -575,7 +577,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'monitor',
-            label: 'Monitor',
+            label: t('common.monitor'),
             content: (
               <PodMonitoring
                 namespace={namespace}

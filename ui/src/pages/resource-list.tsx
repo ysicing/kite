@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 
 import { ResourceType } from '@/types/api'
 
+import { AdvancedDaemonSetListPage } from './advanced-daemonset-list-page'
 import { CloneSetListPage } from './cloneset-list-page'
 import { ConfigMapListPage } from './configmap-list-page'
 import { CRDListPage } from './crd-list-page'
@@ -42,6 +43,8 @@ export function ResourceList() {
       return <StatefulSetListPage />
     case 'daemonsets':
       return <DaemonSetListPage />
+    case 'advanceddaemonsets':
+      return <AdvancedDaemonSetListPage />
     case 'configmaps':
       return <ConfigMapListPage />
     case 'secrets':

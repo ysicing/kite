@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:github.com)",
-      "Bash(go build:*)"
+      "Bash(go build:*)",
+      "Bash(go mod:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }

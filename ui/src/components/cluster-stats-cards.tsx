@@ -52,7 +52,7 @@ export function ClusterStatsCards({
       bgColor: 'bg-blue-50 dark:bg-blue-950/50',
     },
     {
-      label: t('nav.pods'),
+      label: t('common.pods'),
       value: stats.totalPods,
       subValue: stats.runningPods,
       icon: IconBox,

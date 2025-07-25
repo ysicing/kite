@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { IconLoader, IconRefresh, IconTrash } from '@tabler/icons-react'
+import { useTranslation } from 'react-i18next'
 import * as yaml from 'js-yaml'
 import { Pod } from 'kubernetes-types/core/v1'
 import { Link, useNavigate } from 'react-router-dom'
@@ -33,7 +34,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const navigate = useNavigate()
-
+  const { t } = useTranslation()
   const {
     data: pod,
     isLoading,
@@ -156,7 +157,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
         tabs={[
           {
             value: 'overview',
-            label: 'Overview',
+            label: t('common.overview'),
             content: (
               <div className="space-y-4">
                 {/* Status Overview */}
@@ -373,7 +374,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'logs',
-            label: 'Logs',
+            label: t('common.logs'),
             content: (
               <div className="space-y-6">
                 <LogViewer
@@ -391,7 +392,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'terminal',
-            label: 'Terminal',
+            label: t('common.terminal'),
             content: (
               <div className="space-y-6">
                 <Terminal
@@ -411,7 +412,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
             value: 'volumes',
             label: (
               <>
-                Volumes
+                {t('common.volumes')}
                 {pod.spec?.volumes && (
                   <Badge variant="secondary">{pod.spec.volumes.length}</Badge>
                 )}
@@ -430,7 +431,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'Related',
-            label: 'Related',
+            label: t('common.related'),
             content: (
               <RelatedResourcesTable
                 resource={'pods'}
@@ -441,14 +442,14 @@ export function PodDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'events',
-            label: 'Events',
+            label: t('common.events'),
             content: (
               <EventTable resource="pods" name={name} namespace={namespace} />
             ),
           },
           {
             value: 'monitor',
-            label: 'Monitor',
+            label: t('common.monitor'),
             content: (
               <div className="space-y-6">
                 <PodMonitoring

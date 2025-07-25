@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { ResourceType } from '@/types/api'
 import { Card, CardContent } from '@/components/ui/card'
 
+import { AdvancedDaemonSetDetail } from './advanced-daemonset-detail'
 import { CloneSetDetail } from './cloneset-detail'
 import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
@@ -38,6 +39,8 @@ export function ResourceDetail() {
       return <PodDetail namespace={namespace!} name={name} />
     case 'daemonsets':
       return <DaemonSetDetail namespace={namespace!} name={name} />
+    case 'advanceddaemonsets':
+      return <AdvancedDaemonSetDetail namespace={namespace!} name={name} />
     case 'statefulsets':
       return <StatefulSetDetail namespace={namespace!} name={name} />
     case 'nodes':

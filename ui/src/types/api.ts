@@ -22,7 +22,7 @@ import {
 import { Ingress } from 'kubernetes-types/networking/v1'
 import { StorageClass } from 'kubernetes-types/storage/v1'
 
-import { CloneSet } from '@/types/k8s'
+import { CloneSet, AdvancedDaemonSet } from '@/types/k8s'
 
 // Cluster types
 export interface Cluster {
@@ -69,6 +69,7 @@ export type ResourceType =
   | 'deployments'
   | 'statefulsets'
   | 'daemonsets'
+  | 'advanceddaemonsets'
   | 'jobs'
   | 'cronjobs'
   | 'services'
@@ -127,6 +128,10 @@ export interface ResourcesTypeMap {
   }
   daemonsets: {
     items: DaemonSet[]
+    metadata?: listMetadataType
+  }
+  advanceddaemonsets: {
+    items: AdvancedDaemonSet[]
     metadata?: listMetadataType
   }
   jobs: {
@@ -243,6 +248,7 @@ export interface ResourceTypeMap {
   deployments: Deployment
   statefulsets: StatefulSet
   daemonsets: DaemonSet
+  advanceddaemonsets: AdvancedDaemonSet
   jobs: Job
   cronjobs: CronJob
   services: Service

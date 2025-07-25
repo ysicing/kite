@@ -91,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ],
     [t('nav.workloads')]: [
       {
-        title: t('nav.pods'),
+        title: t('common.pods'),
         url: '/pods',
         icon: IconBox,
       },
@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ...(tailscaleStatus?.installed ? {
       [t('nav.tailscale')]: [
         {
-          title: t('nav.overview'),
+          title: t('common.overview'),
           url: '/tailscale-overview',
           icon: IconLayoutDashboard,
         },
@@ -193,7 +193,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ...(systemUpgradeStatus?.installed ? {
       [t('nav.systemUpgrade')]: [
         {
-          title: t('nav.overview'),
+          title: t('common.overview'),
           url: '/system-upgrade-overview',
           icon: IconLayoutDashboard,
         },
@@ -269,7 +269,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconBoxMultiple,
       },
       {
-        title: 'Events',
+        title: t('common.events'),
         url: '/events',
         icon: IconBell,
       },
@@ -318,13 +318,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                tooltip={t('nav.overview')}
+                tooltip={t('common.overview')}
                 asChild
                 isActive={isActive('/')}
               >
                 <Link to="/" onClick={handleMenuItemClick}>
                   <IconLayoutDashboard className="text-sidebar-primary" />
-                  <span className="font-medium">{t('nav.overview')}</span>
+                  <span className="font-medium">{t('common.overview')}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

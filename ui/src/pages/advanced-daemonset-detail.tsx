@@ -5,15 +5,13 @@ import {
   IconLoader,
   IconRefresh,
   IconReload,
-  IconScale,
   IconTrash,
 } from '@tabler/icons-react'
-import { useTranslation } from 'react-i18next'
 import * as yaml from 'js-yaml'
-import { StatefulSet } from 'kubernetes-types/apps/v1'
 import { Container } from 'kubernetes-types/core/v1'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 
 import {
   deleteResource,
@@ -25,7 +23,6 @@ import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   Popover,
@@ -44,94 +41,89 @@ import { RelatedResourcesTable } from '@/components/related-resource-table'
 import { Terminal } from '@/components/terminal'
 import { VolumeTable } from '@/components/volume-table'
 import { YamlEditor } from '@/components/yaml-editor'
+import { AdvancedDaemonSet } from '@/types/k8s'
 
-export function StatefulSetDetail(props: { namespace: string; name: string }) {
+export function AdvancedDaemonSetDetail(props: { namespace: string; name: string }) {
+  const { t } = useTranslation()
   const { namespace, name } = props
   const [yamlContent, setYamlContent] = useState('')
   const [isSavingYaml, setIsSavingYaml] = useState(false)
   const [isRestartPopoverOpen, setIsRestartPopoverOpen] = useState(false)
-  const [isScalePopoverOpen, setIsScalePopoverOpen] = useState(false)
-  const [scaleReplicas, setScaleReplicas] = useState(0)
   const [refreshKey, setRefreshKey] = useState(0)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [refreshInterval, setRefreshInterval] = useState<number>(0)
   const navigate = useNavigate()
-  const { t } = useTranslation()
 
-  // Fetch statefulset data
+  // Fetch advanced daemonset data
   const {
-    data: statefulset,
-    isLoading: isLoadingStatefulSet,
-    isError: isStatefulSetError,
-    error: statefulsetError,
-    refetch: refetchStatefulSet,
-  } = useResource('statefulsets', name, namespace, {
+    data: advancedDaemonSet,
+    isLoading: isLoadingAdvancedDaemonSet,
+    isError: isAdvancedDaemonSetError,
+    error: advancedDaemonSetError,
+    refetch: refetchAdvancedDaemonSet,
+  } = useResource('advanceddaemonsets', name, namespace, {
     refreshInterval,
   })
 
-  const labelSelector = statefulset?.spec?.selector.matchLabels
-    ? Object.entries(statefulset.spec.selector.matchLabels)
+  useEffect(() => {
+    if (advancedDaemonSet) {
+      setYamlContent(yaml.dump(advancedDaemonSet, { indent: 2 }))
+    }
+  }, [advancedDaemonSet])
+
+  // Auto-reset refresh interval when advanceddaemonset reaches stable state
+  useEffect(() => {
+    if (advancedDaemonSet && refreshInterval > 0) {
+      const { status } = advancedDaemonSet
+      const readyReplicas = status?.numberReady || 0
+      const desiredReplicas = status?.desiredNumberScheduled || 0
+      const currentReplicas = status?.currentNumberScheduled || 0
+
+      // Check if advanceddaemonset is in a stable state
+      const isStable =
+        readyReplicas === desiredReplicas && currentReplicas === desiredReplicas
+
+      if (isStable) {
+        setRefreshInterval(0)
+      }
+    }
+  }, [advancedDaemonSet, refreshInterval])
+
+  const handleRefresh = () => {
+    setRefreshKey((prev) => prev + 1)
+    refetchAdvancedDaemonSet()
+  }
+
+  const labelSelector = advancedDaemonSet?.spec?.selector.matchLabels
+    ? Object.entries(advancedDaemonSet.spec.selector.matchLabels)
         .map(([key, value]) => `${key}=${value}`)
         .join(',')
     : undefined
+
   const { data: relatedPods, isLoading: isLoadingPods } = useResources(
     'pods',
     namespace,
     {
       labelSelector,
       refreshInterval,
-      disable: !statefulset?.spec?.selector.matchLabels,
+      disable: !advancedDaemonSet?.spec?.selector.matchLabels,
     }
   )
-
-  useEffect(() => {
-    if (statefulset) {
-      setYamlContent(yaml.dump(statefulset, { indent: 2 }))
-      setScaleReplicas(statefulset.spec?.replicas || 0)
-    }
-  }, [statefulset])
-
-  // Auto-reset refresh interval when statefulset reaches stable state
-  useEffect(() => {
-    if (statefulset && refreshInterval > 0) {
-      const { status } = statefulset
-      const readyReplicas = status?.readyReplicas || 0
-      const replicas = status?.replicas || 0
-      const updatedReplicas = status?.updatedReplicas || 0
-
-      // Check if statefulset is in a stable state
-      const isStable =
-        readyReplicas === replicas && updatedReplicas === replicas
-      console.log(`StatefulSet ${name} stability check:`, {
-        readyReplicas,
-        replicas,
-        updatedReplicas,
-        isStable,
-      })
-      if (isStable) {
-        setRefreshInterval(0)
-      }
-    }
-  }, [statefulset, refreshInterval, name])
-
-  const handleRefresh = () => {
-    setRefreshKey((prev) => prev + 1)
-    refetchStatefulSet()
-  }
 
   const handleSaveYaml = async () => {
     setIsSavingYaml(true)
     try {
-      const parsedYaml = yaml.load(yamlContent) as StatefulSet
-      await updateResource('statefulsets', name, namespace, parsedYaml)
-      toast.success('StatefulSet YAML saved successfully')
-      setRefreshInterval(1000)
+      const parsedYaml = yaml.load(yamlContent) as AdvancedDaemonSet
+      await updateResource('advanceddaemonsets', name, namespace, parsedYaml)
+      toast.success(t('openkruise.advanceddaemonsets.yamlSaveSuccess'))
+      setRefreshInterval(1000) // Set a short refresh interval to see changes
+      await refetchAdvancedDaemonSet()
     } catch (error) {
-      console.error('Failed to save YAML:', error)
+      console.error(t('openkruise.advanceddaemonsets.yamlSaveError'), error)
       toast.error(
-        `Failed to save YAML: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('openkruise.advanceddaemonsets.yamlSaveError')}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
     } finally {
@@ -143,72 +135,37 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
     setYamlContent(content)
   }
 
-  const handleScale = async () => {
-    if (!statefulset) return
-
-    try {
-      const updatedStatefulSet = { ...statefulset } as StatefulSet
-      if (!updatedStatefulSet.spec) {
-        updatedStatefulSet.spec = {
-          selector: { matchLabels: {} },
-          template: { spec: { containers: [] } },
-          serviceName: '',
-        }
-      }
-
-      // Update the replica count
-      updatedStatefulSet.spec.replicas = scaleReplicas
-
-      await updateResource('statefulsets', name, namespace, updatedStatefulSet)
-      toast.success(`StatefulSet scaled to ${scaleReplicas} replicas`)
-      setIsScalePopoverOpen(false)
-      setRefreshInterval(1000)
-    } catch (error) {
-      console.error('Failed to scale statefulset:', error)
-      toast.error(
-        `Failed to scale statefulset: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
-      )
-    }
-  }
-
   const handleRestart = async () => {
-    if (!statefulset) return
+    if (!advancedDaemonSet) return
 
     try {
-      const updatedStatefulSet = { ...statefulset } as StatefulSet
-      if (!updatedStatefulSet.spec) {
-        updatedStatefulSet.spec = {
-          selector: { matchLabels: {} },
-          template: { spec: { containers: [] } },
-          serviceName: '',
-        }
+      // Create a deep copy of the advanceddaemonset to avoid modifying the original
+      const updatedAdvancedDaemonSet = {
+        ...advancedDaemonSet,
       }
-      if (!updatedStatefulSet.spec.template) {
-        updatedStatefulSet.spec.template = { spec: { containers: [] } }
+
+      // Ensure template metadata and annotations exist
+      if (!updatedAdvancedDaemonSet.spec?.template?.metadata) {
+        updatedAdvancedDaemonSet.spec!.template!.metadata = {}
       }
-      if (!updatedStatefulSet.spec.template.metadata) {
-        updatedStatefulSet.spec.template.metadata = {}
-      }
-      if (!updatedStatefulSet.spec.template.metadata.annotations) {
-        updatedStatefulSet.spec.template.metadata.annotations = {}
+      if (!updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations) {
+        updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations = {}
       }
 
       // Add restart annotation to trigger pod restart
-      updatedStatefulSet.spec.template.metadata.annotations[
+      updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations[
         'kite.kubernetes.io/restartedAt'
       ] = new Date().toISOString()
 
-      await updateResource('statefulsets', name, namespace, updatedStatefulSet)
-      toast.success('StatefulSet restart initiated')
+      await updateResource('advanceddaemonsets', name, namespace, updatedAdvancedDaemonSet)
+      toast.success(t('openkruise.advanceddaemonsets.restartSuccess'))
       setIsRestartPopoverOpen(false)
       setRefreshInterval(1000)
     } catch (error) {
-      console.error('Failed to restart statefulset:', error)
+      console.error(t('openkruise.advanceddaemonsets.restartError'), error)
       toast.error(
-        `Failed to restart statefulset: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('openkruise.advanceddaemonsets.restartError')}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
     }
@@ -217,13 +174,13 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      await deleteResource('statefulsets', name, namespace)
-      toast.success('StatefulSet deleted successfully')
-      navigate(`/statefulsets`)
+      await deleteResource('advanceddaemonsets', name, namespace)
+      toast.success(t('openkruise.advanceddaemonsets.deleteSuccess'))
+      navigate(`/advanceddaemonsets`)
     } catch (error) {
       toast.error(
-        `Failed to delete StatefulSet: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('openkruise.advanceddaemonsets.deleteError')}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
       setIsDeleting(false)
@@ -233,45 +190,48 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
 
   const handleContainerUpdate = async (updatedContainer: Container) => {
     try {
-      const updatedStatefulSet = { ...statefulset } as StatefulSet
+      // Create a deep copy of the advanceddaemonset to avoid modifying the original
+      const updatedAdvancedDaemonSet = JSON.parse(
+        JSON.stringify(advancedDaemonSet)
+      ) as AdvancedDaemonSet
 
-      // Update the specific container in the statefulset spec
-      if (updatedStatefulSet.spec?.template?.spec?.containers) {
+      // Update the specific container in the advanceddaemonset spec
+      if (updatedAdvancedDaemonSet.spec?.template?.spec?.containers) {
         const containerIndex =
-          updatedStatefulSet.spec.template.spec.containers.findIndex(
-            (c: Container) => c.name === updatedContainer.name
+          updatedAdvancedDaemonSet.spec.template.spec.containers.findIndex(
+            (c) => c.name === updatedContainer.name
           )
         if (containerIndex !== -1) {
-          updatedStatefulSet.spec.template.spec.containers[containerIndex] =
-            updatedContainer
-          await updateResource(
-            'statefulsets',
-            name,
-            namespace,
-            updatedStatefulSet
-          )
-          toast.success('Container updated successfully')
-          setRefreshInterval(1000)
+          // Ensure image is defined before assignment
+          const containerToUpdate = {
+            ...updatedContainer,
+            image: updatedContainer.image || '', // Provide fallback empty string
+          }
+          updatedAdvancedDaemonSet.spec.template.spec.containers[containerIndex] =
+            containerToUpdate as any // Use type assertion to bypass strict typing
+          await updateResource('advanceddaemonsets', name, namespace, updatedAdvancedDaemonSet)
+          toast.success(t('openkruise.advanceddaemonsets.containerUpdateSuccess'))
+          setRefreshInterval(1000) // Set a short refresh interval to see changes
         }
       }
     } catch (error) {
-      console.error('Failed to update container:', error)
+      console.error(t('openkruise.advanceddaemonsets.containerUpdateError'), error)
       toast.error(
-        `Failed to update container: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('openkruise.advanceddaemonsets.containerUpdateError')}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
     }
   }
 
-  if (isLoadingStatefulSet) {
+  if (isLoadingAdvancedDaemonSet) {
     return (
       <div className="p-6">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-center gap-2">
               <IconLoader className="animate-spin" />
-              <span>Loading StatefulSet details...</span>
+              <span>{t('openkruise.advanceddaemonsets.loadingDetails')}</span>
             </div>
           </CardContent>
         </Card>
@@ -279,15 +239,15 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
     )
   }
 
-  if (isStatefulSetError || !statefulset) {
+  if (isAdvancedDaemonSetError || !advancedDaemonSet) {
     return (
       <div className="p-6">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
               <IconExclamationCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
-              Error loading StatefulSet:{' '}
-              {statefulsetError?.message || 'StatefulSet not found'}
+              {t('openkruise.advanceddaemonsets.errorLoading')}{' '}
+              {advancedDaemonSetError?.message || t('openkruise.advanceddaemonsets.notFound')}
             </div>
           </CardContent>
         </Card>
@@ -295,14 +255,14 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
     )
   }
 
-  const { metadata, spec, status } = statefulset
-  const readyReplicas = status?.readyReplicas || 0
-  const replicas = status?.replicas || 0
-  const currentReplicas = status?.currentReplicas || 0
-  const updatedReplicas = status?.updatedReplicas || 0
+  const { metadata, spec, status } = advancedDaemonSet
+  const readyReplicas = status?.numberReady || 0
+  const desiredReplicas = status?.desiredNumberScheduled || 0
+  const currentReplicas = status?.currentNumberScheduled || 0
+  const availableReplicas = status?.numberAvailable || 0
 
-  const isAvailable = readyReplicas === replicas && replicas > 0
-  const isPending = currentReplicas < replicas
+  const isAvailable = availableReplicas > 0
+  const isPending = currentReplicas < desiredReplicas
 
   return (
     <div className="space-y-6">
@@ -316,72 +276,14 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
         </div>
         <div className="flex gap-2">
           <Button
-            disabled={isLoadingStatefulSet}
+            disabled={isLoadingAdvancedDaemonSet}
             variant="outline"
             size="sm"
             onClick={handleRefresh}
           >
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('openkruise.advanceddaemonsets.refresh')}
           </Button>
-          <Popover
-            open={isScalePopoverOpen}
-            onOpenChange={setIsScalePopoverOpen}
-          >
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconScale className="w-4 h-4" />
-                Scale
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Scale StatefulSet</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Adjust the number of replicas for this StatefulSet.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="replicas">Replicas</Label>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 w-9 p-0"
-                      onClick={() =>
-                        setScaleReplicas(Math.max(0, scaleReplicas - 1))
-                      }
-                      disabled={scaleReplicas <= 0}
-                    >
-                      -
-                    </Button>
-                    <Input
-                      id="replicas"
-                      type="number"
-                      min="0"
-                      value={scaleReplicas}
-                      onChange={(e) =>
-                        setScaleReplicas(parseInt(e.target.value) || 0)
-                      }
-                      className="text-center"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 w-9 p-0"
-                      onClick={() => setScaleReplicas(scaleReplicas + 1)}
-                    >
-                      +
-                    </Button>
-                  </div>
-                </div>
-                <Button onClick={handleScale} className="w-full">
-                  Scale StatefulSet
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
           <Popover
             open={isRestartPopoverOpen}
             onOpenChange={setIsRestartPopoverOpen}
@@ -389,21 +291,36 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconReload className="w-4 h-4" />
-                Restart
+                {t('openkruise.advanceddaemonsets.restart')}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="space-y-2">
-                <p className="text-sm">
-                  This will restart all pods managed by this StatefulSet.
-                </p>
-                <Button
-                  onClick={handleRestart}
-                  className="w-full"
-                  variant="outline"
-                >
-                  Confirm Restart
-                </Button>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium">{t('openkruise.advanceddaemonsets.restartDialogTitle')}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {t('openkruise.advanceddaemonsets.restartDialogDescription')}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsRestartPopoverOpen(false)}
+                    className="flex-1"
+                  >
+                    {t('openkruise.advanceddaemonsets.restartDialogCancel')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleRestart()
+                      setIsRestartPopoverOpen(false)
+                    }}
+                    className="flex-1"
+                  >
+                    <IconReload className="w-4 h-4 mr-2" />
+                    {t('openkruise.advanceddaemonsets.restart')}
+                  </Button>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -413,7 +330,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             onClick={() => setIsDeleteDialogOpen(true)}
           >
             <IconTrash className="w-4 h-4" />
-            Delete
+            {t('openkruise.advanceddaemonsets.delete')}
           </Button>
         </div>
       </div>
@@ -428,7 +345,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Status Overview</CardTitle>
+                    <CardTitle>{t('openkruise.advanceddaemonsets.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -444,79 +361,64 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">
-                            Status
+                            {t('openkruise.advanceddaemonsets.status')}
                           </p>
                           <p className="text-sm font-medium">
                             {isPending
-                              ? 'Pending'
+                              ? t('openkruise.advanceddaemonsets.statusPending')
                               : isAvailable
-                                ? 'Available'
-                                : 'In Progress'}
+                                ? t('openkruise.advanceddaemonsets.statusAvailable')
+                                : t('openkruise.advanceddaemonsets.statusInProgress')}
                           </p>
                         </div>
                       </div>
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Ready Replicas
+                          {t('openkruise.advanceddaemonsets.readyReplicas')}
                         </p>
                         <p className="text-sm font-medium">
-                          {readyReplicas} / {replicas}
+                          {readyReplicas} / {desiredReplicas}
                         </p>
                       </div>
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Current Replicas
+                          {t('openkruise.advanceddaemonsets.currentScheduled')}
                         </p>
                         <p className="text-sm font-medium">{currentReplicas}</p>
                       </div>
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Updated Replicas
+                          {t('openkruise.advanceddaemonsets.desiredScheduled')}
                         </p>
-                        <p className="text-sm font-medium">{updatedReplicas}</p>
+                        <p className="text-sm font-medium">{desiredReplicas}</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* StatefulSet Information */}
+                {/* {t('openkruise.advanceddaemonsets.information')} */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>StatefulSet Information</CardTitle>
+                    <CardTitle>{t('openkruise.advanceddaemonsets.information')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-sm font-medium">Created</Label>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(metadata?.creationTimestamp || '')}
+                        <Label className="text-xs text-muted-foreground">
+                          {t('openkruise.advanceddaemonsets.created')}
+                        </Label>
+                        <p className="text-sm">
+                          {formatDate(metadata?.creationTimestamp || '', true)}
                         </p>
                       </div>
                       <div>
-                        <Label className="text-sm font-medium">
-                          Service Name
+                        <Label className="text-xs text-muted-foreground">
+                          {t('openkruise.advanceddaemonsets.strategy')}
                         </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {spec?.serviceName || 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Update Strategy
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm">
                           {spec?.updateStrategy?.type || 'RollingUpdate'}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Pod Management Policy
-                        </Label>
-                        <p className="text-sm text-muted-foreground">
-                          {spec?.podManagementPolicy || 'OrderedReady'}
                         </p>
                       </div>
                     </div>
@@ -531,12 +433,12 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                 {spec?.template?.spec?.containers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Containers</CardTitle>
+                      <CardTitle>{t('openkruise.advanceddaemonsets.containers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         {spec.template.spec.containers.map(
-                          (container: Container, index: number) => (
+                          (container, index) => (
                             <ContainerTable
                               key={index}
                               container={container}
@@ -553,13 +455,13 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
           },
           {
             value: 'yaml',
-            label: 'YAML',
+            label: t('common.yaml'),
             content: (
               <div className="space-y-4">
                 <YamlEditor
                   key={refreshKey}
                   value={yamlContent}
-                  title="StatefulSet Configuration"
+                  title={t('openkruise.advanceddaemonsets.configuration')}
                   onSave={handleSaveYaml}
                   onChange={handleYamlChange}
                   isSaving={isSavingYaml}
@@ -573,7 +475,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                   value: 'pods',
                   label: (
                     <>
-                      {t('common.pods')}
+                      {t('common.pods')}{' '}
                       {relatedPods && (
                         <Badge variant="secondary">{relatedPods.length}</Badge>
                       )}
@@ -651,7 +553,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                         namespace={namespace}
                         volumes={spec.template.spec?.volumes}
                         containers={spec.template.spec?.containers}
-                        isLoading={isLoadingStatefulSet}
+                        isLoading={isLoadingAdvancedDaemonSet}
                       />
                     </div>
                   ),
@@ -663,7 +565,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             label: t('common.related'),
             content: (
               <RelatedResourcesTable
-                resource={'statefulsets'}
+                resource={'advanceddaemonsets'}
                 name={name}
                 namespace={namespace}
               />
@@ -674,7 +576,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             label: t('common.events'),
             content: (
               <EventTable
-                resource="statefulsets"
+                resource="advanceddaemonsets"
                 name={name}
                 namespace={namespace}
               />
@@ -702,7 +604,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
         onConfirm={handleDelete}
         isDeleting={isDeleting}
         resourceName={metadata?.name || ''}
-        resourceType="StatefulSet"
+        resourceType={t('openkruise.advanceddaemonsets.title')}
       />
     </div>
   )

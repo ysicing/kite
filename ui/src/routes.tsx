@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, useParams } from 'react-router-dom'
 
 import App from './App'
 import { ProtectedRoute } from './components/protected-route'
@@ -17,6 +17,14 @@ import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
 import { VersionTestPage } from './pages/version-test'
+import { AdvancedDaemonSetListPage } from './pages/advanced-daemonset-list-page'
+import { AdvancedDaemonSetDetail } from './pages/advanced-daemonset-detail'
+
+// Route wrapper for AdvancedDaemonSetDetail
+function AdvancedDaemonSetDetailWrapper() {
+  const { namespace, name } = useParams<{ namespace: string; name: string }>()
+  return <AdvancedDaemonSetDetail namespace={namespace || ''} name={name || ''} />
+}
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +86,15 @@ export const router = createBrowserRouter([
       {
         path: 'version-test',
         element: <VersionTestPage />,
+      },
+      // AdvancedDaemonSet specific routes
+      {
+        path: 'advanceddaemonsets',
+        element: <AdvancedDaemonSetListPage />,
+      },
+      {
+        path: 'advanceddaemonsets/:namespace/:name',
+        element: <AdvancedDaemonSetDetailWrapper />,
       },
       {
         path: 'crds/:crd',

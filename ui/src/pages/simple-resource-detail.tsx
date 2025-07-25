@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { IconLoader, IconRefresh, IconTrash } from '@tabler/icons-react'
 import * as yaml from 'js-yaml'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { ResourceType, ResourceTypeMap } from '@/types/api'
@@ -23,6 +24,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
   name: string
   namespace?: string
 }) {
+  const { t } = useTranslation()
   const { namespace, name, resourceType } = props
   const [yamlContent, setYamlContent] = useState('')
   const [isSavingYaml, setIsSavingYaml] = useState(false)
@@ -49,14 +51,14 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
     setIsDeleting(true)
     try {
       await deleteResource(resourceType, name, namespace)
-      toast.success(`${resourceType.slice(0, -1)} deleted successfully`)
+      toast.success(t('common.resourceDeleted', { resource: resourceType.slice(0, -1) }))
 
       // Navigate back to the deployments list page
       navigate(`/${resourceType}`)
     } catch (error) {
       toast.error(
-        `Failed to delete ${resourceType.slice(0, -1)}: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('common.deleteResourceError', { resource: resourceType.slice(0, -1) })}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
     } finally {
@@ -69,13 +71,13 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
     setIsSavingYaml(true)
     try {
       await updateResource(resourceType, name, namespace, content)
-      toast.success('YAML saved successfully')
+      toast.success(t('common.yamlSaved'))
       // Refresh data after successful save
       await handleRefresh()
     } catch (error) {
       toast.error(
-        `Failed to save YAML: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `${t('common.saveYamlError')}: ${
+          error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
     } finally {
@@ -100,7 +102,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
           <CardContent className="pt-6">
             <div className="flex items-center justify-center gap-2">
               <IconLoader className="animate-spin" />
-              <span>Loading {resourceType.slice(0, -1)} details...</span>
+              <span>{t('common.loadingResourceDetails', { resource: resourceType.slice(0, -1) })}</span>
             </div>
           </CardContent>
         </Card>
@@ -114,8 +116,8 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
-              Error loading {resourceType.slice(0, -1)}:{' '}
-              {error?.message || `${resourceType.slice(0, -1)} not found`}
+              {t('common.errorLoadingResource', { resource: resourceType.slice(0, -1) })}:{' '}
+              {error?.message || t('common.resourceNotFound', { resource: resourceType.slice(0, -1) })}
             </div>
           </CardContent>
         </Card>
@@ -143,7 +145,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
             onClick={handleManualRefresh}
           >
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Button
             variant="destructive"
@@ -152,7 +154,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
             disabled={isDeleting}
           >
             <IconTrash className="w-4 h-4" />
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </div>
@@ -161,20 +163,20 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
         tabs={[
           {
             value: 'overview',
-            label: 'Overview',
+            label: t('common.overview'),
             content: (
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
                     <CardTitle className="capitalize">
-                      {resourceType.slice(0, -1)} Information
+                      {t('common.resourceInformation', { resource: resourceType.slice(0, -1) })}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Created
+                          {t('common.created')}
                         </Label>
                         <p className="text-sm">
                           {formatDate(data.metadata?.creationTimestamp || '')}
@@ -182,7 +184,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          UID
+                          {t('common.uid')}
                         </Label>
                         <p className="text-sm ">
                           {data.metadata?.uid || 'N/A'}
@@ -191,13 +193,13 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
                       {getOwnerInfo(data.metadata) && (
                         <div>
                           <Label className="text-xs text-muted-foreground">
-                            Owner
+                            {t('common.owner')}
                           </Label>
                           <p className="text-sm">
                             {(() => {
                               const ownerInfo = getOwnerInfo(data.metadata)
                               if (!ownerInfo) {
-                                return 'No owner'
+                                return t('common.noOwner')
                               }
                               return (
                                 <Link
@@ -229,7 +231,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
                 <YamlEditor
                   key={refreshKey}
                   value={yamlContent}
-                  title="YAML Configuration"
+                  title={t('common.yamlConfiguration')}
                   onSave={handleSaveYaml}
                   onChange={handleYamlChange}
                   isSaving={isSavingYaml}
@@ -239,7 +241,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
           },
           {
             value: 'Related',
-            label: 'Related',
+            label: t('common.related'),
             content: (
               <RelatedResourcesTable
                 resource={resourceType}
@@ -250,7 +252,7 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
           },
           {
             value: 'events',
-            label: 'Events',
+            label: t('common.events'),
             content: (
               <EventTable
                 resource={resourceType}

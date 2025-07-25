@@ -188,7 +188,7 @@ export default function UpgradePlanDetail() {
         tabs={[
           {
             value: 'overview',
-            label: t('systemUpgrade.overview'),
+            label: t('common.overview'),
             content: (
               <div className="space-y-6">
                 {/* 基本信息 */}
