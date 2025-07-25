@@ -892,9 +892,9 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"nodes":       NewNodeHandler(),
 
 		// OpenKruise resources
-		"clonesets":                 NewGenericResourceHandler[*kruiseappsv1alpha1.CloneSet, *kruiseappsv1alpha1.CloneSetList]("clonesets", false, true),
-		"advancedstatefulsets":      NewGenericResourceHandler[*kruiseappsv1beta1.StatefulSet, *kruiseappsv1beta1.StatefulSetList]("advancedstatefulsets", false, false),
-		"advanceddaemonsets":        NewGenericResourceHandler[*kruiseappsv1alpha1.DaemonSet, *kruiseappsv1alpha1.DaemonSetList]("advanceddaemonsets", false, true),
+		"clonesets":                 NewCloneSetHandler(),
+		"advancedstatefulsets":      NewAdvancedStatefulSetHandler(),
+		"advanceddaemonsets":        NewAdvancedDaemonSetHandler(),
 		"broadcastjobs":             NewGenericResourceHandler[*kruiseappsv1alpha1.BroadcastJob, *kruiseappsv1alpha1.BroadcastJobList]("broadcastjobs", false, false),
 		"advancedcronjobs":          NewGenericResourceHandler[*kruiseappsv1alpha1.AdvancedCronJob, *kruiseappsv1alpha1.AdvancedCronJobList]("advancedcronjobs", false, false),
 		"sidecarsets":               NewGenericResourceHandler[*kruiseappsv1alpha1.SidecarSet, *kruiseappsv1alpha1.SidecarSetList]("sidecarsets", true, false),
@@ -953,6 +953,24 @@ func RegisterRoutes(group *gin.RouterGroup) {
 
 	// Traefik detection endpoint
 	group.GET("/traefik/status", GetTraefikStatus)
+
+	// Add unified Kruise operations routes for remaining workload types that support scaling
+	kruiseOpsHandler := &KruiseOperationHandler{}
+	kruiseScalableResources := []string{"uniteddeployments", "broadcastjobs"}
+	for _, resourceType := range kruiseScalableResources {
+		if handler, exists := handlers[resourceType]; exists && !handler.IsClusterScoped() {
+			g := group.Group("/" + resourceType)
+			g.POST("/:namespace/:name/scale", func(c *gin.Context) {
+				c.Set("resource", resourceType)
+				kruiseOpsHandler.ScaleKruiseWorkload(c)
+			})
+			g.POST("/:namespace/:name/restart", func(c *gin.Context) {
+				c.Set("resource", resourceType)
+				kruiseOpsHandler.RestartKruiseWorkload(c)
+			})
+		}
+	}
+
 	// Register related resources route for supported resource types
 	supportedRelatedResourceTypes := []string{"pods", "deployments", "statefulsets", "daemonsets", "configmaps", "secrets", "persistentvolumeclaims"}
 	for _, resourceType := range supportedRelatedResourceTypes {
