@@ -6,16 +6,17 @@ import { Link } from 'react-router-dom'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { ResourceTable } from '@/components/resource-table'
+import { useTranslation } from 'react-i18next'
 
 export function PVCListPage() {
   // Define column helper outside of any hooks
   const columnHelper = createColumnHelper<PersistentVolumeClaim>()
-
+  const { t } = useTranslation()
   // Define columns for the pvc table
   const columns = useMemo(
     () => [
       columnHelper.accessor('metadata.name', {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -29,7 +30,7 @@ export function PVCListPage() {
         ),
       }),
       columnHelper.accessor('status.phase', {
-        header: 'Status',
+        header: t('common.status'),
         cell: ({ getValue }) => {
           const phase = getValue() || 'Unknown'
           let variant: 'default' | 'destructive' | 'secondary' = 'secondary'
@@ -50,26 +51,26 @@ export function PVCListPage() {
         },
       }),
       columnHelper.accessor('spec.volumeName', {
-        header: 'Volume',
+        header: t('common.volumes'),
         cell: ({ getValue }) => getValue() || '-',
       }),
       columnHelper.accessor('spec.storageClassName', {
-        header: 'Storage Class',
+        header: t('nav.storageClasses'),
         cell: ({ getValue }) => getValue() || '-',
       }),
       columnHelper.accessor('spec.resources.requests.storage', {
-        header: 'Capacity',
+        header: t('common.capacity'),
         cell: ({ getValue }) => getValue() || '-',
       }),
       columnHelper.accessor('spec.accessModes', {
-        header: 'Access Modes',
+        header: t('common.accessModes'),
         cell: ({ getValue }) => {
           const modes = getValue() || []
           return modes.join(', ') || '-'
         },
       }),
       columnHelper.accessor('metadata.creationTimestamp', {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 

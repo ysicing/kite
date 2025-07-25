@@ -24,6 +24,12 @@ import { StorageClass } from 'kubernetes-types/storage/v1'
 
 import { CloneSet, AdvancedDaemonSet } from '@/types/k8s'
 
+// Enhanced StorageClass with additional information
+export interface StorageClassWithInfo extends StorageClass {
+  isDefault: boolean
+  associatedPVC: number
+}
+
 // Cluster types
 export interface Cluster {
   name: string
@@ -187,7 +193,7 @@ export interface ResourcesTypeMap {
     metadata?: listMetadataType
   }
   storageclasses: {
-    items: StorageClass[]
+    items: StorageClassWithInfo[]
     metadata?: listMetadataType
   }
   podmetrics: {
@@ -262,7 +268,7 @@ export interface ResourceTypeMap {
   nodes: Node
   events: Event
   persistentvolumes: PersistentVolume
-  storageclasses: StorageClass
+  storageclasses: StorageClassWithInfo
   replicasets: ReplicaSet
   podmetrics: PodMetrics
   clonesets: CloneSet

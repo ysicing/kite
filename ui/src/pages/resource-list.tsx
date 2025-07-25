@@ -18,6 +18,7 @@ import { SecretListPage } from './secret-list-page'
 import { ServiceListPage } from './service-list-page'
 import { SimpleListPage } from './simple-list-page'
 import { StatefulSetListPage } from './statefulset-list-page'
+import { StorageClassListPage } from './storageclass-list-page'
 
 export function ResourceList() {
   const { resource } = useParams()
@@ -51,6 +52,8 @@ export function ResourceList() {
       return <SecretListPage />
     case 'persistentvolumeclaims':
       return <PVCListPage />
+    case 'storageclasses':
+      return <StorageClassListPage />
     case 'crds':
       return <CRDListPage />
     default:

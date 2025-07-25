@@ -23,7 +23,6 @@ import (
 	discoveryv1 "k8s.io/api/discovery/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	storagev1 "k8s.io/api/storage/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metricsv1 "k8s.io/metrics/pkg/apis/metrics/v1beta1"
 )
@@ -878,7 +877,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"jobs":                   NewGenericResourceHandler[*batchv1.Job, *batchv1.JobList]("jobs", false, false),
 		"cronjobs":               NewGenericResourceHandler[*batchv1.CronJob, *batchv1.CronJobList]("cronjobs", false, false),
 		"ingresses":              NewGenericResourceHandler[*networkingv1.Ingress, *networkingv1.IngressList]("ingresses", false, false),
-		"storageclasses":         NewGenericResourceHandler[*storagev1.StorageClass, *storagev1.StorageClassList]("storageclasses", true, false),
+		"storageclasses":         NewStorageClassHandler(),
 		"roles":                  NewGenericResourceHandler[*rbacv1.Role, *rbacv1.RoleList]("roles", false, false),
 		"rolebindings":           NewGenericResourceHandler[*rbacv1.RoleBinding, *rbacv1.RoleBindingList]("rolebindings", false, false),
 		"clusterroles":           NewGenericResourceHandler[*rbacv1.ClusterRole, *rbacv1.ClusterRoleList]("clusterroles", true, false),

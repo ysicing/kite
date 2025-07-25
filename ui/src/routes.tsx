@@ -16,6 +16,7 @@ import UpgradePlansListPage from './pages/upgrade-plans-list-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
+import { StorageClassDetailPage } from './pages/storageclass-detail-page'
 import { VersionTestPage } from './pages/version-test'
 import { AdvancedDaemonSetListPage } from './pages/advanced-daemonset-list-page'
 import { AdvancedDaemonSetDetail } from './pages/advanced-daemonset-detail'
@@ -95,6 +96,11 @@ export const router = createBrowserRouter([
       {
         path: 'advanceddaemonsets/:namespace/:name',
         element: <AdvancedDaemonSetDetailWrapper />,
+      },
+      // StorageClass specific routes
+      {
+        path: 'storageclasses/:name',
+        element: <StorageClassDetailPage />,
       },
       {
         path: 'crds/:crd',

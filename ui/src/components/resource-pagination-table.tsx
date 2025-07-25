@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTranslation } from 'react-i18next'
 
 export interface ResourcePaginationTableProps<T> {
   resourceType: ResourceType // Type for the API call
@@ -61,6 +62,7 @@ export function ResourcePaginationTable<T>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>('')
+  const { t } = useTranslation()
 
   // Fetch namespaces only when not in cluster scope
   const namespaceQuery = useResources('namespaces')
@@ -138,7 +140,7 @@ export function ResourcePaginationTable<T>({
       // Add namespace column as the second column (after name)
       const namespaceColumn = {
         id: 'namespace',
-        header: 'Namespace',
+        header: t('common.namespace'),
         accessorFn: (row: T) => {
           // Try to get namespace from metadata.namespace
           const metadata = (row as { metadata?: { namespace?: string } })
