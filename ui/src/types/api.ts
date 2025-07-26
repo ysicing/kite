@@ -419,6 +419,7 @@ export interface NodeDetailList {
 export interface UpgradePlan extends CustomResource {
   spec: {
     concurrency?: number
+    cordon?: boolean
     nodeSelector?: {
       matchLabels?: Record<string, string>
       matchExpressions?: Array<{
@@ -427,7 +428,28 @@ export interface UpgradePlan extends CustomResource {
         values?: string[]
       }>
     }
+    tolerations?: Array<{
+      key?: string
+      operator?: string
+      value?: string
+      effect?: string
+      tolerationSeconds?: number
+    }>
+    secrets?: Array<{
+      name: string
+      path: string
+    }>
     serviceAccountName?: string
+    prepare?: {
+      image: string
+      command?: string[]
+      args?: string[]
+      envs?: Array<{
+        name: string
+        value?: string
+        valueFrom?: unknown
+      }>
+    }
     upgrade: {
       image: string
       command?: string[]
@@ -440,7 +462,9 @@ export interface UpgradePlan extends CustomResource {
     }
     drain?: {
       enabled?: boolean
+      force?: boolean
       timeout?: string
+      skipWaitForDeleteTimeout?: number
       ignoreDaemonSets?: boolean
       deleteLocalData?: boolean
     }
@@ -452,6 +476,7 @@ export interface UpgradePlan extends CustomResource {
       type: string
       status: string
       lastUpdateTime: string
+      lastTransitionTime?: string
       reason?: string
       message?: string
     }>

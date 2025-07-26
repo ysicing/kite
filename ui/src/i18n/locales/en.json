@@ -46,7 +46,10 @@
     "pods": "Pods",
     "yes": "Yes",
     "no": "No",
-    "default": "Default",  
+    "default": "Default",
+    "resource": "Resource",
+    "false": "False",
+    "true": "True",
     "provisioner": "Provisioner",
     "reclaimPolicy": "Reclaim Policy",
     "volumeBindingMode": "Volume Binding Mode",
@@ -79,6 +82,7 @@
     "statistics": "Statistics",
     "noData": "No data available",
     "conditions": "Conditions",
+    "serviceAccount": "Service Account",
     "other": "Other",
     "timeUnits": {
       "days": "d",
@@ -100,8 +104,7 @@
       "errorLoading": "Error loading {{resource}}",
       "noResults": "No results.",
       "searching": "Searching...",
-      "typeToSearch": "Type at least 2 characters to search or see favorites below...",
-      "noResourcesFound": "No resources found."
+      "typeToSearch": "Type at least 2 characters to search or see favorites below..."
     }
   },
   "actions": {
@@ -854,7 +857,6 @@
       "version": "Version",
       "concurrency": "Concurrency",
       "nodeSelector": "Node Selector",
-      "serviceAccount": "Service Account",
       "applying": "Applying",
       "drainConfig": "Drain Configuration",
       "noNodeSelector": "No node selector configured",

@@ -181,7 +181,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
               ) : query.length < 2 ? (
                 t('common.emptyState.typeToSearch')
               ) : (
-                t('common.emptyState.noResourcesFound')
+                t('common.emptyState.noResourcesFound', { resource: t('common.resource') })
               )}
             </CommandEmpty>
 

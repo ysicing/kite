@@ -47,6 +47,9 @@
     "yes": "是",
     "no": "否",
     "default": "默认",
+    "resource": "资源",
+    "false": "False",
+    "true": "True",
     "provisioner": "供应商",
     "reclaimPolicy": "回收策略",
     "volumeBindingMode": "卷绑定模式",
@@ -79,6 +82,7 @@
     "statistics": "统计信息",
     "noData": "无数据",
     "conditions": "状态",
+    "serviceAccount": "服务账户",
     "other": "其他",
     "timeUnits": {
       "days": "天",
@@ -100,8 +104,7 @@
       "errorLoading": "加载 {{resource}} 时出错",
       "noResults": "没有结果。",
       "searching": "搜索中...",
-      "typeToSearch": "输入至少2个字符进行搜索，或查看下方收藏...",
-      "noResourcesFound": "未找到资源。"
+      "typeToSearch": "输入至少2个字符进行搜索，或查看下方收藏..."
     }
   },
   "actions": {
@@ -134,7 +137,7 @@
     "config": "配置",
     "configMaps": "配置映射",
     "secrets": "密钥",
-    "storage" : "存储",
+    "storage": "存储",
     "persistentVolumeClaims": "持久卷声明",
     "persistentVolumes": "持久卷",
     "storageClasses": "存储类",
@@ -854,7 +857,6 @@
       "version": "版本",
       "concurrency": "并发数",
       "nodeSelector": "节点选择器",
-      "serviceAccount": "服务账户",
       "applying": "执行中",
       "drainConfig": "节点清空配置",
       "noNodeSelector": "未配置节点选择器",

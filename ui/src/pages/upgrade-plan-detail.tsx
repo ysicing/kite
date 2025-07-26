@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import * as yaml from 'js-yaml'
 import {
   IconTrash,
   IconEdit,
@@ -42,8 +43,8 @@ export default function UpgradePlanDetail() {
     error: planError,
     refetch,
   } = useQuery({
-    queryKey: ['resource', selectedCluster, 'plans', '', name],
-    queryFn: () => fetchResource('plans', '', name as string),
+    queryKey: ['resource', selectedCluster, 'plans', 'system-upgrade', name],
+    queryFn: () => fetchResource('plans', name as string, 'system-upgrade'),
     enabled: !!selectedCluster && !!name,
   })
 
@@ -51,9 +52,19 @@ export default function UpgradePlanDetail() {
 
   useEffect(() => {
     if (upgradePlan && typeof upgradePlan === 'object') {
-      // 如果有YAML内容就使用，否则使用JSON stringify
-      const yamlContent = (upgradePlan as any).yaml || JSON.stringify(upgradePlan, null, 2)
-      setEditedYaml(yamlContent)
+      try {
+        // 将对象转换为 YAML 格式
+        const yamlContent = yaml.dump(upgradePlan, {
+          indent: 2,
+          lineWidth: -1, // 不限制行宽度
+          noRefs: true,  // 不使用引用
+        })
+        setEditedYaml(yamlContent)
+      } catch (error) {
+        console.error('Failed to convert to YAML:', error)
+        // 如果 YAML 转换失败，回退到 JSON
+        setEditedYaml(JSON.stringify(upgradePlan, null, 2))
+      }
     }
   }, [upgradePlan])
 
@@ -65,10 +76,19 @@ export default function UpgradePlanDetail() {
 
     try {
       // 解析YAML内容为对象
-      const resourceData = editedYaml.startsWith('{') 
-        ? JSON.parse(editedYaml) 
-        : editedYaml
-      await updateResource('plans', '', name as string, resourceData as any)
+      let resourceData: unknown
+      try {
+        // 首先尝试解析为 YAML
+        resourceData = yaml.load(editedYaml)
+      } catch {
+        // 如果 YAML 解析失败，尝试 JSON
+        try {
+          resourceData = JSON.parse(editedYaml)
+        } catch {
+          throw new Error('无效的 YAML 或 JSON 格式')
+        }
+      }
+      await updateResource('plans', name as string, 'system-upgrade', resourceData as any)
       setIsEditing(false)
       toast.success(t('actions.updateSuccess'))
       refetch()
@@ -81,7 +101,7 @@ export default function UpgradePlanDetail() {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      await deleteResource('plans', '', name as string)
+      await deleteResource('plans', name as string, 'system-upgrade')
       toast.success(t('actions.deleteSuccess'))
       navigate('/plans')
     } catch (error) {
@@ -213,8 +233,22 @@ export default function UpgradePlanDetail() {
                         </p>
                       </div>
                       <div>
+                        <p className="text-sm text-muted-foreground">{t('systemUpgrade.version')}</p>
+                        <p className="font-medium">{upgradePlan.spec?.version || '-'}</p>
+                      </div>
+                      <div>
                         <p className="text-sm text-muted-foreground">{t('systemUpgrade.concurrency')}</p>
                         <p className="font-medium">{upgradePlan.spec?.concurrency || 1}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">{t('common.serviceAccount')}</p>
+                        <p className="font-medium">{upgradePlan.spec?.serviceAccountName || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">{t('nodes.cordon')}</p>
+                        <Badge variant={upgradePlan.spec?.cordon ? "default" : "secondary"}>
+                          {upgradePlan.spec?.cordon ? t('common.true') : t('common.false')}
+                        </Badge>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">{t('common.createdTime')}</p>
@@ -232,19 +266,209 @@ export default function UpgradePlanDetail() {
                   </CardContent>
                 </Card>
 
-                {/* 节点选择器 */}
+                {/* 节点选择器和污点 */}
                 {upgradePlan.spec?.nodeSelector && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{t('systemUpgrade.nodeSelector')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {/* Match Labels */}
+                          {upgradePlan.spec.nodeSelector.matchLabels && Object.keys(upgradePlan.spec.nodeSelector.matchLabels).length > 0 && (
+                            <div>
+                              <h4 className="text-sm font-medium text-muted-foreground mb-2">Match Labels</h4>
+                              <div className="space-y-2">
+                                {Object.entries(upgradePlan.spec.nodeSelector.matchLabels).map(([key, value]) => (
+                                  <div key={key} className="flex items-center gap-2">
+                                    <Badge variant="outline">{key}</Badge>
+                                    <span>=</span>
+                                    <Badge variant="secondary">{String(value)}</Badge>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Match Expressions */}
+                          {upgradePlan.spec.nodeSelector.matchExpressions && upgradePlan.spec.nodeSelector.matchExpressions.length > 0 && (
+                            <div>
+                              <h4 className="text-sm font-medium text-muted-foreground mb-2">Match Expressions</h4>
+                              <div className="space-y-2">
+                                {upgradePlan.spec.nodeSelector.matchExpressions.map((exp, index) => (
+                                  <div key={index} className="p-2 border rounded-lg">
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <Badge variant="outline">{exp.key}</Badge>
+                                      <Badge variant="outline">{exp.operator}</Badge>
+                                      {exp.values && exp.values.length > 0 && (
+                                        <div className="flex gap-1">
+                                          {exp.values.map((value, idx) => (
+                                            <Badge key={idx} variant="secondary">{value}</Badge>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{t('systemUpgrade.tolerations')}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {upgradePlan.spec?.tolerations && upgradePlan.spec.tolerations.length > 0 ? (
+                            upgradePlan.spec.tolerations.map((toleration, index) => (
+                              <div key={index} className="p-2 border rounded-lg">
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                  {toleration.key && (
+                                    <div>
+                                      <span className="text-muted-foreground">Key:</span>
+                                      <Badge variant="outline" className="ml-1">{toleration.key}</Badge>
+                                    </div>
+                                  )}
+                                  <div>
+                                    <span className="text-muted-foreground">Operator:</span>
+                                    <Badge variant="outline" className="ml-1">{toleration.operator || 'Equal'}</Badge>
+                                  </div>
+                                  {toleration.value && (
+                                    <div>
+                                      <span className="text-muted-foreground">Value:</span>
+                                      <Badge variant="secondary" className="ml-1">{toleration.value}</Badge>
+                                    </div>
+                                  )}
+                                  {toleration.effect && (
+                                    <div>
+                                      <span className="text-muted-foreground">Effect:</span>
+                                      <Badge variant="secondary" className="ml-1">{toleration.effect}</Badge>
+                                    </div>
+                                  )}
+                                  {toleration.tolerationSeconds !== undefined && (
+                                    <div className="col-span-2">
+                                      <span className="text-muted-foreground">Toleration Seconds:</span>
+                                      <span className="ml-1">{toleration.tolerationSeconds}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-muted-foreground text-sm">-</div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Prepare 配置 */}
+                {upgradePlan.spec?.prepare && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>{t('systemUpgrade.nodeSelector')}</CardTitle>
+                      <CardTitle>{t('systemUpgrade.prepare')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        {Object.entries(upgradePlan.spec.nodeSelector).map(([key, value]) => (
-                          <div key={key} className="flex items-center gap-2">
-                            <Badge variant="outline">{key}</Badge>
-                            <span>=</span>
-                            <Badge variant="secondary">{String(value)}</Badge>
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('systemUpgrade.image')}</p>
+                          <p className="font-medium font-mono text-sm">
+                            {upgradePlan.spec.prepare.image || '-'}
+                          </p>
+                        </div>
+                        {upgradePlan.spec.prepare.args && upgradePlan.spec.prepare.args.length > 0 && (
+                          <div>
+                            <p className="text-sm text-muted-foreground">{t('systemUpgrade.args')}</p>
+                            <div className="space-y-1">
+                              {upgradePlan.spec.prepare.args.map((arg, index) => (
+                                <Badge key={index} variant="outline" className="mr-1 font-mono text-xs">
+                                  {arg}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Drain 配置 */}
+                {upgradePlan.spec?.drain && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{t('systemUpgrade.drain')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('systemUpgrade.drainForce')}</p>
+                          <Badge variant={upgradePlan.spec.drain.force ? "default" : "secondary"}>
+                            {upgradePlan.spec.drain.force ? t('common.enabled') : t('common.disabled')}
+                          </Badge>
+                        </div>
+                        {upgradePlan.spec.drain.skipWaitForDeleteTimeout && (
+                          <div>
+                            <p className="text-sm text-muted-foreground">{t('systemUpgrade.skipWaitForDeleteTimeout')}</p>
+                            <p className="font-medium">{upgradePlan.spec.drain.skipWaitForDeleteTimeout}</p>
+                          </div>
+                        )}
+                        {upgradePlan.spec.drain.timeout && (
+                          <div>
+                            <p className="text-sm text-muted-foreground">{t('systemUpgrade.timeout')}</p>
+                            <p className="font-medium">{upgradePlan.spec.drain.timeout}</p>
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('systemUpgrade.ignoreDaemonSets')}</p>
+                          <Badge variant={upgradePlan.spec.drain.ignoreDaemonSets ? "default" : "secondary"}>
+                            {upgradePlan.spec.drain.ignoreDaemonSets ? t('common.enabled') : t('common.disabled')}
+                          </Badge>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('systemUpgrade.deleteLocalData')}</p>
+                          <Badge variant={upgradePlan.spec.drain.deleteLocalData ? "default" : "secondary"}>
+                            {upgradePlan.spec.drain.deleteLocalData ? t('common.enabled') : t('common.disabled')}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Secrets 配置 */}
+                {upgradePlan.spec?.secrets && upgradePlan.spec.secrets.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{t('nav.secrets')}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {upgradePlan.spec.secrets.map((secret, index) => (
+                          <div key={index} className="p-2 border rounded-lg">
+                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                               <div>
+                                 <span className="text-muted-foreground">Name:</span>
+                                 <Link 
+                                   to={`/secrets/system-upgrade/${secret.name}`}
+                                   className="ml-1"
+                                 >
+                                   <Badge variant="outline" className="hover:bg-blue-50 cursor-pointer">
+                                     {secret.name}
+                                   </Badge>
+                                 </Link>
+                               </div>
+                               <div>
+                                 <span className="text-muted-foreground">Path:</span>
+                                 <span className="ml-1 font-mono text-xs">{secret.path}</span>
+                               </div>
+                             </div>
                           </div>
                         ))}
                       </div>
@@ -277,7 +501,7 @@ export default function UpgradePlanDetail() {
                           <div>
                             <h4 className="font-medium mb-2">{t('common.conditions')}</h4>
                             <div className="space-y-2">
-                              {upgradePlan.status.conditions.map((condition: any, index: number) => (
+                              {upgradePlan.status.conditions.map((condition, index: number) => (
                                 <div key={index} className="p-3 border rounded-lg">
                                   <div className="grid grid-cols-2 gap-2 text-sm">
                                     <div>

@@ -23,8 +23,8 @@ const SystemUpgradeOverviewPage: React.FC = () => {
   const navigate = useNavigate()
 
   const { data: plansData, isLoading: plansLoading, error: plansError } = useQuery({
-    queryKey: ['resources', 'plans'],
-    queryFn: () => fetchResources('plans'),
+    queryKey: ['resources', 'plans', 'system-upgrade'],
+    queryFn: () => fetchResources('plans', 'system-upgrade'),
   })
 
   const plans = (plansData as any)?.items as UpgradePlan[] || []

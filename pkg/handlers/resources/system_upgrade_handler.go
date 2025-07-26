@@ -60,6 +60,7 @@ func (h *SystemUpgradeResourceHandler) getGVR() schema.GroupVersionResource {
 }
 
 func (h *SystemUpgradeResourceHandler) List(c *gin.Context) {
+	namespace := c.Param("namespace")
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
 	ctx := c.Request.Context()
 
@@ -85,8 +86,13 @@ func (h *SystemUpgradeResourceHandler) List(c *gin.Context) {
 		Kind:    crd.Spec.Names.ListKind,
 	})
 
-	// List all resources (cluster-scoped, no namespace filtering)
-	if err := cs.K8sClient.List(ctx, crList); err != nil {
+	// List resources with namespace filtering
+	listOptions := []client.ListOption{}
+	if namespace != "" {
+		listOptions = append(listOptions, client.InNamespace(namespace))
+	}
+
+	if err := cs.K8sClient.List(ctx, crList, listOptions...); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -96,6 +102,7 @@ func (h *SystemUpgradeResourceHandler) List(c *gin.Context) {
 
 func (h *SystemUpgradeResourceHandler) Get(c *gin.Context) {
 	name := c.Param("name")
+	namespace := c.Param("namespace")
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Resource name is required"})
 		return
@@ -126,8 +133,11 @@ func (h *SystemUpgradeResourceHandler) Get(c *gin.Context) {
 		Kind:    crd.Spec.Names.Kind,
 	})
 
-	// For cluster-scoped resources, only use name
+	// For namespace-scoped resources, use both namespace and name
 	namespacedName := types.NamespacedName{Name: name}
+	if namespace != "" && namespace != "_all" {
+		namespacedName.Namespace = namespace
+	}
 
 	if err := cs.K8sClient.Get(ctx, namespacedName, cr); err != nil {
 		if errors.IsNotFound(err) {
@@ -142,6 +152,7 @@ func (h *SystemUpgradeResourceHandler) Get(c *gin.Context) {
 }
 
 func (h *SystemUpgradeResourceHandler) Create(c *gin.Context) {
+	namespace := c.Param("namespace")
 	ctx := c.Request.Context()
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
 
@@ -173,7 +184,10 @@ func (h *SystemUpgradeResourceHandler) Create(c *gin.Context) {
 		Kind:    crd.Spec.Names.Kind,
 	})
 
-	// No namespace needed for cluster-scoped resources
+	// Set namespace for namespace-scoped resources
+	if namespace != "" && namespace != "_all" {
+		cr.SetNamespace(namespace)
+	}
 
 	if err := cs.K8sClient.Create(ctx, &cr); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -185,6 +199,7 @@ func (h *SystemUpgradeResourceHandler) Create(c *gin.Context) {
 
 func (h *SystemUpgradeResourceHandler) Update(c *gin.Context) {
 	name := c.Param("name")
+	namespace := c.Param("namespace")
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Resource name is required"})
 		return
@@ -215,8 +230,11 @@ func (h *SystemUpgradeResourceHandler) Update(c *gin.Context) {
 		Kind:    crd.Spec.Names.Kind,
 	})
 
-	// For cluster-scoped resources, only use name
+	// For namespace-scoped resources, use both namespace and name
 	namespacedName := types.NamespacedName{Name: name}
+	if namespace != "" && namespace != "_all" {
+		namespacedName.Namespace = namespace
+	}
 
 	if err := cs.K8sClient.Get(ctx, namespacedName, existingCR); err != nil {
 		if errors.IsNotFound(err) {
@@ -240,7 +258,10 @@ func (h *SystemUpgradeResourceHandler) Update(c *gin.Context) {
 	updatedCR.SetResourceVersion(existingCR.GetResourceVersion())
 	updatedCR.SetUID(existingCR.GetUID())
 
-	// No namespace for cluster-scoped resources
+	// Set namespace for namespace-scoped resources
+	if namespace != "" && namespace != "_all" {
+		updatedCR.SetNamespace(namespace)
+	}
 
 	if err := cs.K8sClient.Update(ctx, &updatedCR); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -252,6 +273,7 @@ func (h *SystemUpgradeResourceHandler) Update(c *gin.Context) {
 
 func (h *SystemUpgradeResourceHandler) Delete(c *gin.Context) {
 	name := c.Param("name")
+	namespace := c.Param("namespace")
 	if name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Resource name is required"})
 		return
@@ -282,9 +304,15 @@ func (h *SystemUpgradeResourceHandler) Delete(c *gin.Context) {
 		Kind:    crd.Spec.Names.Kind,
 	})
 
-	// For cluster-scoped resources, only use name
+	// For namespace-scoped resources, use both namespace and name
 	namespacedName := types.NamespacedName{Name: name}
+	if namespace != "" && namespace != "_all" {
+		namespacedName.Namespace = namespace
+	}
 	cr.SetName(name)
+	if namespace != "" && namespace != "_all" {
+		cr.SetNamespace(namespace)
+	}
 
 	// First check if the resource exists
 	if err := cs.K8sClient.Get(ctx, namespacedName, cr); err != nil {
@@ -307,9 +335,9 @@ func (h *SystemUpgradeResourceHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Custom resource deleted successfully"})
 }
 
-// IsClusterScoped returns true since all System Upgrade Controller resources are cluster-scoped
+// IsClusterScoped returns false since Plan resources are namespace-scoped
 func (h *SystemUpgradeResourceHandler) IsClusterScoped() bool {
-	return true
+	return false
 }
 
 // Searchable returns whether the resource supports search
