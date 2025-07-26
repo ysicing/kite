@@ -98,6 +98,8 @@ export type ResourceType =
   | 'proxyclasses'
   | 'proxygroups'
   | 'plans'
+  | 'middlewares'
+  | 'ingressroutes'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -228,6 +230,14 @@ export interface ResourcesTypeMap {
     items: CustomResource[]
     metadata?: listMetadataType
   }
+  middlewares: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
+  ingressroutes: {
+    items: CustomResource[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -277,6 +287,8 @@ export interface ResourceTypeMap {
   proxyclasses: CustomResource
   proxygroups: CustomResource
   plans: CustomResource
+  middlewares: CustomResource
+  ingressroutes: CustomResource
 }
 
 export interface RecentEvent {
@@ -423,7 +435,7 @@ export interface UpgradePlan extends CustomResource {
       envs?: Array<{
         name: string
         value?: string
-        valueFrom?: any
+        valueFrom?: unknown
       }>
     }
     drain?: {

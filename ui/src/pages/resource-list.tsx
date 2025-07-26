@@ -20,6 +20,8 @@ import { ServiceListPage } from './service-list-page'
 import { SimpleListPage } from './simple-list-page'
 import { StatefulSetListPage } from './statefulset-list-page'
 import { StorageClassListPage } from './storageclass-list-page'
+import { MiddlewareListPage } from './middleware-list-page'
+import { IngressRouteListPage } from './ingressroute-list-page'
 
 export function ResourceList() {
   const { resource } = useParams()
@@ -59,6 +61,10 @@ export function ResourceList() {
       return <StorageClassListPage />
     case 'crds':
       return <CRDListPage />
+    case 'middlewares':
+      return <MiddlewareListPage />
+    case 'ingressroutes':
+      return <IngressRouteListPage />
     default:
       return <SimpleListPage resourceType={resource as ResourceType} />
   }

@@ -691,6 +691,7 @@
     "ingressroutes": {
       "title": "Ingress Routes",
       "description": "Manage HTTP/HTTPS routing rules",
+      "detailedDescription": "Traefik IngressRoute resources define HTTP routing rules, directing traffic from entry points to backend services. They support TLS termination, middleware chains, and advanced routing based on host, path, headers, and other criteria.",
       "list": "Ingress Route List",
       "empty": "No ingress routes found",
       "entryPoints": "Entry Points",
@@ -715,6 +716,7 @@
     "middlewares": {
       "title": "Middlewares",
       "description": "Define request/response processing rules",
+      "detailedDescription": "Traefik middlewares modify requests and responses, providing features like authentication, rate limiting, path manipulation, and header modification. They can be chained together to create complex processing pipelines.",
       "list": "Middleware List",
       "empty": "No middlewares found",
       "type": "Type",

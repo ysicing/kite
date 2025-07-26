@@ -14,6 +14,8 @@ import { PVDetailPage } from './pv-detail-page'
 import { SimpleResourceDetail } from './simple-resource-detail'
 import { StatefulSetDetail } from './statefulset-detail'
 import UpgradePlanDetail from './upgrade-plan-detail'
+import { MiddlewareDetail } from './middleware-detail'
+import { IngressRouteDetail } from './ingressroute-detail'
 
 export function ResourceDetail() {
   const { resource, namespace, name } = useParams()
@@ -52,6 +54,10 @@ export function ResourceDetail() {
       return <UpgradePlanDetail />
     case 'persistentvolumes':
       return <PVDetailPage name={name} />
+    case 'middlewares':
+      return <MiddlewareDetail namespace={namespace!} name={name} />
+    case 'ingressroutes':
+      return <IngressRouteDetail namespace={namespace!} name={name} />
     default:
       return (
         <SimpleResourceDetail

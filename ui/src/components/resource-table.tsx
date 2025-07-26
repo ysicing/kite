@@ -170,25 +170,25 @@ export function ResourceTable<T>({
 
       // Only add namespace column if it doesn't already exist
       if (!hasNamespaceColumn) {
-        const namespaceColumn = {
-          id: 'namespace',
-          header: 'Namespace',
-          accessorFn: (row: T) => {
-            // Try to get namespace from metadata.namespace
-            const metadata = (row as { metadata?: { namespace?: string } })
-              ?.metadata
-            return metadata?.namespace || '-'
-          },
-          cell: ({ getValue }: { getValue: () => string }) => (
-            <Badge variant="outline" className="ml-2 ">
-              {getValue()}
-            </Badge>
-          ),
-        }
+        // const namespaceColumn = {
+        //   id: 'namespace',
+        //   header: 'Namespace',
+        //   accessorFn: (row: T) => {
+        //     // Try to get namespace from metadata.namespace
+        //     const metadata = (row as { metadata?: { namespace?: string } })
+        //       ?.metadata
+        //     return metadata?.namespace || '-'
+        //   },
+        //   cell: ({ getValue }: { getValue: () => string }) => (
+        //     <Badge variant="outline" className="ml-2 ">
+        //       {getValue()}
+        //     </Badge>
+        //   ),
+        // }
 
         // Insert namespace column after the first column (typically name)
         const newColumns = [...columns]
-        newColumns.splice(1, 0, namespaceColumn)
+        // newColumns.splice(1, 0, namespaceColumn)
         return newColumns
       }
     }
