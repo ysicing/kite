@@ -131,7 +131,7 @@ export function YamlEditor<T extends ResourceType>({
           <CardTitle>{title}</CardTitle>
         </div>
         <div className="flex items-center gap-4">
-          {showControls && (
+          {showControls && !readOnly && (
             <div className="flex gap-2">
               {isEditing ? (
                 <>

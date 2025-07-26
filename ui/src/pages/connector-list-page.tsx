@@ -120,7 +120,7 @@ const ConnectorListPage: React.FC = () => {
       ),
     }),
     columnHelper.accessor((row) => getConnectorType(row), {
-      header: t('tailscale.connectors.type'),
+      header: t('common.type'),
       cell: ({ getValue }) => (
         <div className="text-center">
           <span className="text-sm">{getValue()}</span>

@@ -84,6 +84,7 @@
     "noData": "无数据",
     "conditions": "状态",
     "serviceAccount": "服务账户",
+    "type": "类型",
     "other": "其他",
     "timeUnits": {
       "days": "天",
@@ -196,7 +197,6 @@
   },
   "services": {
     "title": "服务",
-    "type": "类型",
     "clusterIP": "集群IP",
     "externalIP": "外部IP",
     "ports": "端口",
@@ -309,7 +309,6 @@
   },
   "events": {
     "title": "事件",
-    "type": "类型",
     "reason": "原因",
     "object": "对象",
     "message": "消息",
@@ -640,7 +639,6 @@
       "subnetRouter": "子网路由器",
       "list": "连接器列表",
       "empty": "未找到连接器",
-      "type": "类型",
       "hostname": "主机名",
       "routes": "路由",
       "proxyClass": "代理类",
@@ -746,7 +744,6 @@
       "detailedDescription": "Traefik 中间件修改请求和响应，提供认证、限流、路径操作和头部修改等功能。它们可以链式组合以创建复杂的处理管道。",
       "list": "中间件列表",
       "empty": "未找到中间件",
-      "type": "类型",
       "configuration": "配置"
     },
     "middlewaretcps": {
@@ -827,7 +824,6 @@
     "searchPlans": "搜索升级计划",
     "noPlans": "暂无升级计划",
     "noPlansDescription": "创建升级计划来开始管理您的 Kubernetes 节点升级",
-    "basicInfo": "基本信息",
     "image": "升级镜像",
     "concurrency": "并发数",
     "nodeSelector": "节点选择器",
@@ -896,8 +892,12 @@
     "yamlRequired": "YAML内容不能为空"
   },
   "resources": {
-    "type": "类型",
-    "webhooks": "Webhooks",
-    "basicInfo": "基本信息"
+    "webhooks": "Webhooks"
+  },
+  "secrets": {
+    "cannotDeleteHelmRelease": "无法删除Helm发布密钥"
+  },
+  "configmaps": {
+    "cannotDeleteKubeRootCA": "无法删除 kube-root-ca.crt 配置映射"
   }
 }

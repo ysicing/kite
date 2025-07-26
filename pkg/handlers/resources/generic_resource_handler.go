@@ -18,6 +18,7 @@ import (
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/common"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -249,6 +250,32 @@ func (h *GenericResourceHandler[T, V]) Delete(c *gin.Context) {
 		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Check if the resource is protected
+	obj, err := meta.Accessor(resource)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to access object metadata"})
+		return
+	}
+
+	// Special protection for secrets
+	if h.name == "secrets" {
+		// Type assert to Secret to check the type
+		if secret, ok := any(resource).(*corev1.Secret); ok {
+			if secret.Type == "helm.sh/release.v1" {
+				c.JSON(http.StatusForbidden, gin.H{"error": "cannot delete helm release secret"})
+				return
+			}
+		}
+	}
+
+	// Special protection for configmaps
+	if h.name == "configmaps" {
+		if obj.GetName() == "kube-root-ca.crt" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "cannot delete kube-root-ca.crt configmap"})
+			return
+		}
 	}
 
 	// Check if we should cascade delete

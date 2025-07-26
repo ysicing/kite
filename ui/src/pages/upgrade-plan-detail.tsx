@@ -214,7 +214,7 @@ export default function UpgradePlanDetail() {
                 {/* 基本信息 */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('systemUpgrade.basicInfo')}</CardTitle>
+                    <CardTitle>{t('common.basicInfo')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -32,7 +32,7 @@ export function ServiceListPage() {
         ),
       }),
       columnHelper.accessor('spec.type', {
-        header: t('services.type'),
+        header: t('common.type'),
         enableColumnFilter: true,
         cell: ({ getValue }) => {
           const type = getValue() || 'ClusterIP'

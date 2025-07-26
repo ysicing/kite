@@ -85,7 +85,7 @@ export function AdmissionControllerDetail({ name, type }: AdmissionControllerDet
       {/* Basic Information */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('resources.basicInfo')}</CardTitle>
+          <CardTitle>{t('common.basicInfo')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -48,6 +48,25 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
   }, [data])
 
   const handleDelete = async () => {
+    // Check if the resource is protected
+    if (resourceType === 'secrets' && data) {
+      // Type assert to Secret to check the type
+      const secret = data as unknown as { type?: string };
+      if (secret.type === 'helm.sh/release.v1') {
+        toast.error(t('secrets.cannotDeleteHelmRelease'));
+        setIsDeleteDialogOpen(false);
+        return;
+      }
+    }
+    
+    if (resourceType === 'configmaps' && data) {
+      if (data.metadata?.name === 'kube-root-ca.crt') {
+        toast.error(t('configmaps.cannotDeleteKubeRootCA'));
+        setIsDeleteDialogOpen(false);
+        return;
+      }
+    }
+    
     setIsDeleting(true)
     try {
       await deleteResource(resourceType, name, namespace)
@@ -147,15 +166,18 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
             <IconRefresh className="w-4 h-4" />
             {t('common.refresh')}
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setIsDeleteDialogOpen(true)}
-            disabled={isDeleting}
-          >
-            <IconTrash className="w-4 h-4" />
-            {t('common.delete')}
-          </Button>
+          {!(resourceType === 'secrets' && data && (data as unknown as { type?: string }).type === 'helm.sh/release.v1') &&
+           !(resourceType === 'configmaps' && data && data.metadata?.name === 'kube-root-ca.crt') && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              disabled={isDeleting}
+            >
+              <IconTrash className="w-4 h-4" />
+              {t('common.delete')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -235,6 +257,8 @@ export function SimpleResourceDetail<T extends ResourceType>(props: {
                   onSave={handleSaveYaml}
                   onChange={handleYamlChange}
                   isSaving={isSavingYaml}
+                  readOnly={(resourceType === 'secrets' && data && (data as unknown as { type?: string }).type === 'helm.sh/release.v1') ||
+                            (resourceType === 'configmaps' && data && data.metadata?.name === 'kube-root-ca.crt')}
                 />
               </div>
             ),

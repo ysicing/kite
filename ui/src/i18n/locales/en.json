@@ -84,6 +84,7 @@
     "noData": "No data available",
     "conditions": "Conditions",
     "serviceAccount": "Service Account",
+    "type": "Type",
     "other": "Other",
     "timeUnits": {
       "days": "d",
@@ -196,7 +197,6 @@
   },
   "services": {
     "title": "Services",
-    "type": "Type",
     "clusterIP": "Cluster IP",
     "externalIP": "External IP",
     "ports": "Ports",
@@ -309,7 +309,6 @@
   },
   "events": {
     "title": "Events",
-    "type": "Type",
     "reason": "Reason",
     "object": "Object",
     "message": "Message",
@@ -640,7 +639,6 @@
       "subnetRouter": "Subnet Router",
       "list": "Connector List",
       "empty": "No connectors found",
-      "type": "Type",
       "hostname": "Hostname",
       "routes": "Routes",
       "proxyClass": "Proxy Class",
@@ -746,7 +744,6 @@
       "detailedDescription": "Traefik middlewares modify requests and responses, providing features like authentication, rate limiting, path manipulation, and header modification. They can be chained together to create complex processing pipelines.",
       "list": "Middleware List",
       "empty": "No middlewares found",
-      "type": "Type",
       "configuration": "Configuration"
     },
     "middlewaretcps": {
@@ -827,7 +824,6 @@
     "searchPlans": "Search upgrade plans",
     "noPlans": "No upgrade plans",
     "noPlansDescription": "Create upgrade plans to start managing your Kubernetes node upgrades",
-    "basicInfo": "Basic Information",
     "image": "Upgrade Image",
     "concurrency": "Concurrency",
     "nodeSelector": "Node Selector",
@@ -895,8 +891,12 @@
     "yamlRequired": "YAML content cannot be empty"
   },
   "resources": {
-    "type": "Type",
-    "webhooks": "Webhooks",
-    "basicInfo": "Basic Information"
+    "webhooks": "Webhooks"
+  },
+  "secrets": {
+    "cannotDeleteHelmRelease": "Cannot delete Helm release secret"
+  },
+  "configmaps": {
+    "cannotDeleteKubeRootCA": "Cannot delete kube-root-ca.crt ConfigMap"
   }
 }

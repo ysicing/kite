@@ -30,7 +30,7 @@ export function AdmissionControllerListPage() {
         ),
       }),
       columnHelper.accessor('type', {
-        header: t('resources.type'),
+        header: t('common.type'),
         cell: ({ getValue }) => {
           const type = getValue()
           return (

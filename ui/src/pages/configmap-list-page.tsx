@@ -2,19 +2,19 @@ import { useCallback, useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { ConfigMap } from 'kubernetes-types/core/v1'
 import { Link } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { formatDate } from '@/lib/utils'
 import { ResourceTable } from '@/components/resource-table'
 
 export function ConfigMapListPage() {
   // Define column helper outside of any hooks
   const columnHelper = createColumnHelper<ConfigMap>()
-
+  const { t } = useTranslation()
   // Define columns for the configmap table
   const columns = useMemo(
     () => [
       columnHelper.accessor('metadata.name', {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -27,26 +27,8 @@ export function ConfigMapListPage() {
           </div>
         ),
       }),
-      columnHelper.accessor('data', {
-        header: 'Data Keys',
-        cell: ({ getValue }) => {
-          const data = getValue() || {}
-          const keys = Object.keys(data)
-          if (keys.length === 0) {
-            return '-'
-          }
-          // Limit to first 5 keys for display
-          return keys.length > 5 ? (
-            <span className="text-muted-foreground">
-              {keys.slice(0, 5).join(', ')}...
-            </span>
-          ) : (
-            <span className="text-muted-foreground">{keys.join(', ')}</span>
-          )
-        },
-      }),
       columnHelper.accessor('metadata.creationTimestamp', {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 
@@ -56,20 +38,15 @@ export function ConfigMapListPage() {
         },
       }),
     ],
-    [columnHelper]
+    [columnHelper, t]
   )
 
   // Custom filter for configmap search
   const configMapSearchFilter = useCallback(
     (configMap: ConfigMap, query: string) => {
-      const dataKeys = Object.keys(configMap.data || {}).join(' ')
-      const binaryDataKeys = Object.keys(configMap.binaryData || {}).join(' ')
-
       return (
         configMap.metadata!.name!.toLowerCase().includes(query) ||
-        (configMap.metadata!.namespace?.toLowerCase() || '').includes(query) ||
-        dataKeys.toLowerCase().includes(query) ||
-        binaryDataKeys.toLowerCase().includes(query)
+        (configMap.metadata!.namespace?.toLowerCase() || '').includes(query)
       )
     },
     []

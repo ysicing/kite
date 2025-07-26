@@ -228,7 +228,7 @@ export function ConnectorDetail(props: { name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          {t('tailscale.connectors.type')}
+                          {t('common.type')}
                         </Label>
                         <p className="text-sm">{getConnectorType(connector)}</p>
                       </div>
