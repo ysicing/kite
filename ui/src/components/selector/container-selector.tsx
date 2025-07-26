@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { SimpleContainer } from '@/types/k8s'
 import { cn } from '@/lib/utils'
@@ -33,6 +34,7 @@ export function ContainerSelector({
   showAllOption = true,
   placeholder = 'Select container...',
 }: ContainerSelectorProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   const allOption = { name: 'All Containers', image: '', init: false }
@@ -59,7 +61,7 @@ export function ContainerSelector({
         <Command>
           <CommandInput placeholder="Search containers..." />
           <CommandList>
-            <CommandEmpty>No containers found.</CommandEmpty>
+                          <CommandEmpty>{t('common.emptyState.noResourcesFound', { resource: 'containers' })}</CommandEmpty>
             <CommandGroup>
               {options.map((container) => (
                 <CommandItem

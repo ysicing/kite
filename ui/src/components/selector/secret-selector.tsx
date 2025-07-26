@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Secret } from 'kubernetes-types/core/v1'
+import { useTranslation } from 'react-i18next'
 
 import { useResources } from '@/lib/api'
 import {
@@ -23,6 +24,7 @@ export function SecretSelector({
   placeholder?: string
   className?: string
 }) {
+  const { t } = useTranslation()
   const { data, isLoading } = useResources('secrets', namespace)
 
   const sortedSecrets = useMemo(() => {
@@ -54,7 +56,7 @@ export function SecretSelector({
         ))}
         {!isLoading && (!sortedSecrets || sortedSecrets.length === 0) && (
           <SelectItem disabled value="_empty">
-            No secrets found
+            {t('common.emptyState.noResourcesFound', { resource: 'secrets' })}
           </SelectItem>
         )}
       </SelectContent>

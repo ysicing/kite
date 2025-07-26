@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { IconLoader } from '@tabler/icons-react'
 import { Event } from 'kubernetes-types/core/v1'
+import { useTranslation } from 'react-i18next'
 
 import { ResourceType } from '@/types/api'
 import { useResourcesEvents } from '@/lib/api'
@@ -15,6 +16,7 @@ export function EventTable(props: {
   name: string
   namespace?: string
 }) {
+  const { t } = useTranslation()
   const { data: events, isLoading } = useResourcesEvents(
     props.resource,
     props.name,
@@ -103,7 +105,7 @@ export function EventTable(props: {
         <SimpleTable
           data={events || []}
           columns={eventColumns}
-          emptyMessage="No events found"
+          emptyMessage={t('common.emptyState.noResourcesFound', { resource: 'events' })}
         />
       </CardContent>
     </Card>

@@ -269,7 +269,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
               Error loading deployment:{' '}
-              {deploymentError?.message || 'Deployment not found'}
+              {deploymentError?.message || t('common.resourceNotFound', { resource: 'Deployment' })}
             </div>
           </CardContent>
         </Card>

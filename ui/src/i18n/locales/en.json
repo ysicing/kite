@@ -85,6 +85,23 @@
       "hours": "h",
       "minutes": "m",
       "seconds": "s"
+    },
+    "emptyState": {
+      "noResourcesFound": "No {{resource}} found",
+      "noResourcesInNamespace": "There are no {{resource}} in the {{namespace}} namespace",
+      "noResourcesInCluster": "There are no {{resource}} found",
+      "noSearchResults": "No results match your search query: \"{{query}}\"",
+      "clearSearch": "Clear Search",
+      "tryAgain": "Try Again",
+      "loading": "Loading {{resource}}...",
+      "retrievingData": "Retrieving data",
+      "fromNamespace": "from {{namespace}} namespace",
+      "fromAllNamespaces": "from All Namespaces",
+      "errorLoading": "Error loading {{resource}}",
+      "noResults": "No results.",
+      "searching": "Searching...",
+      "typeToSearch": "Type at least 2 characters to search or see favorites below...",
+      "noResourcesFound": "No resources found."
     }
   },
   "actions": {
@@ -506,7 +523,8 @@
     },
     "advancedstatefulsets": {
       "title": "Advanced StatefulSets",
-      "description": "Enhanced stateful workload with in-place update and parallel release"
+      "description": "Enhanced stateful workload with in-place update and parallel release",
+      "empty": "No advanced statefulsets found"
     },
     "advanceddaemonsets": {
       "title": "Advanced DaemonSets",

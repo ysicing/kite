@@ -299,7 +299,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             <div className="text-center text-destructive">
               <IconExclamationCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
               Error loading StatefulSet:{' '}
-              {statefulsetError?.message || 'StatefulSet not found'}
+              {statefulsetError?.message || t('common.resourceNotFound', { resource: 'StatefulSet' })}
             </div>
           </CardContent>
         </Card>

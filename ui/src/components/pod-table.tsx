@@ -3,6 +3,7 @@ import { IconLoader } from '@tabler/icons-react'
 import { useQueries } from '@tanstack/react-query'
 import { Pod } from 'kubernetes-types/core/v1'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { PodMetrics } from '@/types/api'
 import { fetchResource } from '@/lib/api'
@@ -20,6 +21,7 @@ export function PodTable(props: {
   isLoading?: boolean
   hiddenNode?: boolean
 }) {
+  const { t } = useTranslation()
   const { pods, isLoading } = props
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -199,7 +201,7 @@ export function PodTable(props: {
         <SimpleTable
           data={pods || []}
           columns={podColumns}
-          emptyMessage="No pods found"
+          emptyMessage={t('common.emptyState.noResourcesFound', { resource: 'pods' })}
           pagination={{
             enabled: true,
             pageSize,

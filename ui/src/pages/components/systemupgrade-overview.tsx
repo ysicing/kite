@@ -134,7 +134,7 @@ const SystemUpgradeOverview: React.FC = () => {
         <CardContent>
           {plans.length === 0 ? (
             <p className="text-center text-muted-foreground py-4">
-              No upgrade plans found
+              {t('systemUpgrade.noPlans')}
             </p>
           ) : (
             <div className="space-y-3">

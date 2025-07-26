@@ -15,7 +15,7 @@ import {
   IconTopologyBus,
 } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { globalSearch, SearchResult } from '@/lib/api'
 import { useFavorites } from '@/hooks/use-favorites'
 import { Badge } from '@/components/ui/badge'
@@ -71,6 +71,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const [results, setResults] = useState<SearchResult[] | null>([])
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Use favorites hook
   const {
@@ -175,12 +176,12 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2 py-6">
                   <IconLoader className="h-4 w-4 animate-spin" />
-                  <span>Searching...</span>
+                  <span>{t('common.emptyState.searching')}</span>
                 </div>
               ) : query.length < 2 ? (
-                'Type at least 2 characters to search or see favorites below...'
+                t('common.emptyState.typeToSearch')
               ) : (
-                'No resources found.'
+                t('common.emptyState.noResourcesFound')
               )}
             </CommandEmpty>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Pod } from 'kubernetes-types/core/v1'
 import { Check, ChevronsUpDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { cn, getAge } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ export function PodSelector({
   showAllOption = false,
   placeholder = 'Select pod...',
 }: PodSelectorProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   const allOption: Pod = {
@@ -65,7 +67,7 @@ export function PodSelector({
         <Command>
           <CommandInput placeholder="Search pods..." />
           <CommandList>
-            <CommandEmpty>No pods found.</CommandEmpty>
+                          <CommandEmpty>{t('common.emptyState.noResourcesFound', { resource: 'pods' })}</CommandEmpty>
             <CommandGroup>
               {options.map((pod) => (
                 <CommandItem

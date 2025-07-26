@@ -127,7 +127,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
-              Error loading pod: {podError?.message || 'Pod not found'}
+              Error loading pod: {podError?.message || t('common.resourceNotFound', { resource: 'Pod' })}
             </div>
           </CardContent>
         </Card>

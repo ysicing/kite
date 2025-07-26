@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { ConfigMap } from 'kubernetes-types/core/v1'
+import { useTranslation } from 'react-i18next'
 
 import { useResources } from '@/lib/api'
 import {
@@ -23,6 +24,7 @@ export function ConfigMapSelector({
   placeholder?: string
   className?: string
 }) {
+  const { t } = useTranslation()
   const { data, isLoading } = useResources('configmaps', namespace)
 
   const sortedConfigMaps = useMemo(() => {
@@ -54,7 +56,7 @@ export function ConfigMapSelector({
         ))}
         {!isLoading && (!sortedConfigMaps || sortedConfigMaps.length === 0) && (
           <SelectItem disabled value="_empty">
-            No configmaps found
+            {t('common.emptyState.noResourcesFound', { resource: 'configmaps' })}
           </SelectItem>
         )}
       </SelectContent>

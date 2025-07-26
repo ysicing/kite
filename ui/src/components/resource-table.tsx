@@ -14,6 +14,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Box, Database, Plus, RotateCcw, Search, XCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { ResourceType } from '@/types/api'
 import { useResources } from '@/lib/api'
@@ -69,6 +70,7 @@ export function ResourceTable<T>({
   hideHeader = false,
   customFilters,
 }: ResourceTableProps<T>) {
+  const { t } = useTranslation()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -264,12 +266,14 @@ export function ResourceTable<T>({
             <Database className="h-12 w-12 text-muted-foreground animate-pulse" />
           </div>
           <h3 className="text-lg font-medium mb-1">
-            Loading {resourceName.toLowerCase()}...
+            {t('common.emptyState.loading', { resource: resourceName.toLowerCase() })}
           </h3>
           <p className="text-muted-foreground">
-            Retrieving data
+            {t('common.emptyState.retrievingData')}
             {!clusterScope && selectedNamespace
-              ? ` from ${selectedNamespace === '_all' ? 'All Namespaces' : `namespace ${selectedNamespace}`}`
+              ? selectedNamespace === '_all' 
+                ? ` ${t('common.emptyState.fromAllNamespaces')}`
+                : ` ${t('common.emptyState.fromNamespace', { namespace: selectedNamespace })}`
               : ''}
           </p>
         </div>
@@ -283,14 +287,14 @@ export function ResourceTable<T>({
             <XCircle className="h-16 w-16" />
           </div>
           <h3 className="text-lg font-medium text-red-500 mb-1">
-            Error loading {resourceName.toLowerCase()}
+            {t('common.emptyState.errorLoading', { resource: resourceName.toLowerCase() })}
           </h3>
           <p className="text-muted-foreground mb-4">
             {(error as Error).message}
           </p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" />
-            Try Again
+            {t('common.emptyState.tryAgain')}
           </Button>
         </div>
       )
@@ -303,14 +307,14 @@ export function ResourceTable<T>({
             <Box className="h-12 w-12 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-medium mb-1">
-            No {resourceName.toLowerCase()} found
+            {t('common.emptyState.noResourcesFound', { resource: resourceName.toLowerCase() })}
           </h3>
           <p className="text-muted-foreground">
             {debouncedSearchQuery
-              ? `No results match your search query: "${debouncedSearchQuery}"`
+              ? t('common.emptyState.noSearchResults', { query: debouncedSearchQuery })
               : clusterScope
-                ? `There are no ${resourceName.toLowerCase()} found`
-                : `There are no ${resourceName.toLowerCase()} in the ${selectedNamespace} namespace`}
+                ? t('common.emptyState.noResourcesInCluster', { resource: resourceName.toLowerCase() })
+                : t('common.emptyState.noResourcesInNamespace', { resource: resourceName.toLowerCase(), namespace: selectedNamespace })}
           </p>
           {debouncedSearchQuery && (
             <Button
@@ -318,7 +322,7 @@ export function ResourceTable<T>({
               className="mt-4"
               onClick={() => setSearchQuery('')}
             >
-              Clear Search
+              {t('common.emptyState.clearSearch')}
             </Button>
           )}
         </div>
@@ -340,7 +344,7 @@ export function ResourceTable<T>({
             colSpan={enhancedColumns.length}
             className="h-24 text-center"
           >
-            No results.
+            {t('common.emptyState.noResults')}
           </TableCell>
         </TableRow>
       )

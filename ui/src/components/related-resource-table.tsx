@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { IconExternalLink, IconLoader } from '@tabler/icons-react'
 
 import { RelatedResources, ResourceType } from '@/types/api'
@@ -22,6 +23,7 @@ export function RelatedResourcesTable(props: {
   name: string
   namespace?: string
 }) {
+  const { t } = useTranslation()
   const { resource, name, namespace } = props
 
   const { data: relatedResources, isLoading } = useRelatedResources(
@@ -68,7 +70,7 @@ export function RelatedResourcesTable(props: {
         <SimpleTable
           data={relatedResources || []}
           columns={relatedColumns}
-          emptyMessage="No related found"
+          emptyMessage={t('common.emptyState.noResourcesFound', { resource: 'related resources' })}
         />
       </CardContent>
     </Card>

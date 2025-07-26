@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { IconLoader } from '@tabler/icons-react'
 import { Service } from 'kubernetes-types/core/v1'
+import { useTranslation } from 'react-i18next'
 
 import { Column, SimpleTable } from './simple-table'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
@@ -9,6 +10,7 @@ export function ServiceTable(props: {
   services?: Service[]
   isLoading?: boolean
 }) {
+  const { t } = useTranslation()
   const { services, isLoading } = props
 
   // Service table columns
@@ -66,7 +68,7 @@ export function ServiceTable(props: {
         <SimpleTable
           data={services || []}
           columns={serviceColumns}
-          emptyMessage="No services found"
+          emptyMessage={t('common.emptyState.noResourcesFound', { resource: 'services' })}
         />
       </CardContent>
     </Card>

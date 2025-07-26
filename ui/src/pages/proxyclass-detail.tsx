@@ -162,7 +162,7 @@ export function ProxyClassDetail(props: { name: string }) {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-destructive">
-              Error loading ProxyClass: {error?.message || 'ProxyClass not found'}
+              Error loading ProxyClass: {error?.message || t('common.resourceNotFound', { resource: 'ProxyClass' })}
             </div>
           </CardContent>
         </Card>
