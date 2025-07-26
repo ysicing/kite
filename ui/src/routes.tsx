@@ -24,6 +24,7 @@ import { AdvancedDaemonSetDetail } from './pages/advanced-daemonset-detail'
 import { ConnectorDetail } from './pages/connector-detail'
 import AdmissionControllerDetailWrapper from './pages/admission-controller-detail'
 import { AdmissionControllerListPage } from './pages/admission-controller-list-page'
+import { ServiceDetail } from './pages/service-detail'
 
 // Route wrapper for AdvancedDaemonSetDetail
 function AdvancedDaemonSetDetailWrapper() {
@@ -35,6 +36,12 @@ function AdvancedDaemonSetDetailWrapper() {
 function ConnectorDetailWrapper() {
   const { name } = useParams<{ name: string }>()
   return <ConnectorDetail name={name || ''} />
+}
+
+// Route wrapper for ServiceDetail
+function ServiceDetailWrapper() {
+  const { namespace, name } = useParams<{ namespace: string; name: string }>()
+  return <ServiceDetail namespace={namespace || ''} name={name || ''} />
 }
 
 export const router = createBrowserRouter([
@@ -129,6 +136,11 @@ export const router = createBrowserRouter([
       {
         path: 'admission-controllers/:name',
         element: <AdmissionControllerDetailWrapper />,
+      },
+      // Service specific routes
+      {
+        path: 'services/:namespace/:name',
+        element: <ServiceDetailWrapper />,
       },
       {
         path: 'crds/:crd',

@@ -11,6 +11,7 @@ import {
 import { CronJob, Job } from 'kubernetes-types/batch/v1'
 import {
   ConfigMap,
+  Endpoints,
   Event,
   Namespace,
   Node,
@@ -20,6 +21,7 @@ import {
   Secret,
   Service,
 } from 'kubernetes-types/core/v1'
+import { EndpointSlice } from 'kubernetes-types/discovery/v1'
 import { Ingress } from 'kubernetes-types/networking/v1'
 import { StorageClass } from 'kubernetes-types/storage/v1'
 
@@ -121,6 +123,8 @@ export type ResourceType =
   | 'validatingwebhookconfigurations'
   | 'mutatingwebhookconfigurations'
   | 'admission-controllers'
+  | 'endpoints'
+  | 'endpointslices'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -274,6 +278,14 @@ export interface ResourcesTypeMap {
     items: AdmissionController[]
     metadata?: listMetadataType
   }
+  endpoints: {
+    items: Endpoints[]
+    metadata?: listMetadataType
+  }
+  endpointslices: {
+    items: EndpointSlice[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -328,6 +340,8 @@ export interface ResourceTypeMap {
   validatingwebhookconfigurations: ValidatingWebhookConfiguration
   mutatingwebhookconfigurations: MutatingWebhookConfiguration
   'admission-controllers': AdmissionController
+  endpoints: Endpoints
+  endpointslices: EndpointSlice
 }
 
 export interface RecentEvent {
