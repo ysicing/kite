@@ -140,6 +140,9 @@
     "httproutes": "HTTP 路由",
     "configMaps": "配置映射",
     "secrets": "密钥",
+    "validatingWebhooks": "验证准入控制器",
+    "mutatingWebhooks": "变更准入控制器",
+    "admissionControllers": "准入控制器",
     "storage": "存储",
     "persistentVolumeClaims": "持久卷声明",
     "persistentVolumes": "持久卷",
@@ -891,5 +894,10 @@
   },
   "validation": {
     "yamlRequired": "YAML内容不能为空"
+  },
+  "resources": {
+    "type": "类型",
+    "webhooks": "Webhooks",
+    "basicInfo": "基本信息"
   }
 }

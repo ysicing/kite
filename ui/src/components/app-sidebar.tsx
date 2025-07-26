@@ -24,6 +24,7 @@ import {
   IconStack3,
   IconTopologyBus,
   IconArrowUp,
+  IconShield,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -253,6 +254,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.secrets'),
         url: '/secrets',
         icon: IconLock,
+      },
+      {
+        title: t('nav.admissionControllers'),
+        url: '/admission-controllers',
+        icon: IconShield,
       },
     ],
     [t('common.other')]: [

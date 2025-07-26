@@ -79,6 +79,7 @@ export function ConfigMapListPage() {
     <ResourceTable
       resourceName="ConfigMaps"
       columns={columns}
+      clusterScope={false} // ConfigMaps are namespace-scoped
       searchQueryFilter={configMapSearchFilter}
     />
   )

@@ -140,6 +140,9 @@
     "httproutes": "HTTP Routes",
     "configMaps": "ConfigMaps",
     "secrets": "Secrets",
+    "validatingWebhooks": "Validating Webhooks",
+    "mutatingWebhooks": "Mutating Webhooks",
+    "admissionControllers": "Admission Controllers",
     "storage": "Storage",
     "persistentVolumeClaims": "Persistent Volume Claims",
     "persistentVolumes": "Persistent Volumes",
@@ -890,5 +893,10 @@
   },
   "validation": {
     "yamlRequired": "YAML content cannot be empty"
+  },
+  "resources": {
+    "type": "Type",
+    "webhooks": "Webhooks",
+    "basicInfo": "Basic Information"
   }
 }

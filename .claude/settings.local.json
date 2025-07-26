@@ -12,7 +12,8 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run type-check:*)",
       "Bash(npm run:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(go doc:*)"
     ],
     "deny": []
   }

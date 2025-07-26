@@ -1,6 +1,7 @@
 // API types for Custom Resources
 
 import { CustomResourceDefinition } from 'kubernetes-types/apiextensions/v1'
+import { ValidatingWebhookConfiguration, MutatingWebhookConfiguration } from 'kubernetes-types/admissionregistration/v1'
 import {
   DaemonSet,
   Deployment,
@@ -53,6 +54,23 @@ export interface CustomResource {
   status?: Record<string, unknown>
 }
 
+// Unified admission controller interface
+export interface AdmissionController {
+  apiVersion: string
+  kind: string
+  metadata: {
+    name: string
+    namespace?: string
+    creationTimestamp: string
+    uid?: string
+    resourceVersion?: string
+    labels?: Record<string, string>
+    annotations?: Record<string, string>
+  }
+  type: 'validating' | 'mutating'
+  spec?: Record<string, unknown>
+}
+
 export interface CustomResourceList {
   apiVersion: string
   kind: string
@@ -100,6 +118,9 @@ export type ResourceType =
   | 'plans'
   | 'middlewares'
   | 'ingressroutes'
+  | 'validatingwebhookconfigurations'
+  | 'mutatingwebhookconfigurations'
+  | 'admission-controllers'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -113,6 +134,9 @@ export const clusterScopeResources: ResourceType[] = [
   'proxyclasses',
   'proxygroups',
   'plans',
+  'validatingwebhookconfigurations',
+  'mutatingwebhookconfigurations',
+  'admission-controllers',
 ]
 
 type listMetadataType = {
@@ -238,6 +262,18 @@ export interface ResourcesTypeMap {
     items: CustomResource[]
     metadata?: listMetadataType
   }
+  validatingwebhookconfigurations: {
+    items: ValidatingWebhookConfiguration[]
+    metadata?: listMetadataType
+  }
+  mutatingwebhookconfigurations: {
+    items: MutatingWebhookConfiguration[]
+    metadata?: listMetadataType
+  }
+  'admission-controllers': {
+    items: AdmissionController[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -289,6 +325,9 @@ export interface ResourceTypeMap {
   plans: CustomResource
   middlewares: CustomResource
   ingressroutes: CustomResource
+  validatingwebhookconfigurations: ValidatingWebhookConfiguration
+  mutatingwebhookconfigurations: MutatingWebhookConfiguration
+  'admission-controllers': AdmissionController
 }
 
 export interface RecentEvent {

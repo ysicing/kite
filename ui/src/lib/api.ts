@@ -408,24 +408,35 @@ export const useResourcesV2 = <T extends ResourceType>(
 export const fetchResource = <T>(
   resource: string,
   name: string,
-  namespace?: string
+  namespace?: string,
+  queryParams?: Record<string, string>
 ): Promise<T> => {
-  const endpoint = namespace
+  let endpoint = namespace
     ? `/${resource}/${namespace}/${name}`
     : `/${resource}/${name}`
+  
+  if (queryParams) {
+    const params = new URLSearchParams(queryParams)
+    endpoint += `?${params.toString()}`
+  }
+  
   return fetchAPI<T>(endpoint)
 }
 export const useResource = <T extends keyof ResourceTypeMap>(
   resource: T,
   name: string,
   namespace?: string,
-  options?: { staleTime?: number; refreshInterval?: number }
+  options?: { 
+    staleTime?: number; 
+    refreshInterval?: number;
+    queryParams?: Record<string, string>
+  }
 ) => {
   const ns = namespace || '_all'
   return useQuery({
-    queryKey: [resource.slice(0, -1), ns, name], // Remove 's' from resource name for singular
+    queryKey: [resource.slice(0, -1), ns, name, options?.queryParams], // Remove 's' from resource name for singular
     queryFn: () => {
-      return fetchResource<ResourceTypeMap[T]>(resource, name, ns)
+      return fetchResource<ResourceTypeMap[T]>(resource, name, ns, options?.queryParams)
     },
     retry: 1,
     refetchOnWindowFocus: 'always',

@@ -22,6 +22,8 @@ import VersionTest from './pages/version-test'
 import { AdvancedDaemonSetListPage } from './pages/advanced-daemonset-list-page'
 import { AdvancedDaemonSetDetail } from './pages/advanced-daemonset-detail'
 import { ConnectorDetail } from './pages/connector-detail'
+import AdmissionControllerDetailWrapper from './pages/admission-controller-detail'
+import { AdmissionControllerListPage } from './pages/admission-controller-list-page'
 
 // Route wrapper for AdvancedDaemonSetDetail
 function AdvancedDaemonSetDetailWrapper() {
@@ -118,6 +120,15 @@ export const router = createBrowserRouter([
       {
         path: 'connectors/:name',
         element: <ConnectorDetailWrapper />,
+      },
+      // Admission Controller specific routes
+      {
+        path: 'admission-controllers',
+        element: <AdmissionControllerListPage />,
+      },
+      {
+        path: 'admission-controllers/:name',
+        element: <AdmissionControllerDetailWrapper />,
       },
       {
         path: 'crds/:crd',

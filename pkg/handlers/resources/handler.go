@@ -17,6 +17,7 @@ import (
 	kruiseappsv1alpha1 "github.com/openkruise/kruise-api/apps/v1alpha1"
 	kruiseappsv1beta1 "github.com/openkruise/kruise-api/apps/v1beta1"
 	kruisepolicyv1alpha1 "github.com/openkruise/kruise-api/policy/v1alpha1"
+	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -897,27 +898,30 @@ func RegisterRoutes(group *gin.RouterGroup) {
 	// Note: All handlers now get the k8s client from gin context instead of being passed it during initialization
 	// We pass nil as the k8sClient parameter since handlers will get it from context
 	handlers = map[string]resourceHandler{
-		"namespaces":             NewGenericResourceHandler[*corev1.Namespace, *corev1.NamespaceList]("namespaces", true, false),
-		"persistentvolumes":      NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, false),
-		"persistentvolumeclaims": NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
-		"configmaps":             NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, false),
-		"secrets":                NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, false),
-		"services":               NewGenericResourceHandler[*corev1.Service, *corev1.ServiceList]("services", false, true),
-		"endpoints":              NewGenericResourceHandler[*corev1.Endpoints, *corev1.EndpointsList]("endpoints", false, false),
-		"endpointslices":         NewGenericResourceHandler[*discoveryv1.EndpointSlice, *discoveryv1.EndpointSliceList]("endpointslices", false, false),
-		"pods":                   NewGenericResourceHandler[*corev1.Pod, *corev1.PodList]("pods", false, true),
-		"replicasets":            NewGenericResourceHandler[*appsv1.ReplicaSet, *appsv1.ReplicaSetList]("replicasets", false, false),
-		"statefulsets":           NewGenericResourceHandler[*appsv1.StatefulSet, *appsv1.StatefulSetList]("statefulsets", false, false),
-		"daemonsets":             NewGenericResourceHandler[*appsv1.DaemonSet, *appsv1.DaemonSetList]("daemonsets", false, true),
-		"jobs":                   NewGenericResourceHandler[*batchv1.Job, *batchv1.JobList]("jobs", false, false),
-		"cronjobs":               NewGenericResourceHandler[*batchv1.CronJob, *batchv1.CronJobList]("cronjobs", false, false),
-		"ingresses":              NewGenericResourceHandler[*networkingv1.Ingress, *networkingv1.IngressList]("ingresses", false, false),
-		"storageclasses":         NewStorageClassHandler(),
-		"roles":                  NewGenericResourceHandler[*rbacv1.Role, *rbacv1.RoleList]("roles", false, false),
-		"rolebindings":           NewGenericResourceHandler[*rbacv1.RoleBinding, *rbacv1.RoleBindingList]("rolebindings", false, false),
-		"clusterroles":           NewGenericResourceHandler[*rbacv1.ClusterRole, *rbacv1.ClusterRoleList]("clusterroles", true, false),
-		"clusterrolebindings":    NewGenericResourceHandler[*rbacv1.ClusterRoleBinding, *rbacv1.ClusterRoleBindingList]("clusterrolebindings", true, false),
-		"crds":                   NewGenericResourceHandler[*apiextensionsv1.CustomResourceDefinition, *apiextensionsv1.CustomResourceDefinitionList]("crds", true, false),
+		"namespaces":                      NewGenericResourceHandler[*corev1.Namespace, *corev1.NamespaceList]("namespaces", true, false),
+		"persistentvolumes":               NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, false),
+		"persistentvolumeclaims":          NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
+		"configmaps":                      NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, true),
+		"secrets":                         NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, true),
+		"services":                        NewGenericResourceHandler[*corev1.Service, *corev1.ServiceList]("services", false, true),
+		"endpoints":                       NewGenericResourceHandler[*corev1.Endpoints, *corev1.EndpointsList]("endpoints", false, false),
+		"endpointslices":                  NewGenericResourceHandler[*discoveryv1.EndpointSlice, *discoveryv1.EndpointSliceList]("endpointslices", false, false),
+		"pods":                            NewGenericResourceHandler[*corev1.Pod, *corev1.PodList]("pods", false, true),
+		"replicasets":                     NewGenericResourceHandler[*appsv1.ReplicaSet, *appsv1.ReplicaSetList]("replicasets", false, false),
+		"statefulsets":                    NewGenericResourceHandler[*appsv1.StatefulSet, *appsv1.StatefulSetList]("statefulsets", false, false),
+		"daemonsets":                      NewGenericResourceHandler[*appsv1.DaemonSet, *appsv1.DaemonSetList]("daemonsets", false, true),
+		"jobs":                            NewGenericResourceHandler[*batchv1.Job, *batchv1.JobList]("jobs", false, false),
+		"cronjobs":                        NewGenericResourceHandler[*batchv1.CronJob, *batchv1.CronJobList]("cronjobs", false, false),
+		"ingresses":                       NewGenericResourceHandler[*networkingv1.Ingress, *networkingv1.IngressList]("ingresses", false, false),
+		"storageclasses":                  NewStorageClassHandler(),
+		"roles":                           NewGenericResourceHandler[*rbacv1.Role, *rbacv1.RoleList]("roles", false, false),
+		"rolebindings":                    NewGenericResourceHandler[*rbacv1.RoleBinding, *rbacv1.RoleBindingList]("rolebindings", false, false),
+		"clusterroles":                    NewGenericResourceHandler[*rbacv1.ClusterRole, *rbacv1.ClusterRoleList]("clusterroles", true, false),
+		"clusterrolebindings":             NewGenericResourceHandler[*rbacv1.ClusterRoleBinding, *rbacv1.ClusterRoleBindingList]("clusterrolebindings", true, false),
+		"crds":                            NewGenericResourceHandler[*apiextensionsv1.CustomResourceDefinition, *apiextensionsv1.CustomResourceDefinitionList]("crds", true, false),
+		"validatingwebhookconfigurations": NewGenericResourceHandler[*admissionregistrationv1.ValidatingWebhookConfiguration, *admissionregistrationv1.ValidatingWebhookConfigurationList]("validatingwebhookconfigurations", true, false),
+		"mutatingwebhookconfigurations":   NewGenericResourceHandler[*admissionregistrationv1.MutatingWebhookConfiguration, *admissionregistrationv1.MutatingWebhookConfigurationList]("mutatingwebhookconfigurations", true, false),
+		"admission-controllers":           NewAdmissionControllerHandler(),
 
 		"events":      NewEventHandler(),
 		"deployments": NewDeploymentHandler(),
@@ -959,10 +963,10 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"traefikservices":   NewTraefikResourceHandler("traefikservices", "traefikservices.traefik.io", "TraefikService", "traefik.io", "v1alpha1"),
 		"serverstransports": NewTraefikResourceHandler("serverstransports", "serverstransports.traefik.io", "ServersTransport", "traefik.io", "v1alpha1"),
 
-		"podmetrics":             NewGenericResourceHandler[*metricsv1.PodMetrics, *metricsv1.PodMetricsList]("metrics.k8s.io", false, false),
-		"nodemetrics":            NewGenericResourceHandler[*metricsv1.NodeMetrics, *metricsv1.NodeMetricsList]("metrics.k8s.io", false, false),
-		"gateways":               NewGenericResourceHandler[*gatewayapiv1.Gateway, *gatewayapiv1.GatewayList]("gateways", false, true),
-		"httproutes":             NewGenericResourceHandler[*gatewayapiv1.HTTPRoute, *gatewayapiv1.HTTPRouteList]("httproutes", false, true),
+		"podmetrics":  NewGenericResourceHandler[*metricsv1.PodMetrics, *metricsv1.PodMetricsList]("metrics.k8s.io", false, false),
+		"nodemetrics": NewGenericResourceHandler[*metricsv1.NodeMetrics, *metricsv1.NodeMetricsList]("metrics.k8s.io", false, false),
+		"gateways":    NewGenericResourceHandler[*gatewayapiv1.Gateway, *gatewayapiv1.GatewayList]("gateways", false, true),
+		"httproutes":  NewGenericResourceHandler[*gatewayapiv1.HTTPRoute, *gatewayapiv1.HTTPRouteList]("httproutes", false, true),
 	}
 
 	for name, handler := range handlers {
