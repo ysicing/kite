@@ -24,6 +24,7 @@
     "restart": "重启",
     "scale": "扩缩容",
     "overview": "概览",
+    "viewDetails": "查看详情",
     "available": "可用",
     "unavailable": "不可用",
     "language": "语言",
@@ -77,6 +78,7 @@
     "uid": "UID",
     "statistics": "统计信息",
     "noData": "无数据",
+    "conditions": "状态",
     "other": "其他",
     "timeUnits": {
       "days": "天",
@@ -96,6 +98,7 @@
     "deleteSuccess": "删除成功"
   },
   "nav": {
+    "features": "高级特性",
     "cluster": "集群",
     "workloads": "工作负载",
     "openkruise": "OpenKruise",
@@ -605,6 +608,9 @@
     "connectors": {
       "title": "连接器",
       "description": "管理子网路由器、出口节点和应用连接器以实现安全网络访问",
+      "networkConfig": "网络配置",
+      "advertiseRoutes": "发布路由",
+      "subnetRouter": "子网路由器",
       "list": "连接器列表",
       "empty": "未找到连接器",
       "type": "类型",

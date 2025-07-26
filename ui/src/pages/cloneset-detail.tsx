@@ -576,7 +576,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 {status?.conditions && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>{t('openkruise.clonesets.conditions')}</CardTitle>
+                      <CardTitle>{t('common.conditions')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">

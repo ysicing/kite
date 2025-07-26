@@ -24,6 +24,7 @@
     "restart": "Restart",
     "scale": "Scale",
     "overview": "Overview",
+    "viewDetails": "View Details",
     "available": "Available",
     "unavailable": "Unavailable",
     "language": "Language",
@@ -77,6 +78,7 @@
     "uid": "UID",
     "statistics": "Statistics",
     "noData": "No data available",
+    "conditions": "Conditions",
     "other": "Other",
     "timeUnits": {
       "days": "d",
@@ -96,6 +98,7 @@
     "deleteSuccess": "Delete successful"
   },
   "nav": {
+    "features": "Advanced Features",
     "cluster": "Cluster",
     "workloads": "Workloads",
     "openkruise": "OpenKruise",
@@ -605,6 +608,9 @@
     "connectors": {
       "title": "Connectors",
       "description": "Manage subnet routers, exit nodes, and app connectors for secure network access",
+      "networkConfig": "Network",
+      "advertiseRoutes": "Advertise Routes",
+      "subnetRouter": "Subnet Router",
       "list": "Connector List",
       "empty": "No connectors found",
       "type": "Type",

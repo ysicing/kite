@@ -122,13 +122,17 @@ const ConnectorListPage: React.FC = () => {
     columnHelper.accessor((row) => getConnectorType(row), {
       header: t('tailscale.connectors.type'),
       cell: ({ getValue }) => (
-        <span className="text-sm">{getValue()}</span>
+        <div className="text-center">
+          <span className="text-sm">{getValue()}</span>
+        </div>
       ),
     }),
     columnHelper.accessor((row) => row.spec.hostname || row.status?.hostname || '-', {
       header: t('tailscale.connectors.hostname'),
       cell: ({ getValue }) => (
-        <span className="text-sm font-mono">{getValue()}</span>
+        <div className="text-center">
+          <span className="text-sm font-mono">{getValue()}</span>
+        </div>
       ),
     }),
     columnHelper.accessor((row) => row.spec.subnetRouter?.advertiseRoutes || row.spec.appConnector?.routes, {
@@ -136,7 +140,7 @@ const ConnectorListPage: React.FC = () => {
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
           {row.original.spec.subnetRouter?.advertiseRoutes && (
-            <div className="flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-1 text-sm justify-center">
               <IconRoute className="h-3 w-3" />
               <span className="font-mono">
                 {formatRoutes(row.original.spec.subnetRouter.advertiseRoutes)}
@@ -144,7 +148,7 @@ const ConnectorListPage: React.FC = () => {
             </div>
           )}
           {row.original.spec.appConnector?.routes && (
-            <div className="flex items-center gap-1 text-sm">
+            <div className="flex items-center gap-1 text-sm justify-center">
               <IconExternalLink className="h-3 w-3" />
               <span className="font-mono">
                 {formatRoutes(row.original.spec.appConnector.routes)}
@@ -159,16 +163,18 @@ const ConnectorListPage: React.FC = () => {
       cell: ({ getValue }) => {
         const proxyClass = getValue()
         return (
-          <span className="text-sm">
-            {proxyClass ? (
-              <Link 
-                to={`/proxyclasses/${proxyClass}`}
-                className="text-blue-600 hover:underline"
-              >
-                {proxyClass}
-              </Link>
-            ) : '-'}
-          </span>
+          <div className="text-center">
+            <span className="text-sm">
+              {proxyClass ? (
+                <Link 
+                  to={`/proxyclasses/${proxyClass}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  {proxyClass}
+                </Link>
+              ) : '-'}
+            </span>
+          </div>
         )
       },
     }),
@@ -177,7 +183,7 @@ const ConnectorListPage: React.FC = () => {
       cell: ({ getValue }) => {
         const tags = getValue()
         return (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 justify-center">
             {tags?.map((tag, index) => (
               <Badge key={index} variant="outline" className="text-xs">
                 <IconTag className="h-3 w-3 mr-1" />
@@ -193,10 +199,12 @@ const ConnectorListPage: React.FC = () => {
       cell: ({ getValue }) => {
         const { status, variant, icon } = getValue()
         return (
-          <Badge variant={variant} className="flex items-center gap-1">
-            {icon}
-            {status}
-          </Badge>
+          <div className="flex justify-center">
+            <Badge variant={variant} className="flex items-center gap-1">
+              {icon}
+              {status}
+            </Badge>
+          </div>
         )
       },
     }),

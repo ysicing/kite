@@ -89,13 +89,13 @@ func (h *AdvancedDaemonSetHandler) ScaleAdvancedDaemonSet(c *gin.Context) {
 func (h *AdvancedDaemonSetHandler) ListAdvancedDaemonSetRelatedResources(c *gin.Context) {
 	namespace := c.Param("namespace")
 	name := c.Param("name")
-	
+
 	// Validate parameters
 	if namespace == "" || name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "namespace and name are required"})
 		return
 	}
-	
+
 	ctx := c.Request.Context()
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
 
@@ -169,13 +169,13 @@ func (h *AdvancedDaemonSetHandler) ListAdvancedDaemonSetRelatedResources(c *gin.
 func (h *AdvancedDaemonSetHandler) GetAdvancedDaemonSetStatus(c *gin.Context) {
 	namespace := c.Param("namespace")
 	name := c.Param("name")
-	
+
 	// Validate parameters
 	if namespace == "" || name == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "namespace and name are required"})
 		return
 	}
-	
+
 	ctx := c.Request.Context()
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
 

@@ -275,7 +275,7 @@ export default function UpgradePlanDetail() {
                       <div className="space-y-4">
                         {upgradePlan.status.conditions && upgradePlan.status.conditions.length > 0 && (
                           <div>
-                            <h4 className="font-medium mb-2">{t('systemUpgrade.conditions')}</h4>
+                            <h4 className="font-medium mb-2">{t('common.conditions')}</h4>
                             <div className="space-y-2">
                               {upgradePlan.status.conditions.map((condition: any, index: number) => (
                                 <div key={index} className="p-3 border rounded-lg">

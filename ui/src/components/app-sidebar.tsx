@@ -46,6 +46,8 @@ import {
 import { ClusterSelector } from './cluster-selector'
 import { Collapsible, CollapsibleTrigger } from './ui/collapsible'
 
+
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation()
   const location = useLocation()
@@ -64,30 +66,109 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/nodes',
         icon: IconServer2,
       },
-      // Always show OpenKruise in cluster group
+    ],
+    [t('nav.features')]: [
+      // Always show Advanced Features Overview first
       {
-        title: t('nav.openkruise'),
-        url: '/openkruise',
-        icon: IconStack3,
-      },
-      // Always show Tailscale in cluster group
-      {
-        title: t('nav.tailscale'),
-        url: '/tailscale',
-        icon: IconNetwork,
-      },
-      // Always show Traefik in traffic group
-      {
-        title: t('nav.traefik'),
-        url: '/traefik',
+        title: t('common.overview'),
+        url: '/advanced-features',
         icon: IconLayoutDashboard,
       },
-      // Always show System Upgrade Controller in cluster group
-      {
-        title: t('nav.systemUpgrade'),
-        url: '/system-upgrade',
-        icon: IconArrowUp,
-      },
+      // OpenKruise as nested group
+      ...(openKruiseStatus?.installed ? [
+        {
+          title: t('nav.openkruise'),
+          icon: IconStack3,
+          isGroup: true,
+          children: [
+            {
+              title: t('nav.clonesets'),
+              url: '/clonesets',
+              icon: IconRocket,
+            },
+            {
+              title: t('nav.advancedstatefulsets'),
+              url: '/advancedstatefulsets',
+              icon: IconStack2,
+            },
+            {
+              title: t('nav.advanceddaemonsets'),
+              url: '/advanceddaemonsets',
+              icon: IconTopologyBus,
+            },
+            {
+              title: t('nav.broadcastjobs'),
+              url: '/broadcastjobs',
+              icon: IconPlayerPlay,
+            },
+            {
+              title: t('nav.advancedcronjobs'),
+              url: '/advancedcronjobs',
+              icon: IconClockHour4,
+            },
+            {
+              title: t('nav.sidecarsets'),
+              url: '/sidecarsets',
+              icon: IconBox,
+            },
+          ]
+        },
+      ] : []),
+      // Tailscale as nested group
+      ...(tailscaleStatus?.installed ? [
+        {
+          title: t('nav.tailscale'),
+          icon: IconNetwork,
+          isGroup: true,
+          children: [
+            {
+              title: t('nav.connectors'),
+              url: '/connectors',
+              icon: IconHttpConnect,
+            },
+            {
+              title: t('nav.proxyclasses'),
+              url: '/proxyclasses',
+              icon: IconRouter,
+            },
+          ]
+        },
+      ] : []),
+      // System Upgrade as nested group
+      ...(systemUpgradeStatus?.installed ? [
+        {
+          title: t('nav.systemUpgrade'),
+          icon: IconArrowUp,
+          isGroup: true,
+          children: [
+            {
+              title: t('nav.plans'),
+              url: '/plans',
+              icon: IconArrowUp,
+            },
+          ]
+        },
+      ] : []),
+      // Traefik as nested group
+      ...(traefikStatus?.installed ? [
+        {
+          title: t('nav.traefik'),
+          icon: IconRouter,
+          isGroup: true,
+          children: [
+            {
+              title: t('nav.ingressroutes'),
+              url: '/ingressroutes',
+              icon: IconRouter,
+            },
+            {
+              title: t('nav.middlewares'),
+              url: '/middlewares',
+              icon: IconCode,
+            },
+          ]
+        },
+      ] : []),
     ],
     [t('nav.workloads')]: [
       {
@@ -121,89 +202,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: IconClockHour4,
       },
     ],
-    ...(openKruiseStatus?.installed ? {
-      [t('nav.openkruise')]: [
-        {
-          title: t('nav.clonesets'),
-          url: '/clonesets',
-          icon: IconRocket,
-        },
-        {
-          title: t('nav.advancedstatefulsets'),
-          url: '/advancedstatefulsets',
-          icon: IconStack2,
-        },
-        {
-          title: t('nav.advanceddaemonsets'),
-          url: '/advanceddaemonsets',
-          icon: IconTopologyBus,
-        },
-        {
-          title: t('nav.broadcastjobs'),
-          url: '/broadcastjobs',
-          icon: IconPlayerPlay,
-        },
-        {
-          title: t('nav.advancedcronjobs'),
-          url: '/advancedcronjobs',
-          icon: IconClockHour4,
-        },
-        {
-          title: t('nav.sidecarsets'),
-          url: '/sidecarsets',
-          icon: IconBox,
-        },
-        // {
-        //   title: t('nav.imagepulljobs'),
-        //   url: '/imagepulljobs',
-        //   icon: IconDatabase,
-        // },
-        // {
-        //   title: t('nav.nodeimages'),
-        //   url: '/nodeimages',
-        //   icon: IconServer2,
-        // },
-      ]
-    } : {}),
-    ...(tailscaleStatus?.installed ? {
-      [t('nav.tailscale')]: [
-        {
-          title: t('common.overview'),
-          url: '/tailscale-overview',
-          icon: IconLayoutDashboard,
-        },
-        {
-          title: t('nav.connectors'),
-          url: '/connectors',
-          icon: IconHttpConnect,
-        },
-        {
-          title: t('nav.proxyclasses'),
-          url: '/proxyclasses',
-          icon: IconRouter,
-        },
-        // ProxyGroups 默认隐藏，可以通过直接访问 URL 使用
-        // {
-        //   title: t('nav.proxygroups'),
-        //   url: '/proxygroups',
-        //   icon: IconNetwork,
-        // },
-      ]
-    } : {}),
-    ...(systemUpgradeStatus?.installed ? {
-      [t('nav.systemUpgrade')]: [
-        {
-          title: t('common.overview'),
-          url: '/system-upgrade-overview',
-          icon: IconLayoutDashboard,
-        },
-        {
-          title: t('nav.plans'),
-          url: '/plans',
-          icon: IconArrowUp,
-        },
-      ]
-    } : {}),
     [t('nav.traffic')]: [
       {
         title: t('nav.services'),
@@ -215,18 +213,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/ingresses',
         icon: IconRouter,
       },
-    ...(traefikStatus?.installed ? [
-        {
-          title: t('nav.ingressroutes'),
-          url: '/ingressroutes',
-          icon: IconRouter,
-        },
-        {
-          title: t('nav.middlewares'),
-          url: '/middlewares',
-          icon: IconCode,
-        },
-      ]:[]),
     ],
     [t('nav.storage')]: [
       {
@@ -340,20 +326,56 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <CollapsibleContent>
                 <SidebarGroupContent className="flex flex-col gap-2">
                   <SidebarMenu>
-                    {items.map((item) => (
+                    {items.map((item: any) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          tooltip={item.title}
-                          asChild
-                          isActive={isActive(item.url)}
-                        >
-                          <Link to={item.url} onClick={handleMenuItemClick}>
-                            {item.icon && (
-                              <item.icon className="text-sidebar-primary" />
-                            )}
-                            <span>{item.title}</span>
-                          </Link>
-                        </SidebarMenuButton>
+                        {item.isGroup ? (
+                          // Nested group
+                          <Collapsible defaultOpen className="group/nested-collapsible">
+                            <SidebarMenuButton asChild>
+                              <CollapsibleTrigger className="w-full">
+                                {item.icon && (
+                                  <item.icon className="text-sidebar-primary" />
+                                )}
+                                <span>{item.title}</span>
+                                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/nested-collapsible:rotate-180" />
+                              </CollapsibleTrigger>
+                            </SidebarMenuButton>
+                            <CollapsibleContent>
+                              <SidebarMenu className="ml-4 mt-1">
+                                {item.children?.map((child: any) => (
+                                  <SidebarMenuItem key={child.title}>
+                                    <SidebarMenuButton
+                                      tooltip={child.title}
+                                      asChild
+                                      isActive={isActive(child.url)}
+                                    >
+                                      <Link to={child.url} onClick={handleMenuItemClick}>
+                                        {child.icon && (
+                                          <child.icon className="text-sidebar-primary" />
+                                        )}
+                                        <span>{child.title}</span>
+                                      </Link>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                                ))}
+                              </SidebarMenu>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        ) : (
+                          // Regular menu item
+                          <SidebarMenuButton
+                            tooltip={item.title}
+                            asChild
+                            isActive={isActive(item.url)}
+                          >
+                            <Link to={item.url} onClick={handleMenuItemClick}>
+                              {item.icon && (
+                                <item.icon className="text-sidebar-primary" />
+                              )}
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        )}
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>

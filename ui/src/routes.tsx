@@ -12,19 +12,27 @@ import ConnectorListPage from './pages/connector-list-page'
 import ProxyClassListPage from './pages/proxyclass-list-page'
 import TailscaleOverviewPage from './pages/tailscale-overview-page'
 import SystemUpgradeOverviewPage from './pages/system-upgrade-overview-page'
+import AdvancedFeaturesOverview from './pages/advanced-features-overview'
 import UpgradePlansListPage from './pages/upgrade-plans-list-page'
 import { Overview } from './pages/overview'
 import { ResourceDetail } from './pages/resource-detail'
 import { ResourceList } from './pages/resource-list'
 import { StorageClassDetailPage } from './pages/storageclass-detail-page'
-import { VersionTestPage } from './pages/version-test'
+import VersionTest from './pages/version-test'
 import { AdvancedDaemonSetListPage } from './pages/advanced-daemonset-list-page'
 import { AdvancedDaemonSetDetail } from './pages/advanced-daemonset-detail'
+import { ConnectorDetail } from './pages/connector-detail'
 
 // Route wrapper for AdvancedDaemonSetDetail
 function AdvancedDaemonSetDetailWrapper() {
   const { namespace, name } = useParams<{ namespace: string; name: string }>()
   return <AdvancedDaemonSetDetail namespace={namespace || ''} name={name || ''} />
+}
+
+// Route wrapper for ConnectorDetail
+function ConnectorDetailWrapper() {
+  const { name } = useParams<{ name: string }>()
+  return <ConnectorDetail name={name || ''} />
 }
 
 export const router = createBrowserRouter([
@@ -47,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <Overview />,
+      },
+      {
+        path: 'advanced-features',
+        element: <AdvancedFeaturesOverview />,
       },
       {
         path: 'openkruise',
@@ -86,7 +98,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'version-test',
-        element: <VersionTestPage />,
+        element: <VersionTest />,
       },
       // AdvancedDaemonSet specific routes
       {
@@ -101,6 +113,11 @@ export const router = createBrowserRouter([
       {
         path: 'storageclasses/:name',
         element: <StorageClassDetailPage />,
+      },
+      // Connector specific routes
+      {
+        path: 'connectors/:name',
+        element: <ConnectorDetailWrapper />,
       },
       {
         path: 'crds/:crd',

@@ -1173,6 +1173,16 @@ export interface TraefikStatus {
   installed: boolean
   version?: string
   workloads: TraefikWorkload[]
+  ingressRoutes?: {
+    total: number
+    active: number
+  }
+  middlewares?: {
+    total: number
+  }
+  services?: {
+    total: number
+  }
 }
 
 export const useTraefikStatus = () => {

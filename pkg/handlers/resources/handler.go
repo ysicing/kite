@@ -286,19 +286,40 @@ func GetTailscaleStatus(c *gin.Context) {
 
 	// Try to get version from tailscale-operator deployment
 	if status.Installed {
-		var deployment appsv1.Deployment
-		if err := cs.K8sClient.Get(ctx, types.NamespacedName{
-			Name:      "tailscale-operator",
-			Namespace: "tailscale",
-		}, &deployment); err == nil {
-			// Extract version from image tag if possible
-			for _, container := range deployment.Spec.Template.Spec.Containers {
-				if container.Name == "operator" {
-					status.Version = extractVersionFromImage(container.Image)
-					break
+		// Try multiple common deployment names and namespaces
+		deploymentConfigs := []struct {
+			name       string
+			namespace  string
+			containers []string
+		}{
+			{"operator", "tailscale", []string{"operator", "tailscale-operator"}},
+			{"tailscale-operator", "tailscale", []string{"operator", "tailscale-operator"}},
+			{"tailscale-operator", "kube-system", []string{"operator", "tailscale-operator"}},
+			{"tailscale-operator", "default", []string{"operator", "tailscale-operator"}},
+			{"operator", "kube-system", []string{"operator", "tailscale-operator"}},
+		}
+
+		for _, config := range deploymentConfigs {
+			var deployment appsv1.Deployment
+			if err := cs.K8sClient.Get(ctx, types.NamespacedName{
+				Name:      config.name,
+				Namespace: config.namespace,
+			}, &deployment); err == nil {
+				// Extract version from image tag if possible
+				for _, container := range deployment.Spec.Template.Spec.Containers {
+					for _, containerName := range config.containers {
+						if container.Name == containerName {
+							version := extractVersionFromImage(container.Image)
+							if version != "unknown" {
+								status.Version = version
+								goto versionFound
+							}
+						}
+					}
 				}
 			}
 		}
+	versionFound:
 	}
 
 	status.Workloads = workloads
@@ -401,7 +422,7 @@ func GetTraefikStatus(c *gin.Context) {
 			}
 		} else {
 			// Try common namespace alternatives
-			for _, ns := range []string{"traefik", "kube-system", "default"} {
+			for _, ns := range []string{"traefik-v2", "traefik", "kube-system", "default"} {
 				if err := cs.K8sClient.Get(ctx, types.NamespacedName{
 					Name:      "traefik",
 					Namespace: ns,
@@ -829,9 +850,22 @@ func getTraefikCRDName(kind string) string {
 
 // extractVersionFromImage extracts version from container image
 func extractVersionFromImage(image string) string {
-	parts := strings.Split(image, ":")
-	if len(parts) > 1 {
-		return parts[len(parts)-1]
+	// Remove any registry prefix and get just the image:tag part
+	parts := strings.Split(image, "/")
+	imageWithTag := parts[len(parts)-1]
+
+	// Split by colon to get tag
+	tagParts := strings.Split(imageWithTag, ":")
+	if len(tagParts) > 1 {
+		tag := tagParts[len(tagParts)-1]
+
+		// Skip common non-version tags
+		if tag == "latest" || tag == "stable" || tag == "main" || tag == "master" {
+			return "unknown"
+		}
+
+		// Return the tag (which should be the version)
+		return tag
 	}
 	return "unknown"
 }
