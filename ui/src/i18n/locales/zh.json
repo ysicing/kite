@@ -85,6 +85,8 @@
     "conditions": "状态",
     "serviceAccount": "服务账户",
     "type": "类型",
+    "hosts": "主机",
+    "loadBalancer": "负载均衡器",
     "other": "其他",
     "timeUnits": {
       "days": "天",
@@ -720,7 +722,6 @@
       "list": "入口路由列表",
       "empty": "未找到入口路由",
       "entryPoints": "入口点",
-      "hosts": "主机",
       "paths": "路径",
       "services": "服务",
       "middlewares": "中间件",
@@ -903,9 +904,7 @@
   "ingress": {
     "noTLSConfigured": "未配置 TLS",
     "tlsConfiguration": "TLS 配置",
-    "hosts": "主机",
     "secretName": "密钥名称",
-    "host": "主机",
     "path": "路径",
     "service": "服务",
     "port": "端口",

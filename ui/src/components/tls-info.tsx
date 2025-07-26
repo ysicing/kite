@@ -34,7 +34,7 @@ export function TLSInfo({ ingress }: { ingress: Ingress }) {
           <CardContent className="space-y-4">
             <div>
               <Label className="text-xs text-muted-foreground">
-                {t('ingress.hosts')}
+                {t('common.hosts')}
               </Label>
               <div className="flex flex-wrap gap-2 mt-1">
                 {tlsEntry.hosts?.map((host, hostIndex) => (

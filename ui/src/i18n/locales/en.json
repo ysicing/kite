@@ -85,6 +85,8 @@
     "conditions": "Conditions",
     "serviceAccount": "Service Account",
     "type": "Type",
+    "hosts": "Host(s)",
+    "loadBalancer": "Load Balancer",
     "other": "Other",
     "timeUnits": {
       "days": "d",
@@ -720,7 +722,6 @@
       "list": "Ingress Route List",
       "empty": "No ingress routes found",
       "entryPoints": "Entry Points",
-      "hosts": "Hosts",
       "paths": "Paths",
       "services": "Services",
       "middlewares": "Middlewares",
@@ -902,9 +903,7 @@
   "ingress": {
     "noTLSConfigured": "No TLS configured",
     "tlsConfiguration": "TLS Configuration",
-    "hosts": "Hosts",
     "secretName": "Secret Name",
-    "host": "Host",
     "path": "Path",
     "service": "Service",
     "port": "Port",

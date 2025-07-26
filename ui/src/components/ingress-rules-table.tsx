@@ -67,7 +67,7 @@ export function IngressRulesTable(props: {
   const columns = useMemo(
     (): Column<IngressRule>[] => [
       {
-        header: t('ingress.host'),
+        header: t('common.hosts'),
         accessor: (rule) => rule.host,
         cell: (value: unknown) => (
           <div className="font-medium">{value as string || '*'}</div>
