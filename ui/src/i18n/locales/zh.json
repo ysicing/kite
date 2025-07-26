@@ -899,5 +899,18 @@
   },
   "configmaps": {
     "cannotDeleteKubeRootCA": "无法删除 kube-root-ca.crt 配置映射"
+  },
+  "ingress": {
+    "noTLSConfigured": "未配置 TLS",
+    "tlsConfiguration": "TLS 配置",
+    "hosts": "主机",
+    "secretName": "密钥名称",
+    "host": "主机",
+    "path": "路径",
+    "service": "服务",
+    "port": "端口",
+    "tls": "TLS",
+    "secret": "密钥",
+    "rules": "规则"
   }
 }

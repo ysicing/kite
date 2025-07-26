@@ -898,5 +898,18 @@
   },
   "configmaps": {
     "cannotDeleteKubeRootCA": "Cannot delete kube-root-ca.crt ConfigMap"
+  },
+  "ingress": {
+    "noTLSConfigured": "No TLS configured",
+    "tlsConfiguration": "TLS Configuration",
+    "hosts": "Hosts",
+    "secretName": "Secret Name",
+    "host": "Host",
+    "path": "Path",
+    "service": "Service",
+    "port": "Port",
+    "tls": "TLS",
+    "secret": "Secret",
+    "rules": "Rules"
   }
 }

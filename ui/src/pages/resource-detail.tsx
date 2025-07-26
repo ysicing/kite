@@ -7,6 +7,7 @@ import { AdvancedDaemonSetDetail } from './advanced-daemonset-detail'
 import { CloneSetDetail } from './cloneset-detail'
 import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
+import { IngressDetail } from './ingress-detail'
 import { NodeDetail } from './node-detail'
 import { PodDetail } from './pod-detail'
 import { ProxyClassDetail } from './proxyclass-detail'
@@ -56,6 +57,8 @@ export function ResourceDetail() {
       return <PVDetailPage name={name} />
     case 'middlewares':
       return <MiddlewareDetail namespace={namespace!} name={name} />
+    case 'ingresses':
+      return <IngressDetail namespace={namespace!} name={name} />
     case 'ingressroutes':
       return <IngressRouteDetail namespace={namespace!} name={name} />
     default:
