@@ -943,7 +943,7 @@ export function NodeDetail(props: { name: string }) {
             label: t('common.terminal'),
             content: (
               <div className="space-y-6">
-                <Terminal type="node" namespace={name} />
+                <Terminal type="node" namespace="kube-system" nodeName={name} />
               </div>
             ),
           },

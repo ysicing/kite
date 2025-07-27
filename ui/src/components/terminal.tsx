@@ -42,6 +42,7 @@ interface TerminalProps {
   type?: 'node' | 'pod'
   namespace: string
   podName?: string
+  nodeName?: string
   pods?: Pod[]
   containers?: SimpleContainer
 }
@@ -49,6 +50,7 @@ interface TerminalProps {
 export function Terminal({
   namespace,
   podName,
+  nodeName,
   pods,
   containers = [],
   type = 'pod',
@@ -177,8 +179,13 @@ export function Terminal({
 
   // Unified terminal and websocket lifecycle
   useEffect(() => {
-    if (!pods || pods.length === 0) if (!selectedPod) return
-    if (!selectedContainer) return
+    if (type === 'pod') {
+      if (!pods || pods.length === 0) return
+      if (!selectedPod) return
+      if (!selectedContainer) return
+    } else if (type === 'node') {
+      if (!nodeName && !namespace) return
+    }
     if (!terminalRef.current) return
 
     if (xtermRef.current) xtermRef.current.dispose()
@@ -252,7 +259,7 @@ export function Terminal({
     const wsUrl =
       type === 'pod'
         ? `${protocol}//${host}/api/v1/terminal/${namespace}/${selectedPod}/ws?container=${selectedContainer}&x-cluster-name=${currentCluster}`
-        : `${protocol}//${host}/api/v1/node-terminal/${namespace}/ws?x-cluster-name=${currentCluster}`
+        : `${protocol}//${host}/api/v1/node-terminal/${nodeName || namespace}/ws?x-cluster-name=${currentCluster}`
     const websocket = new WebSocket(wsUrl)
     wsRef.current = websocket
 
@@ -405,7 +412,7 @@ export function Terminal({
       if (pingTimerRef.current) clearInterval(pingTimerRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPod, selectedContainer, namespace, type, updateNetworkStats])
+  }, [selectedPod, selectedContainer, namespace, nodeName, type, updateNetworkStats])
 
   // Clear terminal
   const clearTerminal = useCallback(() => {
