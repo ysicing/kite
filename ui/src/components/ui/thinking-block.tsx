@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ChevronDown, ChevronRight, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Markdown } from '@/components/ui/markdown'

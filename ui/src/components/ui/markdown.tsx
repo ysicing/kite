@@ -7,16 +7,15 @@ interface MarkdownProps {
 }
 
 export function Markdown({ content, className }: MarkdownProps) {
-  const parseMarkdown = (text: string): JSX.Element[] => {
+  const parseMarkdown = (text: string): React.JSX.Element[] => {
     const lines = text.split('\n')
-    const elements: JSX.Element[] = []
+    const elements: React.JSX.Element[] = []
     let inCodeBlock = false
-    let codeBlockLanguage = ''
     let codeBlockContent: string[] = []
     let listItems: string[] = []
     let inList = false
 
-    const processInlineMarkdown = (line: string): JSX.Element => {
+    const processInlineMarkdown = (line: string): React.JSX.Element => {
       // 处理行内代码
       line = line.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
       
@@ -58,7 +57,6 @@ export function Markdown({ content, className }: MarkdownProps) {
           </pre>
         )
         codeBlockContent = []
-        codeBlockLanguage = ''
         inCodeBlock = false
       }
     }
@@ -74,7 +72,6 @@ export function Markdown({ content, className }: MarkdownProps) {
         } else {
           flushList()
           inCodeBlock = true
-          codeBlockLanguage = trimmedLine.slice(3)
         }
         continue
       }
@@ -89,7 +86,7 @@ export function Markdown({ content, className }: MarkdownProps) {
         flushList()
         const level = trimmedLine.match(/^#+/)?.[0].length || 1
         const text = trimmedLine.replace(/^#+\s*/, '')
-        const Tag = `h${Math.min(level, 6)}` as keyof JSX.IntrinsicElements
+        const Tag = `h${Math.min(level, 6)}` as keyof React.JSX.IntrinsicElements
         
         elements.push(
           <Tag key={elements.length} className={cn(

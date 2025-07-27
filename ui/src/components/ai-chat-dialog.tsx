@@ -33,7 +33,7 @@ interface AiChatDialogProps {
 
 export function AiChatDialog({ isOpen, onClose }: AiChatDialogProps) {
   const { t } = useTranslation()
-  const { settings, isConfigured, isLoaded } = useAiSettings()
+  const { settings, isConfigured } = useAiSettings()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
