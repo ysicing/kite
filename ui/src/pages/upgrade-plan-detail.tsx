@@ -271,7 +271,7 @@ export default function UpgradePlanDetail() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
                       <CardHeader>
-                        <CardTitle>{t('systemUpgrade.nodeSelector')}</CardTitle>
+                        <CardTitle>{t('common.nodeSelector')}</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">

@@ -138,7 +138,7 @@ const ProxyClassListPage: React.FC = () => {
             {hasNodeSelector(proxyClass) && (
               <Badge variant="outline" className="text-xs">
                 <IconSettings className="h-3 w-3 mr-1" />
-                {t('tailscale.proxyclasses.featuresTypes.nodeSelector')}
+                {t('common.nodeSelector')}
               </Badge>
             )}
           </div>

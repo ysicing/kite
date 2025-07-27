@@ -280,7 +280,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
         <div>
           <h1 className="text-lg font-bold">{metadata?.name}</h1>
           <p className="text-muted-foreground">
-            Namespace: <span className="font-medium">{namespace}</span>
+            {t('common.namespace')}: <span className="font-medium">{namespace}</span>
           </p>
         </div>
         <div className="flex gap-2">
@@ -355,7 +355,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Status Overview</CardTitle>
+                    <CardTitle>{t('common.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -385,7 +385,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Ready Replicas
+                          {t('common.readyReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {readyReplicas} / {desiredReplicas}
@@ -411,13 +411,13 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 {/* DaemonSet Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>DaemonSet Information</CardTitle>
+                    <CardTitle>{t('common.basicInfo')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Created
+                          {t('common.created')}
                         </Label>
                         <p className="text-sm">
                           {formatDate(metadata?.creationTimestamp || '', true)}

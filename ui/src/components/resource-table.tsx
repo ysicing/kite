@@ -373,7 +373,7 @@ export function ResourceTable<T>({
               selectedNamespace &&
               selectedNamespace !== '_all' && (
                 <div className="text-muted-foreground flex items-center mt-1">
-                  <span>Namespace:</span>
+                  <span>{t('common.namespace')}:</span>
                   <Badge variant="outline" className="ml-2 ">
                     {selectedNamespace}
                   </Badge>

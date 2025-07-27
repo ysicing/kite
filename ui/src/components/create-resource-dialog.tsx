@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-
+import { useTranslation } from 'react-i18next'
 import { applyResource } from '@/lib/api'
 import { getTemplateByName, resourceTemplates } from '@/lib/templates'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,7 @@ export function CreateResourceDialog({
   open,
   onOpenChange,
 }: CreateResourceDialogProps) {
+  const { t } = useTranslation()
   const [yaml, setYaml] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
@@ -84,26 +85,23 @@ export function CreateResourceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="!max-w-4xl sm:!max-w-4xl max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Create Resource</DialogTitle>
-          <DialogDescription>
-            Paste any Kubernetes resource YAML configuration and apply it to the
-            cluster
-          </DialogDescription>
+          <DialogTitle>{t('dialog.createResource')}</DialogTitle>
+          <DialogDescription>{t('dialog.createResourceDescription')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="template">Template</Label>
+            <Label htmlFor="template">{t('common.template')}</Label>
             <Select
               value={selectedTemplate}
               onValueChange={handleTemplateSelect}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a template or start from scratch" />
+                <SelectValue placeholder={t('dialog.placeholder')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="empty">
-                  Empty (Start from scratch)
+                  {t('common.empty')} ({t('dialog.startFromScratch')})
                 </SelectItem>
                 {resourceTemplates.map((template) => (
                   <SelectItem key={template.name} value={template.name}>

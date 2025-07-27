@@ -279,7 +279,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                       {service.spec?.selector && (
                         <div className="md:col-span-2">
                           <Label className="text-xs text-muted-foreground">
-                            {t('services.selector')}
+                            {t('common.selector')}
                           </Label>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {Object.entries(service.spec.selector).map(([key, value]) => (

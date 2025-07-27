@@ -85,7 +85,7 @@ export function DeleteConfirmationDialog({
                 </p>
                 {namespace && (
                   <p>
-                    <span className="font-medium">Namespace:</span> {namespace}
+                    <span className="font-medium">{t('common.namespace')}:</span> {namespace}
                   </p>
                 )}
               </div>

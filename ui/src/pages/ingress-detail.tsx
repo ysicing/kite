@@ -130,7 +130,7 @@ export function IngressDetail(props: {
           <h1 className="text-lg font-bold">{name}</h1>
           {namespace && (
             <p className="text-muted-foreground">
-              Namespace: <span className="font-medium">{namespace}</span>
+              {t('common.namespace')}: <span className="font-medium">{namespace}</span>
             </p>
           )}
         </div>

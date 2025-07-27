@@ -8,6 +8,7 @@ import { ConfigMapListPage } from './configmap-list-page'
 import { CRDListPage } from './crd-list-page'
 import { DaemonSetListPage } from './daemonset-list-page'
 import { DeploymentListPage } from './deployment-list-page'
+import { EventListPage } from './event-list-page'
 import { GatewayListPage } from './gateway-list-page'
 import { HTTPRouteListPage } from './httproute-list-page'
 import { IngressListPage } from './ingress-list-page'
@@ -63,6 +64,8 @@ export function ResourceList() {
       return <StorageClassListPage />
     case 'crds':
       return <CRDListPage />
+    case 'events':
+      return <EventListPage />
     case 'middlewares':
       return <MiddlewareListPage />
     case 'ingressroutes':

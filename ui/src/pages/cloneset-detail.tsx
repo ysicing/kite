@@ -437,7 +437,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('openkruise.clonesets.statusOverview')}</CardTitle>
+                    <CardTitle>{t('common.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -459,7 +459,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          {t('openkruise.clonesets.readyReplicas')}
+                          {t('common.readyReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {readyReplicas} / {totalReplicas}
@@ -468,7 +468,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          {t('openkruise.clonesets.updatedReplicas')}
+                          {t('common.updatedReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {status?.updatedReplicas || 0}
@@ -477,7 +477,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          {t('openkruise.clonesets.availableReplicas')}
+                          {t('common.availableReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {status?.availableReplicas || 0}
@@ -523,7 +523,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          {t('openkruise.clonesets.selector')}
+                          {t('common.selector')}
                         </Label>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {Object.entries(
@@ -692,7 +692,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
             value: 'services',
             label: (
               <>
-                {t('openkruise.clonesets.services')}{' '}
+                {t('common.services')}{' '}
                 {relatedServices && (
                   <Badge variant="secondary">
                     {relatedServices.length}

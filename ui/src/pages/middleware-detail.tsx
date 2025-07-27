@@ -432,7 +432,7 @@ export function MiddlewareDetail({ namespace, name }: MiddlewareDetailProps) {
                     <div>
                       <p className="font-mono text-sm">{mw.name}</p>
                       {mw.namespace && (
-                        <p className="text-xs text-muted-foreground">Namespace: {mw.namespace}</p>
+                        <p className="text-xs text-muted-foreground">{t('common.namespace')}: {mw.namespace}</p>
                       )}
                     </div>
                   </div>
@@ -755,7 +755,7 @@ export function MiddlewareDetail({ namespace, name }: MiddlewareDetailProps) {
                 {/* Basic Information */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Middleware Information</CardTitle>
+                    <CardTitle>{t('common.basicInfo')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -27,7 +27,7 @@ export function EventTable(props: {
   const eventColumns = useMemo(
     (): Column<Event>[] => [
       {
-        header: 'Type',
+        header: t('events.table.type'),
         accessor: (event: Event) => event.type || '',
         cell: (value: unknown) => {
           const type = value as string
@@ -36,56 +36,35 @@ export function EventTable(props: {
         },
       },
       {
-        header: 'Reason',
+        header: t('events.table.reason'),
         accessor: (event: Event) => event.reason || '',
         cell: (value: unknown) => (
           <div className="font-medium">{value as string}</div>
         ),
       },
       {
-        header: 'Message',
+        header: t('events.table.message'),
         accessor: (event: Event) => event.message || '',
         cell: (value: unknown) => (
-          <div className="text-sm whitespace-pre-wrap">{value as string}</div>
+          <div className="text-sm max-w-sm truncate" title={value as string}>
+            {value as string}
+          </div>
         ),
       },
       {
-        header: 'Source',
-        accessor: (event: Event) => event.reportingComponent || '',
-        cell: (value: unknown) => {
-          return (
-            <span className="text-muted-foreground text-sm">
-              {value as string}
-            </span>
-          )
-        },
-      },
-      {
-        header: 'First Seen',
+        header: t('events.table.firstSeen'),
         accessor: (event: Event) =>
           event.firstTimestamp || event.eventTime || '',
         cell: (value: unknown) => {
           return (
-            <span className="text-muted-foreground text-sm">
-              {formatDate(value as string)}
-            </span>
-          )
-        },
-      },
-      {
-        header: 'Last Seen',
-        accessor: (event: Event) =>
-          event.lastTimestamp || event.eventTime || '',
-        cell: (value: unknown) => {
-          return (
-            <span className="text-muted-foreground text-sm">
+            <span className="text-muted-foreground text-sm whitespace-nowrap">
               {formatDate(value as string)}
             </span>
           )
         },
       },
     ],
-    []
+    [t]
   )
 
   if (isLoading) {
@@ -99,7 +78,7 @@ export function EventTable(props: {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Events</CardTitle>
+        <CardTitle>{t('events.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <SimpleTable

@@ -221,7 +221,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                         </div>
                         {result.namespace && (
                           <div className="text-xs text-muted-foreground mt-1">
-                            Namespace: {result.namespace}
+                            {t('common.namespace')}: {result.namespace}
                           </div>
                         )}
                       </div>

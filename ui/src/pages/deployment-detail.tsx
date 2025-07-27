@@ -288,7 +288,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
         <div>
           <h1 className="text-lg font-bold">{name}</h1>
           <p className="text-muted-foreground">
-            Namespace: <span className="font-medium">{namespace}</span>
+            {t('common.namespace')}: <span className="font-medium">{namespace}</span>
           </p>
         </div>
         <div className="flex gap-2">
@@ -303,7 +303,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconScale className="w-4 h-4" />
-                Scale
+                {t('common.scale')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -315,7 +315,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="replicas">Replicas</Label>
+                  <Label htmlFor="replicas">{t('common.replicas')}</Label>
                   <div className="flex items-center gap-1">
                     <Button
                       variant="outline"
@@ -419,7 +419,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Status Overview</CardTitle>
+                    <CardTitle>{t('common.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -431,7 +431,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground">
-                            Status
+                            {t('common.status')}
                           </p>
                           <p className="text-sm font-medium">
                             {getDeploymentStatus(deployment)}
@@ -441,7 +441,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Ready Replicas
+                          {t('common.readyReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {readyReplicas} / {totalReplicas}
@@ -450,7 +450,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Updated Replicas
+                          {t('common.updatedReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {status?.updatedReplicas || 0}
@@ -459,7 +459,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Available Replicas
+                          {t('common.availableReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {status?.availableReplicas || 0}
@@ -471,13 +471,13 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                 {/* Deployment Info */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Deployment Information</CardTitle>
+                    <CardTitle>{t('common.basicInfo')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Created
+                          {t('common.created')}
                         </Label>
                         <p className="text-sm">
                           {formatDate(
@@ -496,7 +496,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Replicas
+                          {t('common.replicas')}
                         </Label>
                         <p className="text-sm">
                           {deployment.spec?.replicas || 0}
@@ -504,7 +504,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Selector
+                          {t('common.selector')}
                         </Label>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {Object.entries(

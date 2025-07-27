@@ -138,7 +138,7 @@ export default function UpgradePlansListPage() {
        }),
       //  columnHelper.accessor((row) => row.spec?.nodeSelector, {
       //    id: 'nodeSelector',
-      //    header: t('systemUpgrade.nodeSelector'),
+      //    header: t('common.nodeSelector'),
       //    cell: ({ row }) => {
       //      const nodeSelector = row.original.spec?.nodeSelector
       //      if (!nodeSelector) return '-'

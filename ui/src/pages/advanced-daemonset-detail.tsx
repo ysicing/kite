@@ -272,7 +272,7 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
         <div>
           <h1 className="text-2xl font-bold">{metadata?.name}</h1>
           <p className="text-muted-foreground">
-            Namespace: <span className="font-medium">{namespace}</span>
+            {t('common.namespace')}: <span className="font-medium">{namespace}</span>
           </p>
         </div>
         <div className="flex gap-2">
@@ -346,7 +346,7 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
                 {/* Status Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('openkruise.advanceddaemonsets.statusOverview')}</CardTitle>
+                    <CardTitle>{t('common.statusOverview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -376,7 +376,7 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          {t('openkruise.advanceddaemonsets.readyReplicas')}
+                          {t('common.readyReplicas')}
                         </p>
                         <p className="text-sm font-medium">
                           {readyReplicas} / {desiredReplicas}
