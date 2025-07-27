@@ -201,7 +201,7 @@ export function MiddlewareListPage() {
         ),
       }),
       columnHelper.accessor((row: MiddlewareResource) => getMiddlewareType(row.spec as MiddlewareSpec), {
-        header: 'Type',
+        header: t('common.type'),
         cell: ({ getValue }) => {
           const type = getValue()
           return (

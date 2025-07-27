@@ -133,7 +133,7 @@ export default function UpgradePlansListPage() {
         ),
       }),
       columnHelper.accessor('spec.version', {
-         header: t('systemUpgrade.version'),
+         header: t('common.version'),
          cell: ({ row }) => row.original.spec?.version || '-',
        }),
       //  columnHelper.accessor((row) => row.spec?.nodeSelector, {

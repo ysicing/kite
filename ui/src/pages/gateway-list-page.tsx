@@ -1,19 +1,20 @@
 import { useCallback, useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { Gateway } from '@/types/gateway'
 import { formatDate } from '@/lib/utils'
 import { ResourceTable } from '@/components/resource-table'
 
 export function GatewayListPage() {
+  const { t } = useTranslation()
   // Define column helper outside of any hooks
   const columnHelper = createColumnHelper<Gateway>()
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('metadata.name', {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -25,11 +26,11 @@ export function GatewayListPage() {
         ),
       }),
       columnHelper.accessor('spec.gatewayClassName', {
-        header: 'Gateway Class',
+        header: t('common.gatewayClass'),
         cell: ({ row }) => row.original.spec?.gatewayClassName || 'N/A',
       }),
       columnHelper.accessor('metadata.creationTimestamp', {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 
@@ -39,7 +40,7 @@ export function GatewayListPage() {
         },
       }),
     ],
-    [columnHelper]
+    [columnHelper, t]
   )
 
   const filter = useCallback((ns: Gateway, query: string) => {

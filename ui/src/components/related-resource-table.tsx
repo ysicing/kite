@@ -35,14 +35,14 @@ export function RelatedResourcesTable(props: {
   const relatedColumns = useMemo(
     (): Column<RelatedResources>[] => [
       {
-        header: 'Kind',
+        header: t('common.kind'),
         accessor: (rs: RelatedResources) => rs.type,
         cell: (value: unknown) => (
           <Badge className="capitalize">{value as string}</Badge>
         ),
       },
       {
-        header: 'Name',
+        header: t('common.name'),
         accessor: (rs: RelatedResources) => rs,
         cell: (value: unknown) => {
           const rs = value as RelatedResources
@@ -50,7 +50,7 @@ export function RelatedResourcesTable(props: {
         },
       },
     ],
-    []
+    [t]
   )
 
   if (isLoading) {
@@ -64,7 +64,7 @@ export function RelatedResourcesTable(props: {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Related</CardTitle>
+        <CardTitle>{t('common.related')}</CardTitle>
       </CardHeader>
       <CardContent>
         <SimpleTable

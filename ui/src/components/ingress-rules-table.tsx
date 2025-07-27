@@ -79,7 +79,7 @@ export function IngressRulesTable(props: {
         cell: (value: unknown) => value as string,
       },
       {
-        header: t('ingress.service'),
+        header: t('common.services'),
         accessor: (rule) => ({ service: rule.service, namespace: rule.namespace }),
         cell: (value: unknown) => {
           const data = value as { service: string; namespace: string | undefined }
@@ -96,7 +96,7 @@ export function IngressRulesTable(props: {
         },
       },
       {
-        header: t('ingress.port'),
+        header: t('common.port'),
         accessor: (rule) => rule.servicePort,
         cell: (value: unknown) => value as string || '-',
       },

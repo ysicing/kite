@@ -50,7 +50,7 @@ export function ServiceListPage() {
         },
       }),
       columnHelper.accessor('spec.ports', {
-        header: t('services.ports'),
+        header: t('common.port'),
         cell: ({ getValue }) => {
           const ports = getValue() || []
           if (ports.length === 0) return '-'

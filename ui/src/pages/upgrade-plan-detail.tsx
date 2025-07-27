@@ -233,7 +233,7 @@ export default function UpgradePlanDetail() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">{t('systemUpgrade.version')}</p>
+                        <p className="text-sm text-muted-foreground">{t('common.version')}</p>
                         <p className="font-medium">{upgradePlan.spec?.version || '-'}</p>
                       </div>
                       <div>

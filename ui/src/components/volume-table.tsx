@@ -1,6 +1,6 @@
 import { Container, Volume } from 'kubernetes-types/core/v1'
 import { Link } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Column, SimpleTable } from '@/components/simple-table'
@@ -25,11 +25,12 @@ export function VolumeTable({
   containers,
   isLoading,
 }: VolumeTableProps) {
+  const { t } = useTranslation()
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Volumes</CardTitle>
+          <CardTitle>{t('common.volumes')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
@@ -121,12 +122,12 @@ export function VolumeTable({
 
   const columns: Column<VolumeTableData>[] = [
     {
-      header: 'Name',
+      header: t('common.name'),
       accessor: (item) => item.name,
       cell: (value) => <span className="font-medium">{value as string}</span>,
     },
     {
-      header: 'Type',
+      header: t('common.type'),
       accessor: (item) => item.type,
       cell: (value) => (
         <Badge variant="outline" className="text-xs">
@@ -135,12 +136,12 @@ export function VolumeTable({
       ),
     },
     {
-      header: 'Details',
+      header: t('common.details'),
       accessor: (item) => item.details,
       cell: (value) => value as React.ReactNode,
     },
     {
-      header: 'Volume Mounts',
+      header: t('common.volumeMounts'),
       accessor: (item) => item.mounts,
       cell: (value) => {
         const mounts = value as string
@@ -178,7 +179,7 @@ export function VolumeTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Volumes</CardTitle>
+        <CardTitle>{t('common.volumes')}</CardTitle>
       </CardHeader>
       <CardContent>
         <SimpleTable

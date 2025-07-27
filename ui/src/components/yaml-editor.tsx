@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { IconCheck, IconEdit, IconLoader, IconX } from '@tabler/icons-react'
+import { useTranslation } from 'react-i18next'
 import * as yaml from 'js-yaml'
 import { editor as monacoEditor } from 'monaco-editor'
 
@@ -49,6 +50,7 @@ export function YamlEditor<T extends ResourceType>({
   const [isValidYaml, setIsValidYaml] = useState(true)
   const [validationError, setValidationError] = useState<string>('')
   const { actualTheme } = useTheme()
+  const { t } = useTranslation()
   const editorRef = useRef<monacoEditor.IStandaloneCodeEditor | null>(null)
   const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -145,7 +147,7 @@ export function YamlEditor<T extends ResourceType>({
                     ) : (
                       <IconCheck className="w-4 h-4 mr-2" />
                     )}
-                    Save
+                    {t('common.save')}
                   </Button>
                   <Button
                     size="sm"
@@ -154,7 +156,7 @@ export function YamlEditor<T extends ResourceType>({
                     disabled={isSaving}
                   >
                     <IconX className="w-4 h-4 mr-2" />
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                 </>
               ) : (
@@ -165,7 +167,7 @@ export function YamlEditor<T extends ResourceType>({
                   disabled={readOnly}
                 >
                   <IconEdit className="w-4 h-4 mr-2" />
-                  Edit
+                  {t('common.edit')}
                 </Button>
               )}
             </div>

@@ -90,7 +90,7 @@ const SystemUpgradeOverview: React.FC = () => {
               </Badge>
               {systemUpgradeStatus.version && (
                 <Badge variant="outline">
-                  {t('systemUpgrade.version')}: {systemUpgradeStatus.version}
+                  {t('common.version')}: {systemUpgradeStatus.version}
                 </Badge>
               )}
             </>

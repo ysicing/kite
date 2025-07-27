@@ -68,7 +68,7 @@ export function PodTable(props: {
   const podColumns = useMemo(
     (): Column<Pod>[] => [
       {
-        header: 'Name',
+        header:  t('common.name'),
         accessor: (pod: Pod) => pod.metadata,
         cell: (value: unknown) => {
           const meta = value as Pod['metadata']
@@ -82,7 +82,7 @@ export function PodTable(props: {
         },
       },
       {
-        header: 'Ready',
+        header:  t('common.ready'),
         accessor: (pod: Pod) => {
           const status = getPodStatus(pod)
           return `${status.readyContainers} / ${status.totalContainers}`
@@ -90,7 +90,7 @@ export function PodTable(props: {
         cell: (value: unknown) => value as string,
       },
       {
-        header: 'Restart',
+        header: t('common.restart'),
         accessor: (pod: Pod) => {
           const status = getPodStatus(pod)
           return status.restartString || '0'
@@ -104,7 +104,7 @@ export function PodTable(props: {
         },
       },
       {
-        header: 'Status',
+        header: t('common.status'),
         accessor: (pod: Pod) => pod,
         cell: (value: unknown) => {
           const status = getPodStatus(value as Pod)
@@ -157,7 +157,7 @@ export function PodTable(props: {
         ? []
         : [
             {
-              header: 'Node',
+              header: t('nav.nodes'),
               accessor: (pod: Pod) => pod.spec?.nodeName || '-',
               cell: (value: unknown) => (
                 <Link
@@ -170,7 +170,7 @@ export function PodTable(props: {
             },
           ]),
       {
-        header: 'Created',
+        header: t('common.created'),
         accessor: (pod: Pod) => pod.metadata?.creationTimestamp || '',
         cell: (value: unknown) => {
           return (
@@ -181,14 +181,14 @@ export function PodTable(props: {
         },
       },
     ],
-    [metricsMap, props.hiddenNode]
+    [metricsMap, props.hiddenNode, t]
   )
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
         <IconLoader className="animate-spin mr-2" />
-        Loading pods...
+        {t('common.loading')}...
       </div>
     )
   }

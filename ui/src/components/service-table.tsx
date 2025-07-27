@@ -17,14 +17,14 @@ export function ServiceTable(props: {
   const serviceColumns = useMemo(
     (): Column<Service>[] => [
       {
-        header: 'Name',
+        header: t('common.name'),
         accessor: (service: Service) => service.metadata?.name || '',
         cell: (value: unknown) => (
           <div className="font-medium">{value as string}</div>
         ),
       },
       {
-        header: 'Type',
+        header: t('common.type'),
         accessor: (service: Service) => service.spec?.type || 'ClusterIP',
         cell: (value: unknown) => value as string,
       },
@@ -34,7 +34,7 @@ export function ServiceTable(props: {
         cell: (value: unknown) => value as string,
       },
       {
-        header: 'Ports',
+        header: t('common.port'),
         accessor: (service: Service) => service.spec?.ports || [],
         cell: (value: unknown) => {
           const ports = value as Array<{
@@ -48,7 +48,7 @@ export function ServiceTable(props: {
         },
       },
     ],
-    []
+    [t]
   )
 
   if (isLoading) {
@@ -62,7 +62,7 @@ export function ServiceTable(props: {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Services</CardTitle>
+        <CardTitle>{t('common.services')}</CardTitle>
       </CardHeader>
       <CardContent>
         <SimpleTable

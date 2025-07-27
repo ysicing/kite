@@ -3,7 +3,7 @@ import { IconCircleCheckFilled, IconLoader } from '@tabler/icons-react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { StatefulSet } from 'kubernetes-types/apps/v1'
 import { Link } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { ResourceTable } from '@/components/resource-table'
@@ -11,12 +11,12 @@ import { ResourceTable } from '@/components/resource-table'
 export function StatefulSetListPage() {
   // Define column helper outside of any hooks
   const columnHelper = createColumnHelper<StatefulSet>()
-
+  const { t } = useTranslation()
   // Define columns for the statefulset table
   const columns = useMemo(
     () => [
       columnHelper.accessor('metadata.name', {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -31,7 +31,7 @@ export function StatefulSetListPage() {
       }),
       columnHelper.accessor((row) => row.status, {
         id: 'ready',
-        header: 'Ready',
+        header: t('common.ready'),
         cell: ({ row }) => {
           const status = row.original.status
           const ready = status?.readyReplicas || 0
@@ -44,7 +44,7 @@ export function StatefulSetListPage() {
         },
       }),
       columnHelper.accessor('status.conditions', {
-        header: 'Status',
+        header: t('common.status'),
         cell: ({ row }) => {
           const readyReplicas = row.original.status?.readyReplicas || 0
           const replicas = row.original.status?.replicas || 0
@@ -74,11 +74,11 @@ export function StatefulSetListPage() {
         },
       }),
       columnHelper.accessor('spec.serviceName', {
-        header: 'Service Name',
+        header: t('common.services'),
         cell: ({ getValue }) => getValue() || '-',
       }),
       columnHelper.accessor('metadata.creationTimestamp', {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 
@@ -88,7 +88,7 @@ export function StatefulSetListPage() {
         },
       }),
     ],
-    [columnHelper]
+    [columnHelper, t]
   )
 
   // Custom filter for statefulset search

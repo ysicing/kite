@@ -3,6 +3,7 @@ import yaml from 'js-yaml'
 import { Deployment } from 'kubernetes-types/apps/v1'
 import { Container } from 'kubernetes-types/core/v1'
 import { Plus, Trash2, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { createResource } from '@/lib/api'
@@ -102,6 +103,7 @@ export function DeploymentCreateDialog({
     ...initialFormData,
     namespace: defaultNamespace || 'default',
   })
+  const { t } = useTranslation()
   const [isCreating, setIsCreating] = useState(false)
   const [step, setStep] = useState(1)
   const [editedYaml, setEditedYaml] = useState<string>('')
@@ -805,18 +807,18 @@ export function DeploymentCreateDialog({
                 variant="outline"
                 onClick={() => handleDialogChange(false)}
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               {step < totalSteps ? (
                 <Button onClick={handleNext} disabled={!validateStep(step)}>
-                  Next
+                  {t('common.next')}
                 </Button>
               ) : (
                 <Button
                   onClick={handleCreate}
                   disabled={!validateStep(step) || isCreating}
                 >
-                  {isCreating ? 'Creating...' : 'Create Deployment'}
+                  {isCreating ? t('common.creating') : t('common.createDeployment')}
                 </Button>
               )}
             </div>

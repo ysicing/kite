@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -32,6 +33,7 @@ export function DeleteConfirmationDialog({
   isDeleting = false,
   namespace,
 }: DeleteConfirmationDialogProps) {
+  const { t } = useTranslation()
   const [confirmationInput, setConfirmationInput] = useState('')
 
   const handleDialogChange = (open: boolean) => {
@@ -59,7 +61,7 @@ export function DeleteConfirmationDialog({
             </div>
             <div className="flex-1">
               <DialogTitle className="text-left">
-                Delete {resourceType}
+                {t('common.delete')} {resourceType}
               </DialogTitle>
               <DialogDescription className="text-left">
                 This action cannot be undone.
@@ -111,14 +113,14 @@ export function DeleteConfirmationDialog({
             onClick={() => handleDialogChange(false)}
             disabled={isDeleting}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             variant="destructive"
             onClick={handleConfirm}
             disabled={isConfirmDisabled}
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? t('common.deleting') : t('common.delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

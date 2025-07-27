@@ -334,7 +334,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             onClick={handleRefresh}
           >
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Popover
             open={isScalePopoverOpen}
@@ -343,7 +343,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconScale className="w-4 h-4" />
-                Scale
+                {t('common.scale')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -401,7 +401,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconReload className="w-4 h-4" />
-                Restart
+                {t('common.restart')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80">
@@ -414,7 +414,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                   className="w-full"
                   variant="outline"
                 >
-                  Confirm Restart
+                  {t('actions.confirmRestart')}
                 </Button>
               </div>
             </PopoverContent>
@@ -425,7 +425,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
             onClick={() => setIsDeleteDialogOpen(true)}
           >
             <IconTrash className="w-4 h-4" />
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </div>
@@ -543,7 +543,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                 {spec?.template?.spec?.initContainers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Init Containers</CardTitle>
+                      <CardTitle>{t('common.initContainers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -568,7 +568,7 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
                 {spec?.template?.spec?.containers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Containers</CardTitle>
+                      <CardTitle>{t('common.containers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">

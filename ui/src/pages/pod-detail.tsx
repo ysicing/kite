@@ -148,7 +148,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleManualRefresh}>
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Button
             variant="destructive"
@@ -157,7 +157,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
             disabled={isDeleting}
           >
             <IconTrash className="w-4 h-4" />
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </div>

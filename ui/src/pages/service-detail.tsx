@@ -212,12 +212,12 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                 {/* Service Overview */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t('services.overview')}</CardTitle>
+                    <CardTitle>{t('common.overview')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                       <div>
-                        <p className="text-xs text-muted-foreground">{t('services.type')}</p>
+                        <p className="text-xs text-muted-foreground">{t('common.type')}</p>
                         <p className="text-sm font-medium">
                           <Badge variant="outline">{serviceType}</Badge>
                         </p>
@@ -231,7 +231,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                         <p className="text-sm font-medium">{externalIP || '-'}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">{t('services.ports')}</p>
+                        <p className="text-xs text-muted-foreground">{t('common.port')}</p>
                         <p className="text-sm font-medium">
                           {ports.length === 0
                             ? '-'
@@ -323,7 +323,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                             </div>
                             <div className="flex-1">
                               <p className="text-sm">
-                                {t('services.port')}: <span className="font-medium">{port.port}</span>
+                                {t('common.port')}: <span className="font-medium">{port.port}</span>
                               </p>
                               {port.targetPort && (
                                 <p className="text-sm">
@@ -422,7 +422,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                                 )}
                               </div>
                               <div>
-                                <p className="text-sm font-medium mb-2">{t('services.ports')}</p>
+                                <p className="text-sm font-medium mb-2">{t('common.port')}</p>
                                 {subset.ports?.length ? (
                                   <div className="space-y-1">
                                     {subset.ports.map((port: any, i: number) => (
@@ -536,7 +536,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                               )}
                             </div>
                             <div>
-                              <p className="text-sm font-medium mb-2">{t('services.ports')}</p>
+                              <p className="text-sm font-medium mb-2">{t('common.port')}</p>
                               {(slice as EndpointSlice).ports?.length ? (
                                 <div className="space-y-1">
                                   {(slice as EndpointSlice).ports!.map((port: any, i: number) => (
@@ -554,7 +554,7 @@ export function ServiceDetail(props: { namespace: string; name: string }) {
                                   ))}
                                 </div>
                               ) : (
-                                <p className="text-sm text-muted-foreground">{t('common.noData', {resource: t('services.ports').toLowerCase()})}</p>
+                                <p className="text-sm text-muted-foreground">{t('common.noData', {resource: t('common.port').toLowerCase()})}</p>
                               )}
                             </div>
                           </div>

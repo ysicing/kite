@@ -132,7 +132,7 @@ export function TailscalePage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">
-                {t('tailscale.version')}: <span className="font-medium">{status.version || 'Unknown'}</span>
+                {t('common.version')}: <span className="font-medium">{status.version || 'Unknown'}</span>
               </p>
             </div>
             <Badge variant="secondary">
@@ -169,7 +169,7 @@ export function TailscalePage() {
                     {status.version || 'Unknown'}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {t('tailscale.version')}
+                    {t('common.version')}
                   </div>
                 </div>
                 <div className="text-center">

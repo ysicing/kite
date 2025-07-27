@@ -176,7 +176,7 @@ const TraefikOverview: React.FC = () => {
           </Badge>
           {status.version && (
             <Badge variant="outline">
-              {t('traefik.version')}: {status.version}
+              {t('common.version')}: {status.version}
             </Badge>
           )}
         </div>
@@ -214,7 +214,7 @@ const TraefikOverview: React.FC = () => {
                   {status.version || 'Unknown'}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {t('traefik.version')}
+                  {t('common.version')}
                 </div>
               </div>
               <div className="text-center">

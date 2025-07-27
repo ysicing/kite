@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Link, useParams } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { CustomResource, ResourceType } from '@/types/api'
 import { useResource } from '@/lib/api'
 import { getAge } from '@/lib/utils'
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { ResourceTable } from '@/components/resource-table'
 
 export function CRListPage() {
+  const { t } = useTranslation()
   const { crd } = useParams<{ crd: string }>()
   const { data: crdData, isLoading: isLoadingCRD } = useResource('crds', crd!)
 
@@ -20,7 +21,7 @@ export function CRListPage() {
     () =>
       [
         columnHelper.accessor('metadata.name', {
-          header: 'Name',
+          header: t('common.name'),
           cell: ({ row }) => {
             const cr = row.original
             const hasNamespace = cr.metadata?.namespace
@@ -36,19 +37,19 @@ export function CRListPage() {
           },
         }),
         columnHelper.accessor('kind', {
-          header: 'Kind',
+          header: t('common.kind'),
           cell: ({ getValue }) => (
             <span className=" text-sm">{getValue()}</span>
           ),
         }),
         columnHelper.accessor('apiVersion', {
-          header: 'API Version',
+          header: t('common.apiVersion'),
           cell: ({ getValue }) => (
             <span className=" text-xs text-gray-600">{getValue()}</span>
           ),
         }),
         columnHelper.accessor('status', {
-          header: 'Status',
+          header: t('common.status'),
           cell: ({ getValue }) => {
             const status = getValue()
             // Try to extract status information from common patterns
@@ -93,13 +94,13 @@ export function CRListPage() {
           },
         }),
         columnHelper.accessor('metadata.creationTimestamp', {
-          header: 'Age',
+          header: t('common.age'),
           cell: ({ getValue }) => {
             return getAge(getValue() as string)
           },
         }),
       ].filter((column) => column !== undefined),
-    [columnHelper, crd]
+    [columnHelper, crd, t]
   )
 
   // Custom search filter for CRs

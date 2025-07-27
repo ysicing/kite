@@ -168,7 +168,7 @@ const OpenKruiseOverview: React.FC = () => {
           </Badge>
           {status.version && (
             <Badge variant="outline">
-              {t('openkruise.version')}: {status.version}
+              {t('common.version')}: {status.version}
             </Badge>
           )}
         </div>
@@ -203,7 +203,7 @@ const OpenKruiseOverview: React.FC = () => {
                   {status.version || 'Unknown'}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {t('openkruise.version')}
+                  {t('common.version')}
                 </div>
               </div>
               <div className="text-center">

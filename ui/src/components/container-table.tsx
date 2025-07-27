@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Container } from 'kubernetes-types/core/v1'
 import { ChevronDown, ChevronRight, Edit3 } from 'lucide-react'
-
+import { useTranslation } from 'react-i18next'
 import { ContainerEditDialog } from './container-edit-dialog'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -12,6 +12,7 @@ export function ContainerTable(props: {
   onContainerUpdate?: (updatedContainer: Container) => void
   init?: boolean
 }) {
+  const { t } = useTranslation()
   const { container, onContainerUpdate, init } = props
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -80,7 +81,7 @@ export function ContainerTable(props: {
               {/* Ports */}
               <div>
                 <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Ports
+                  {t('common.port')}
                 </Label>
                 <div className="mt-1 min-h-[24px]">
                   {container.ports && container.ports.length > 0 ? (

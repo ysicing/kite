@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Container } from 'kubernetes-types/core/v1'
 
 import { EnvironmentEditor, ImageEditor, ResourceEditor } from '../editors'
@@ -16,6 +17,7 @@ export function ContainerEditPage({
   onSave,
   onCancel,
 }: ContainerEditPageProps) {
+  const { t } = useTranslation()
   const [editedContainer, setEditedContainer] = useState<Container>(container)
 
   const handleUpdate = (updates: Partial<Container>) => {
@@ -32,9 +34,9 @@ export function ContainerEditPage({
         <h1 className="text-2xl font-bold">Edit Container: {container.name}</h1>
         <div className="flex gap-2">
           <Button variant="outline" onClick={onCancel}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>{t('common.save')}</Button>
         </div>
       </div>
 

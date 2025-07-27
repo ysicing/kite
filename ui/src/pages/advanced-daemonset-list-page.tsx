@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { IconCircleCheckFilled, IconLoader } from '@tabler/icons-react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Link } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { ResourceTable } from '@/components/resource-table'
@@ -11,12 +11,12 @@ import { AdvancedDaemonSet } from '@/types/k8s'
 export function AdvancedDaemonSetListPage() {
   // Define column helper outside of any hooks
   const columnHelper = createColumnHelper<AdvancedDaemonSet>()
-
+  const { t } = useTranslation()
   // Define columns for the advanced daemonset table
   const columns = useMemo(
     () => [
       columnHelper.accessor('metadata.name', {
-        header: 'Name',
+        header: t('common.name'),
         cell: ({ row }) => (
           <div className="font-medium text-blue-500 hover:underline">
             <Link
@@ -30,23 +30,23 @@ export function AdvancedDaemonSetListPage() {
         ),
       }),
       columnHelper.accessor('status.desiredNumberScheduled', {
-        header: 'Desired',
+        header: t('common.desired'),
         cell: ({ getValue }) => getValue() || 0,
       }),
       columnHelper.accessor('status.currentNumberScheduled', {
-        header: 'Current',
+        header: t('common.current'),
         cell: ({ getValue }) => getValue() || 0,
       }),
       columnHelper.accessor('status.numberReady', {
-        header: 'Ready',
+        header: t('common.ready'),
         cell: ({ getValue }) => getValue() || 0,
       }),
       columnHelper.accessor('status.numberAvailable', {
-        header: 'Available',
+        header: t('common.available'),
         cell: ({ getValue }) => getValue() || 0,
       }),
       columnHelper.accessor('status.conditions', {
-        header: 'Status',
+        header: t('common.status'),
         cell: ({ row }) => {
           const readyReplicas = row.original.status?.numberReady || 0
           const replicas = row.original.status?.desiredNumberScheduled || 0
@@ -76,7 +76,7 @@ export function AdvancedDaemonSetListPage() {
         },
       }),
       columnHelper.accessor('metadata.creationTimestamp', {
-        header: 'Created',
+        header: t('common.created'),
         cell: ({ getValue }) => {
           const dateStr = formatDate(getValue() || '')
 
@@ -86,7 +86,7 @@ export function AdvancedDaemonSetListPage() {
         },
       }),
     ],
-    [columnHelper]
+    [columnHelper, t]
   )
 
   // Custom filter for advanced daemonset search

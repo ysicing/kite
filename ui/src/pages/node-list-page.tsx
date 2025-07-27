@@ -216,7 +216,7 @@ export function NodeListPage() {
       }),
       columnHelper.accessor((row) => row.status?.nodeInfo?.kubeletVersion, {
         id: 'version',
-        header: t('nodes.version'),
+        header: t('common.version'),
         cell: ({ getValue }) => (
           <div className="flex justify-center">
             <span className="text-xs text-muted-foreground">{getValue() || t('nodes.unavailable')}</span>
@@ -460,7 +460,7 @@ export function NodeListPage() {
       // 存活时间列
       columnHelper.accessor((row) => row.age, {
         id: 'age',
-        header: t('nodes.age'),
+        header: t('common.age'),
         cell: ({ getValue }) => {
           const age = getValue()
           return (
@@ -470,7 +470,7 @@ export function NodeListPage() {
       }),
       columnHelper.accessor((row) => row.status?.nodeInfo?.kubeletVersion, {
         id: 'version',
-        header: t('nodes.version'),
+        header: t('common.version'),
         cell: ({ getValue }) => (
           <span className="text-xs text-muted-foreground">{getValue() || t('nodes.unavailable')}</span>
         ),

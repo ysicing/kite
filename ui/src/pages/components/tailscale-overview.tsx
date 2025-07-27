@@ -249,7 +249,7 @@ const TailscaleOverview: React.FC = () => {
           {status.version && (
             <Badge variant="outline" className="flex items-center gap-1">
               <IconTag className="h-3 w-3" />
-              {t('tailscale.version')}: {status.version}
+              {t('common.version')}: {status.version}
             </Badge>
           )}
         </div>

@@ -294,7 +294,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleRefresh}>
             <IconRefresh className="w-4 h-4" />
-            Refresh
+            {t('common.refresh')}
           </Button>
           <Popover
             open={isScalePopoverOpen}
@@ -350,7 +350,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                 </div>
                 <Button onClick={handleScale} className="w-full">
                   <IconScale className="w-4 h-4 mr-2" />
-                  Scale
+                  {t('common.scale')}
                 </Button>
               </div>
             </PopoverContent>
@@ -362,7 +362,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
             <PopoverTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconReload className="w-4 h-4" />
-                Restart
+                {t('common.restart')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -381,7 +381,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                     onClick={() => setIsRestartPopoverOpen(false)}
                     className="flex-1"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -391,7 +391,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                     className="flex-1"
                   >
                     <IconReload className="w-4 h-4 mr-2" />
-                    Restart
+                    {t('common.restart')}
                   </Button>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
             disabled={isDeleting}
           >
             <IconTrash className="w-4 h-4" />
-            Delete
+            {t('common.delete')}
           </Button>
         </div>
       </div>

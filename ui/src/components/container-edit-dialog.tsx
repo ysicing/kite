@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { DialogDescription } from '@radix-ui/react-dialog'
+import { useTranslation } from 'react-i18next'
 import { Container } from 'kubernetes-types/core/v1'
 
 import { EnvironmentEditor, ImageEditor, ResourceEditor } from './editors'
@@ -26,6 +27,7 @@ export function ContainerEditDialog({
   container,
   onSave,
 }: ContainerEditDialogProps) {
+  const { t } = useTranslation()
   const [editedContainer, setEditedContainer] = useState<Container>(container)
 
   useEffect(() => {
@@ -79,9 +81,9 @@ export function ContainerEditDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>{t('common.save')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

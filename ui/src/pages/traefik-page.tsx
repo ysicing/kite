@@ -138,7 +138,7 @@ export function TraefikPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">
-                {t('traefik.version')}: <span className="font-medium">{status.version || 'Unknown'}</span>
+                {t('common.version')}: <span className="font-medium">{status.version || 'Unknown'}</span>
               </p>
             </div>
             <Badge variant="secondary">
@@ -175,7 +175,7 @@ export function TraefikPage() {
                     {status.version || 'Unknown'}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {t('traefik.version')}
+                    {t('common.version')}
                   </div>
                 </div>
                 <div className="text-center">
