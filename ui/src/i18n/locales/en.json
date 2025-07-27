@@ -87,6 +87,7 @@
     "type": "Type",
     "hosts": "Host(s)",
     "loadBalancer": "Load Balancer",
+    "imagePullSecrets": "Image Pull Secrets",
     "other": "Other",
     "timeUnits": {
       "days": "d",

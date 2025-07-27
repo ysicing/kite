@@ -144,15 +144,17 @@ export function ServiceAccountDetail(props: {
             <IconRefresh className="w-4 h-4" />
             {t('common.refresh')}
           </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setIsDeleteDialogOpen(true)}
-            disabled={isDeleting}
-          >
-            <IconTrash className="w-4 h-4" />
-            {t('common.delete')}
-          </Button>
+          {name !== 'default' && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              disabled={isDeleting}
+            >
+              <IconTrash className="w-4 h-4" />
+              {t('common.delete')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -217,14 +219,16 @@ export function ServiceAccountDetail(props: {
                             {t('common.imagePullSecrets')}
                           </Label>
                           <div className="flex flex-wrap gap-2 mt-1">
-                            {data.imagePullSecrets.map((secret: { name: string }, index: number) => (
-                              <Link
-                                key={index}
-                                to={`/secrets/${namespace}/${secret.name}`}
-                                className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200 hover:text-blue-900 transition-colors"
-                              >
-                                {secret.name}
-                              </Link>
+                            {data.imagePullSecrets.map((secret, index) => (
+                              secret.name && (
+                                <Link
+                                  key={index}
+                                  to={`/secrets/${namespace}/${secret.name}`}
+                                  className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200 hover:text-blue-900 transition-colors"
+                                >
+                                  {secret.name}
+                                </Link>
+                              )
                             ))}
                           </div>
                         </div>

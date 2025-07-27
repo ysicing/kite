@@ -87,6 +87,7 @@
     "type": "类型",
     "hosts": "主机",
     "loadBalancer": "负载均衡器",
+    "imagePullSecrets": "镜像拉取密钥",
     "other": "其他",
     "timeUnits": {
       "days": "天",
