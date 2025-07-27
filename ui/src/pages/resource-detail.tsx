@@ -17,6 +17,7 @@ import { StatefulSetDetail } from './statefulset-detail'
 import UpgradePlanDetail from './upgrade-plan-detail'
 import { MiddlewareDetail } from './middleware-detail'
 import { IngressRouteDetail } from './ingressroute-detail'
+import { ServiceAccountDetail } from './serviceaccount-detail'
 
 export function ResourceDetail() {
   const { resource, namespace, name } = useParams()
@@ -61,6 +62,8 @@ export function ResourceDetail() {
       return <IngressDetail namespace={namespace!} name={name} />
     case 'ingressroutes':
       return <IngressRouteDetail namespace={namespace!} name={name} />
+    case 'serviceaccounts':
+      return <ServiceAccountDetail namespace={namespace!} name={name} />
     default:
       return (
         <SimpleResourceDetail

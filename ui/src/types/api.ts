@@ -20,6 +20,7 @@ import {
   Pod,
   Secret,
   Service,
+  ServiceAccount,
 } from 'kubernetes-types/core/v1'
 import { EndpointSlice } from 'kubernetes-types/discovery/v1'
 import { Ingress } from 'kubernetes-types/networking/v1'
@@ -125,6 +126,7 @@ export type ResourceType =
   | 'admission-controllers'
   | 'endpoints'
   | 'endpointslices'
+  | 'serviceaccounts'
 
 export const clusterScopeResources: ResourceType[] = [
   'crds',
@@ -286,6 +288,10 @@ export interface ResourcesTypeMap {
     items: EndpointSlice[]
     metadata?: listMetadataType
   }
+  serviceaccounts: {
+    items: ServiceAccount[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -342,6 +348,7 @@ export interface ResourceTypeMap {
   'admission-controllers': AdmissionController
   endpoints: Endpoints
   endpointslices: EndpointSlice
+  serviceaccounts: ServiceAccount
 }
 
 export interface RecentEvent {

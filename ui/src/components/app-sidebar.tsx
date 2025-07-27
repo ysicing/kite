@@ -25,6 +25,7 @@ import {
   IconTopologyBus,
   IconArrowUp,
   IconShield,
+  IconUser,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -266,6 +267,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.namespaces'),
         url: '/namespaces',
         icon: IconBoxMultiple,
+      },
+      {
+        title: t('nav.serviceAccounts'),
+        url: '/serviceaccounts',
+        icon: IconUser,
       },
       {
         title: t('common.events'),

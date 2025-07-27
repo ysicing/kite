@@ -210,14 +210,14 @@ func GetOpenKruiseStatus(c *gin.Context) {
 		},
 	}
 
-	// Check each workload availability and count
-	for i, workload := range workloads {
-		available, count := checkWorkloadAvailability(ctx, cs, workload)
-		workloads[i].Available = available
-		workloads[i].Count = count
+	// Use cached workload status check to reduce API calls
+	workloads = globalWorkloadCache.GetCachedWorkloadStatus(ctx, cs, workloads)
 
-		if available {
+	// Check if any workload is installed
+	for _, workload := range workloads {
+		if workload.Available {
 			status.Installed = true
+			break
 		}
 	}
 
@@ -275,14 +275,14 @@ func GetTailscaleStatus(c *gin.Context) {
 		},
 	}
 
-	// Check each workload availability and count
-	for i, workload := range workloads {
-		available, count := checkTailscaleWorkloadAvailability(ctx, cs, workload)
-		workloads[i].Available = available
-		workloads[i].Count = count
+	// Use cached workload status check to reduce API calls
+	workloads = globalWorkloadCache.GetCachedTailscaleWorkloadStatus(ctx, cs, workloads)
 
-		if available {
+	// Check if any workload is installed
+	for _, workload := range workloads {
+		if workload.Available {
 			status.Installed = true
+			break
 		}
 	}
 
@@ -397,14 +397,14 @@ func GetTraefikStatus(c *gin.Context) {
 		},
 	}
 
-	// Check each workload availability and count
-	for i, workload := range workloads {
-		available, count := checkTraefikWorkloadAvailability(ctx, cs, workload)
-		workloads[i].Available = available
-		workloads[i].Count = count
+	// Use cached workload status check to reduce API calls
+	workloads = globalWorkloadCache.GetCachedTraefikWorkloadStatus(ctx, cs, workloads)
 
-		if available {
+	// Check if any workload is installed
+	for _, workload := range workloads {
+		if workload.Available {
 			status.Installed = true
+			break
 		}
 	}
 
@@ -903,6 +903,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"persistentvolumeclaims":          NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
 		"configmaps":                      NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, true),
 		"secrets":                         NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, true),
+		"serviceaccounts":                 NewGenericResourceHandler[*corev1.ServiceAccount, *corev1.ServiceAccountList]("serviceaccounts", false, true),
 		"services":                        NewGenericResourceHandler[*corev1.Service, *corev1.ServiceList]("services", false, true),
 		"endpoints":                       NewGenericResourceHandler[*corev1.Endpoints, *corev1.EndpointsList]("endpoints", false, false),
 		"endpointslices":                  NewGenericResourceHandler[*discoveryv1.EndpointSlice, *discoveryv1.EndpointSliceList]("endpointslices", false, false),

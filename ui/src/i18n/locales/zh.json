@@ -143,6 +143,7 @@
     "httproutes": "HTTP 路由",
     "configMaps": "配置映射",
     "secrets": "密钥",
+    "serviceAccounts": "服务账户",
     "validatingWebhooks": "验证准入控制器",
     "mutatingWebhooks": "变更准入控制器",
     "admissionControllers": "准入控制器",

@@ -143,6 +143,7 @@
     "httproutes": "HTTP Routes",
     "configMaps": "ConfigMaps",
     "secrets": "Secrets",
+    "serviceAccounts": "Service Accounts",
     "validatingWebhooks": "Validating Webhooks",
     "mutatingWebhooks": "Mutating Webhooks",
     "admissionControllers": "Admission Controllers",
