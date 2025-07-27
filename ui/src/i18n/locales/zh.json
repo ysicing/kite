@@ -939,5 +939,10 @@
     "tls": "TLS",
     "secret": "密钥",
     "rules": "规则"
+  },
+  "ai": {
+    "welcome": "你好！我是你的Kubernetes助手。你可以问我任何关于Kubernetes的问题，比如：\n\n• 如何部署应用？\n• Pod状态异常怎么办？\n• 如何配置Service？\n• 存储卷如何使用？\n\n我会尽力为你提供准确的答案！",
+    "placeholder": "问我任何关于Kubernetes的问题...",
+    "assistant": "Kubernetes AI助手"
   }
 }

@@ -3,6 +3,7 @@ import './App.css'
 import { useEffect } from 'react'
 import { Outlet, useSearchParams } from 'react-router-dom'
 
+import { AiChatButton } from './components/ai-chat-button'
 import { AppSidebar } from './components/app-sidebar'
 import { ColorThemeProvider } from './components/color-theme-provider'
 import { GlobalSearch } from './components/global-search'
@@ -69,6 +70,7 @@ function AppContent() {
         </SidebarInset>
       </SidebarProvider>
       <GlobalSearch open={isOpen} onOpenChange={closeSearch} />
+      <AiChatButton />
       <Toaster />
     </>
   )

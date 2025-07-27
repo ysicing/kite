@@ -938,5 +938,10 @@
     "tls": "TLS",
     "secret": "Secret",
     "rules": "Rules"
+  },
+  "ai": {
+    "welcome": "Hello! I'm your Kubernetes assistant. You can ask me any questions about Kubernetes, such as:\n\n• How to deploy applications?\n• What to do when Pod status is abnormal?\n• How to configure Services?\n• How to use storage volumes?\n\nI'll do my best to provide accurate answers!",
+    "placeholder": "Ask me anything about Kubernetes...",
+    "assistant": "Kubernetes AI Assistant"
   }
 }
