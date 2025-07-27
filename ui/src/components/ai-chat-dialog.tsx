@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Send, Bot, User } from 'lucide-react'
+import { Send, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ChatGPTIcon } from './icons/chatgpt-icon'
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AiChatDialog } from './ai-chat-dialog'
 import { ChatGPTIcon } from './icons/chatgpt-icon'
