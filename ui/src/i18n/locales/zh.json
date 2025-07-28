@@ -959,6 +959,29 @@
   "ai": {
     "welcome": "你好！我是你的Kubernetes助手。你可以问我任何关于Kubernetes的问题，比如：\n\n• 如何部署应用？\n• Pod状态异常怎么办？\n• 如何配置Service？\n• 存储卷如何使用？\n\n我会尽力为你提供准确的答案！",
     "placeholder": "问我任何关于Kubernetes的问题...",
-    "assistant": "Kubernetes AI助手"
+    "assistant": "Kubernetes AI助手",
+    "settings": {
+      "title": "AI助手设置",
+      "description": "配置AI助手的行为和外观",
+      "apiUrl": "API URL",
+      "apiKey": "API密钥",
+      "model": "模型",
+      "testing": "测试",
+      "testConnection": "测试连接",
+      "saving": "正在保存设置...",
+      "save": "保存设置",
+      "storageNote": "设置将保存在浏览器的本地存储中",
+      "notConfigured": "AI助手未配置",
+      "configurationRequired": "请在设置中配置AI助手以开始使用",
+      "connectionSuccess": "连接成功",
+      "connectionFailed": "连接失败，请检查您的API设置",
+      "connectionError": "连接错误，请稍后重试",
+      "error": {
+        "apiKeyRequired": "API密钥是必需的",
+        "apiKeyTooShort": "API密钥长度必须至少为6个字符",
+        "saveFailed": "保存设置失败，请检查API URL和密钥是否正确",
+        "timeout": "请求超时，请检查您的网络连接或API服务状态"
+      }
+    }
   }
 }

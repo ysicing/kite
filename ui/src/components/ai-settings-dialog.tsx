@@ -59,7 +59,7 @@ export function AiSettingsDialog({ children }: AiSettingsDialogProps) {
     // 验证API Key
     if (!settingsToValidate.apiKey.trim()) {
       newErrors.apiKey = t('ai.settings.errors.apiKeyRequired')
-    } else if (settingsToValidate.apiKey.length < 10) {
+    } else if (settingsToValidate.apiKey.length < 6) {
       newErrors.apiKey = t('ai.settings.errors.apiKeyTooShort')
     }
 

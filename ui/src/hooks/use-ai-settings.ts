@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS: OpenAISettings = {
   model: 'gpt-4o-mini'
 }
 
-const STORAGE_KEY = 'ai-settings'
+const STORAGE_KEY = 'kite-ai-settings'
 
 export const useAiSettings = () => {
   const [settings, setSettings] = useState<OpenAISettings>(DEFAULT_SETTINGS)

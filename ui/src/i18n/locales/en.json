@@ -967,6 +967,29 @@
   "ai": {
     "welcome": "Hello! I'm your Kubernetes assistant. You can ask me any questions about Kubernetes, such as:\n\n• How to deploy applications?\n• What to do when Pod status is abnormal?\n• How to configure Services?\n• How to use storage volumes?\n\nI'll do my best to provide accurate answers!",
     "placeholder": "Ask me anything about Kubernetes...",
-    "assistant": "Kubernetes AI Assistant"
+    "assistant": "Kubernetes AI Assistant",
+    "settings": {
+      "title": "AI Assistant Settings",
+      "description": "Configure the behavior and appearance of the AI assistant",
+      "apiUrl": "API URL",
+      "apiKey": "API Key",
+      "model": "Model",
+      "testing": "Testing",
+      "testConnection": "Test Connection",
+      "saving": "Saving settings...",
+      "save": "Save Settings",
+      "storageNote": "Settings will be saved in your browser's local storage",
+      "notConfigured": "AI Assistant not configured",
+      "configurationRequired": "Please configure the AI Assistant in the settings to start using it",
+      "connectionSuccess": "Connection successful",
+      "connectionFailed": "Connection failed, please check your API settings",
+      "connectionError": "Connection error, please try again later",
+      "error": {
+        "apiKeyRequired": "API Key is required",
+        "apiKeyTooShort": "API Key must be at least 6 characters long",
+        "saveFailed": "Failed to save settings, please check if the API URL and key are correct",
+        "timeout": "Request timed out, please check your network connection or API service status"
+      }
+    }
   }
 }
