@@ -675,15 +675,6 @@ func checkTraefikWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet
 
 // checkSystemUpgradeWorkloadAvailability checks if a specific System Upgrade Controller workload type is available and returns count
 func checkSystemUpgradeWorkloadAvailability(ctx context.Context, cs *cluster.ClientSet, workload SystemUpgradeWorkload) (bool, int) {
-	// Special case for Job resources - they are native Kubernetes resources
-	if workload.Kind == "Job" {
-		var list batchv1.JobList
-		if err := cs.K8sClient.List(ctx, &list); err != nil {
-			return false, 0 // Jobs should always be available in Kubernetes
-		}
-		return true, len(list.Items)
-	}
-
 	// For Plan resources, first check if the CRD exists
 	crdName := getSystemUpgradeCRDName(workload.Kind)
 	if crdName == "" {
