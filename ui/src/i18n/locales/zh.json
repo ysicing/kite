@@ -107,7 +107,7 @@
     "availableReplicas": "可用副本",
     "currentReplicas": "当前副本",
     "completed": "已完成",
-    "started": "已启动",
+    "started": "启动时间",
     "statusOverview": "状态概览",
     "updateStrategy": "更新策略",
     "selector": "选择器",
@@ -117,6 +117,11 @@
     "learnMore": "了解更多",
     "installGuide": "安装指南",
     "summary": "总览",
+    "restartCount": "重启次数",
+    "phase": "状态",
+    "readyContainers": "就绪容器",
+    "strategy": "更新策略",
+    "details": "详情",
     "other": "其他",
     "timeUnits": {
       "days": "天",
@@ -342,7 +347,6 @@
     "taintKeyRequired": "污点键是必需的",
     "untaintSuccess": "节点 {{name}} 污点移除成功",
     "untaintError": "移除节点污点失败：{{error}}",
-    "yamlConfiguration": "YAML配置",
     "unknownError": "未知错误",
     "memory": "内存",
     "conditions": {
@@ -581,16 +585,12 @@
       "scaleError": "扩缩容 CloneSet 失败",
       "restartSuccess": "CloneSet 重启成功",
       "restartError": "重启 CloneSet 失败",
-      "yamlSaveSuccess": "YAML 保存成功",
-      "yamlSaveError": "保存 YAML 失败",
       "containerUpdateSuccess": "容器 {{name}} 更新成功",
       "containerUpdateError": "更新容器失败",
       "cloneSetInformation": "CloneSet 信息",
       "created": "创建时间",
       "containers": "容器",
-      "conditions": "条件",
-      "yamlConfiguration": "YAML 配置",
-      "services": "服务"
+      "conditions": "条件"
     },
     "advancedstatefulsets": {
       "title": "高级有状态副本集",
@@ -600,7 +600,6 @@
     "advanceddaemonsets": {
       "title": "高级守护进程集",
       "description": "增强版的守护进程集，支持原地升级和灵活的发布策略",
-      "yamlSaveSuccess": "高级守护进程集 YAML 保存成功",
       "restartSuccess": "高级守护进程集重启已启动",
       "deleteSuccess": "高级守护进程集删除成功",
       "containerUpdateSuccess": "容器更新成功",
@@ -618,7 +617,6 @@
       "desiredScheduled": "期望调度",
       "information": "高级守护进程集信息",
       "created": "创建时间",
-      "strategy": "策略",
       "containers": "容器",
       "configuration": "高级守护进程集配置",
       "restartDialogTitle": "重启高级守护进程集",
@@ -743,9 +741,7 @@
         "withNodeSelector": "节点选择器"
       },
       "deleteSuccess": "代理类删除成功",
-      "deleteError": "删除代理类失败",
-      "yamlSaveSuccess": "YAML 保存成功",
-      "yamlSaveError": "保存 YAML 失败"
+      "deleteError": "删除代理类失败"
     },
     "proxygroups": {
       "title": "代理组",
@@ -774,7 +770,6 @@
       "empty": "未找到入口路由",
       "entryPoints": "入口点",
       "paths": "路径",
-      "services": "服务",
       "middlewares": "中间件",
       "tls": "TLS"
     },
@@ -920,8 +915,6 @@
       "deleteDescription": "确定要删除升级计划 \"{{name}}\" 吗？此操作不可逆。",
       "deleteSuccess": "升级计划删除成功",
       "deleteError": "删除升级计划失败",
-      "yamlSaveSuccess": "YAML 配置保存成功",
-      "yamlSaveError": "保存 YAML 配置失败",
       "status": {
         "ready": "就绪",
         "notReady": "未就绪",

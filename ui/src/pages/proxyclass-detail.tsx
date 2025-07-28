@@ -123,10 +123,10 @@ export function ProxyClassDetail(props: { name: string }) {
     setIsSavingYaml(true)
     try {
       await updateResource('proxyclasses', name, undefined, parsedYaml as ProxyClassResource)
-      toast.success(t('tailscale.proxyclasses.yamlSaveSuccess'))
+      toast.success(t('common.yamlSaved'))
       await handleRefresh()
     } catch (error: any) {
-      toast.error(`${t('tailscale.proxyclasses.yamlSaveError')}: ${error.message}`)
+      toast.error(`${t('common.yamlSaveError')}: ${error.message}`)
     } finally {
       setIsSavingYaml(false)
     }

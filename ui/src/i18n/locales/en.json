@@ -117,6 +117,11 @@
     "learnMore": "Learn More",
     "installGuide": "Installation Guide",
     "summary": "Summary",
+    "restartCount": "Restart Count",
+    "phase": "Phase",
+    "readyContainers": "Ready Containers",
+    "strategy": "Strategy",
+    "details": "Details",
     "other": "Other",
     "timeUnits": {
       "days": "d",
@@ -344,7 +349,6 @@
     "taintKeyRequired": "Taint key is required",
     "untaintSuccess": "Node {{name}} untainted successfully",
     "untaintError": "Failed to untaint node: {{error}}",
-    "yamlConfiguration": "YAML Configuration",
     "unknownError": "Unknown error",
     "memory": "Memory",
     "conditions": {
@@ -583,17 +587,13 @@
       "scaleError": "Failed to scale CloneSet",
       "restartSuccess": "CloneSet restarted successfully",
       "restartError": "Failed to restart CloneSet",
-      "yamlSaveSuccess": "YAML saved successfully",
-      "yamlSaveError": "Failed to save YAML",
       "containerUpdateSuccess": "Container {{name}} updated successfully",
       "containerUpdateError": "Failed to update container",
       "cloneSetInformation": "CloneSet Information",
       "created": "Created",
       "selector": "Selector",
       "containers": "Containers",
-      "conditions": "Conditions",
-      "yamlConfiguration": "YAML Configuration",
-      "services": "Services"
+      "conditions": "Conditions"
     },
     "advancedstatefulsets": {
       "title": "Advanced StatefulSets",
@@ -603,7 +603,6 @@
     "advanceddaemonsets": {
       "title": "Advanced DaemonSets",
       "description": "Enhanced daemon set with in-place update and flexible release strategies",
-      "yamlSaveSuccess": "AdvancedDaemonSet YAML saved successfully",
       "restartSuccess": "AdvancedDaemonSet restart initiated",
       "deleteSuccess": "AdvancedDaemonSet deleted successfully",
       "containerUpdateSuccess": "Container updated successfully",
@@ -621,7 +620,6 @@
       "desiredScheduled": "Desired Scheduled",
       "information": "AdvancedDaemonSet Information",
       "created": "Created",
-      "strategy": "Strategy",
       "containers": "Containers",
       "configuration": "AdvancedDaemonSet Configuration",
       "restartDialogTitle": "Restart AdvancedDaemonSet",
@@ -748,9 +746,7 @@
         "withNodeSelector": "With Node Selector"
       },
       "deleteSuccess": "ProxyClass deleted successfully",
-      "deleteError": "Failed to delete ProxyClass",
-      "yamlSaveSuccess": "YAML saved successfully",
-      "yamlSaveError": "Failed to save YAML"
+      "deleteError": "Failed to delete ProxyClass"
     },
     "proxygroups": {
       "title": "Proxy Groups",
@@ -780,7 +776,6 @@
       "empty": "No ingress routes found",
       "entryPoints": "Entry Points",
       "paths": "Paths",
-      "services": "Services",
       "middlewares": "Middlewares",
       "tls": "TLS"
     },
@@ -928,8 +923,6 @@
       "deleteDescription": "Are you sure you want to delete upgrade plan \"{{name}}\"? This action cannot be undone.",
       "deleteSuccess": "Upgrade plan deleted successfully",
       "deleteError": "Failed to delete upgrade plan",
-      "yamlSaveSuccess": "YAML configuration saved successfully",
-      "yamlSaveError": "Failed to save YAML configuration",
       "status": {
         "ready": "Ready",
         "notReady": "Not Ready",

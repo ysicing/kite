@@ -477,7 +477,7 @@ export function DeploymentCreateDialog({
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <Label className="text-lg font-medium">Containers</Label>
+              <Label className="text-lg font-medium">{t('common.containers')}</Label>
               <Button
                 type="button"
                 variant="outline"

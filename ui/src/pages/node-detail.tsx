@@ -903,7 +903,7 @@ export function NodeDetail(props: { name: string }) {
                 <YamlEditor<'nodes'>
                   key={refreshKey}
                   value={yamlContent}
-                  title={t('nodes.yamlConfiguration')}
+                  title={t('common.yamlConfiguration')}
                   onSave={handleSaveYaml}
                   onChange={handleYamlChange}
                   isSaving={isSavingYaml}

@@ -117,13 +117,13 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
     try {
       const parsedYaml = yaml.load(yamlContent) as AdvancedDaemonSet
       await updateResource('advanceddaemonsets', name, namespace, parsedYaml)
-      toast.success(t('openkruise.advanceddaemonsets.yamlSaveSuccess'))
+      toast.success(t('common.yamlSaved'))
       setRefreshInterval(1000) // Set a short refresh interval to see changes
       await refetchAdvancedDaemonSet()
     } catch (error) {
-      console.error(t('openkruise.advanceddaemonsets.yamlSaveError'), error)
+      console.error(t('common.yamlSaveError'), error)
       toast.error(
-        `${t('openkruise.advanceddaemonsets.yamlSaveError')}: ${
+        `${t('common.yamlSaveError')}: ${
           error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
@@ -416,7 +416,7 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          {t('openkruise.advanceddaemonsets.strategy')}
+                          {t('common.strategy')}
                         </Label>
                         <p className="text-sm">
                           {spec?.updateStrategy?.type || 'RollingUpdate'}
@@ -434,7 +434,7 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
                 {spec?.template?.spec?.containers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>{t('openkruise.advanceddaemonsets.containers')}</CardTitle>
+                      <CardTitle>{t('common.containers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">

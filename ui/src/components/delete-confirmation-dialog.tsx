@@ -78,10 +78,10 @@ export function DeleteConfirmationDialog({
               </p>
               <div className="space-y-1 text-muted-foreground">
                 <p>
-                  <span className="font-medium">Name:</span> {resourceName}
+                  <span className="font-medium">{t('common.name')}:</span> {resourceName}
                 </p>
                 <p>
-                  <span className="font-medium">Type:</span> {resourceType}
+                  <span className="font-medium">{t('common.type')}:</span> {resourceType}
                 </p>
                 {namespace && (
                   <p>

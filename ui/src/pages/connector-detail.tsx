@@ -96,10 +96,10 @@ export function ConnectorDetail(props: { name: string }) {
     setIsSavingYaml(true)
     try {
       await updateResource('connectors', name, undefined, parsedYaml as ConnectorResource)
-      toast.success(t('tailscale.connectors.yamlSaveSuccess'))
+      toast.success(t('common.yamlSaved'))
       await handleRefresh()
     } catch (error: any) {
-      toast.error(`${t('tailscale.connectors.yamlSaveError')}: ${error.message}`)
+      toast.error(`${t('common.yamlSaveErrorr')}: ${error.message}`)
     } finally {
       setIsSavingYaml(false)
     }

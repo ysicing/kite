@@ -488,7 +488,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Strategy
+                          {t('common.strategy')}
                         </Label>
                         <p className="text-sm">
                           {deployment.spec?.strategy?.type || 'RollingUpdate'}
@@ -534,7 +534,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                     <Card>
                       <CardHeader>
                         <CardTitle>
-                          Init Containers (
+                          {t('common.initContainers')} (
                           {
                             deployment.spec?.template?.spec?.initContainers
                               ?.length
@@ -567,7 +567,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      Containers (
+                      {t('common.containers')} (
                       {deployment.spec?.template?.spec?.containers?.length || 0}
                       )
                     </CardTitle>
@@ -595,7 +595,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
                 {status?.conditions && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Conditions</CardTitle>
+                      <CardTitle>{t('common.conditions')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">

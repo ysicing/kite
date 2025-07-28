@@ -184,7 +184,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                           />
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Phase</p>
+                          <p className="text-xs text-muted-foreground">{t('common.phase')}</p>
                           <p className="text-sm font-medium">
                             {podStatus.reason}
                           </p>
@@ -196,7 +196,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Ready Containers
+                          {t('common.readyContainers')}
                         </p>
                         <p className="text-sm font-medium">
                           {podStatus.readyContainers} /{' '}
@@ -206,7 +206,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
 
                       <div>
                         <p className="text-xs text-muted-foreground">
-                          Restart Count
+                          {t('common.restartCount')}
                         </p>
                         <p className="text-sm font-medium">
                           {podStatus.restartString}
@@ -214,7 +214,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                       </div>
 
                       <div>
-                        <p className="text-xs text-muted-foreground">Node</p>
+                        <p className="text-xs text-muted-foreground">{t('pods.node')}</p>
                         <p className="text-sm font-medium truncate">
                           {pod.spec?.nodeName ? (
                             <Link
@@ -251,7 +251,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Started
+                          {t('common.started')}
                         </Label>
                         <p className="text-sm">
                           {pod.status?.startTime
@@ -311,7 +311,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                     <Card>
                       <CardHeader>
                         <CardTitle>
-                          Init Containers (
+                          {t('common.initContainers')} (
                           {pod?.spec?.initContainers?.length || 0})
                         </CardTitle>
                       </CardHeader>
@@ -333,7 +333,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      Containers ({pod?.spec?.containers?.length || 0})
+                      {t('common.containers')} ({pod?.spec?.containers?.length || 0})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -354,7 +354,7 @@ export function PodDetail(props: { namespace: string; name: string }) {
                 {pod.status?.conditions && pod.status.conditions.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Conditions</CardTitle>
+                      <CardTitle>{t('common.conditions')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">

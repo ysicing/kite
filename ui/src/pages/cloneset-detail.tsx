@@ -142,12 +142,12 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
     setIsSavingYaml(true)
     try {
       await updateResource('clonesets', name, namespace, content)
-      toast.success(t('openkruise.clonesets.yamlSaveSuccess'))
+      toast.success(t('common.yamlSaved'))
       setRefreshInterval(1000)
     } catch (error) {
       console.error('Failed to save YAML:', error)
       toast.error(
-        `${t('openkruise.clonesets.yamlSaveError')}: ${
+        `${t('common.yamlSaveError')}: ${
           error instanceof Error ? error.message : t('common.unknownError')
         }`
       )
@@ -550,7 +550,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {t('openkruise.clonesets.containers')} (
+                      {t('common.containers')} (
                       {cloneSet.spec?.template?.spec?.containers?.length || 0}
                       )
                     </CardTitle>
@@ -618,7 +618,7 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
               <YamlEditor<'clonesets'>
                 key={refreshKey}
                 value={yamlContent}
-                title={t('openkruise.clonesets.yamlConfiguration')}
+                title={t('common.yamlConfiguration')}
                 onSave={handleSaveYaml}
                 onChange={handleYamlChange}
                 isSaving={isSavingYaml}

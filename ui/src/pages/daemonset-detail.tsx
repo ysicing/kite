@@ -425,7 +425,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                       </div>
                       <div>
                         <Label className="text-xs text-muted-foreground">
-                          Strategy
+                          {t('common.strategy')}
                         </Label>
                         <p className="text-sm">
                           {spec?.updateStrategy?.type || 'RollingUpdate'}
@@ -443,7 +443,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 {spec?.template?.spec?.initContainers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Init Containers</CardTitle>
+                      <CardTitle>{t('common.initContainers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -466,7 +466,7 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
                 {spec?.template?.spec?.containers && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Containers</CardTitle>
+                      <CardTitle>{t('common.containers')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
