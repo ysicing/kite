@@ -852,7 +852,14 @@
     "viewRelease": "查看发布说明",
     "viewCommit": "查看提交",
     "checkForUpdates": "检查更新",
-    "lastCheck": "上次检查: {{time}}"
+    "lastCheck": "上次检查: {{time}}",
+    "upgrade": "一键升级",
+    "upgrading": "升级中...",
+    "upgradeSuccess": "升级成功",
+    "upgradeError": "升级失败",
+    "upgradeConfirm": "确认升级",
+    "upgradeConfirmMessage": "确定要升级到最新版本吗？这将重启 Kite 服务。",
+    "upgradeDescription": "点击升级按钮将重启 kube-system 中的 kite deployment 以应用最新版本。"
   },
   "systemUpgrade": {
     "title": "系统升级控制器",

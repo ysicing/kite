@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, Info, RefreshCw } from 'lucide-react'
+import { ExternalLink, Info, RefreshCw, Upload } from 'lucide-react'
+import { toast } from 'sonner'
 
-import { useVersionInfo } from '@/lib/api'
+import { useVersionInfo, upgradeKite } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,6 +12,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 interface VersionIndicatorProps {
   variant?: 'compact' | 'full'
@@ -61,6 +70,8 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
   const { t } = useTranslation()
   const { data: versionInfo, isLoading, error, refetch } = useVersionInfo()
   const [showUpdateBadge, setShowUpdateBadge] = useState(false)
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
+  const [isUpgrading, setIsUpgrading] = useState(false)
 
   useEffect(() => {
     if (versionInfo?.hasUpdate) {
@@ -72,6 +83,27 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
       return () => clearTimeout(timer)
     }
   }, [versionInfo?.hasUpdate])
+
+  const handleUpgrade = async () => {
+    try {
+      setIsUpgrading(true)
+      const result = await upgradeKite()
+      toast.success(t('version.upgradeSuccess'), {
+        description: result.message,
+      })
+      setShowUpgradeDialog(false)
+      // 等待几秒后刷新版本信息
+      setTimeout(() => {
+        refetch()
+      }, 3000)
+    } catch (error) {
+      toast.error(t('version.upgradeError'), {
+        description: error instanceof Error ? error.message : '升级失败',
+      })
+    } finally {
+      setIsUpgrading(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -154,24 +186,46 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
                     </p>
                   )}
                   
-                  {versionInfo.releaseUrl && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="w-full"
-                    >
-                      <a
-                        href={versionInfo.releaseUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2"
+                  <div className="flex gap-2">
+                    {versionInfo.releaseUrl && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="flex-1"
                       >
-                        {t('version.viewCommit')}
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                        <a
+                          href={versionInfo.releaseUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                          {t('version.viewCommit')}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    )}
+                    
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setShowUpgradeDialog(true)}
+                      disabled={isUpgrading}
+                      className="flex-1 bg-green-600 hover:bg-green-700"
+                    >
+                      {isUpgrading ? (
+                        <>
+                          <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
+                          {t('version.upgrading')}
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-3 w-3 mr-2" />
+                          {t('version.upgrade')}
+                        </>
+                      )}
                     </Button>
-                  )}
+                  </div>
                 </div>
               </>
             )}
@@ -225,7 +279,7 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <div className="flex items-start gap-3">
             <div className="h-2 w-2 bg-green-500 rounded-full mt-2" />
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1">
               <p className="font-medium text-green-700 dark:text-green-400">
                 {t('version.updateAvailable')}
               </p>
@@ -240,24 +294,46 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
                   {t('version.releaseDate', { date: versionInfo.releaseDate })}
                 </p>
               )}
-              {versionInfo.releaseUrl && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="border-green-300 text-green-700 hover:bg-green-100 dark:border-green-700 dark:text-green-300 dark:hover:bg-green-900/30"
-                >
-                  <a
-                    href={versionInfo.releaseUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
+              <div className="flex gap-2 pt-2">
+                {versionInfo.releaseUrl && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="border-green-300 text-green-700 hover:bg-green-100 dark:border-green-700 dark:text-green-300 dark:hover:bg-green-900/30"
                   >
-                    {t('version.viewCommit')}
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                    <a
+                      href={versionInfo.releaseUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      {t('version.viewCommit')}
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                )}
+                
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => setShowUpgradeDialog(true)}
+                  disabled={isUpgrading}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isUpgrading ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      {t('version.upgrading')}
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {t('version.upgrade')}
+                    </>
+                  )}
                 </Button>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -268,6 +344,49 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
           time: new Date(versionInfo.updatedAt).toLocaleString() 
         })}
       </div>
+      
+      {/* 升级确认对话框 */}
+      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('version.upgradeConfirm')}</DialogTitle>
+            <DialogDescription>
+              {t('version.upgradeConfirmMessage')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground">
+              {t('version.upgradeDescription')}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowUpgradeDialog(false)}
+              disabled={isUpgrading}
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              onClick={handleUpgrade}
+              disabled={isUpgrading}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {isUpgrading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  {t('version.upgrading')}
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  {t('version.upgrade')}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 

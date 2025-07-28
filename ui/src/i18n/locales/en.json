@@ -858,7 +858,14 @@
     "viewRelease": "View Release Notes",
     "viewCommit": "View Commit",
     "checkForUpdates": "Check for Updates",
-    "lastCheck": "Last Check: {{time}}"
+    "lastCheck": "Last Check: {{time}}",
+    "upgrade": "One-Click Upgrade",
+    "upgrading": "Upgrading...",
+    "upgradeSuccess": "Upgrade Successful",
+    "upgradeError": "Upgrade Failed",
+    "upgradeConfirm": "Confirm Upgrade",
+    "upgradeConfirmMessage": "Are you sure you want to upgrade to the latest version? This will restart the Kite service.",
+    "upgradeDescription": "Click the upgrade button to restart the kite deployment in kube-system to apply the latest version."
   },
   "systemUpgrade": {
     "title": "System Upgrade Controller",

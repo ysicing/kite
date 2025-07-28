@@ -1170,6 +1170,11 @@ export const useCurrentVersion = () => {
   })
 }
 
+// 升级Kite - 重启kube-system中的kite deployment
+export const upgradeKite = async (): Promise<{ message: string }> => {
+  return await apiClient.post<{ message: string }>('/version/upgrade', {})
+}
+
 // Traefik API
 export interface TraefikWorkload {
   name: string

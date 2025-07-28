@@ -8,6 +8,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"k8s.io/klog/v2"
+
+	"github.com/zxh326/kite/pkg/cluster"
+	"github.com/zxh326/kite/pkg/handlers/resources"
 )
 
 // 版本信息结构
@@ -37,12 +40,14 @@ type VersionHandler struct {
 	currentVersion string
 	cachedVersion  *VersionInfo
 	lastCheck      time.Time
+	cm             *cluster.ClusterManager
 }
 
 // 创建新的版本处理器
-func NewVersionHandler() *VersionHandler {
+func NewVersionHandler(cm *cluster.ClusterManager) *VersionHandler {
 	return &VersionHandler{
 		currentVersion: getCurrentVersion(),
+		cm:             cm,
 	}
 }
 
@@ -140,5 +145,25 @@ func (h *VersionHandler) GetVersionInfo(c *gin.Context) {
 func (h *VersionHandler) GetCurrentVersion(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"version": h.currentVersion,
+	})
+}
+
+// 一键升级处理器 - 重启kube-system中的kite deployment
+func (h *VersionHandler) UpgradeKite(c *gin.Context) {
+	// 获取部署处理器
+	deploymentHandler := resources.NewDeploymentHandler()
+
+	// 重启kube-system命名空间中的kite deployment
+	if err := deploymentHandler.Restart(c, "kube-system", "kite"); err != nil {
+		klog.Errorf("Failed to restart kite deployment: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "重启kite deployment失败: " + err.Error(),
+		})
+		return
+	}
+
+	klog.Infof("Kite deployment restarted successfully")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Kite已成功重启，升级即将生效",
 	})
 }
