@@ -98,7 +98,7 @@ const TraefikOverview: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              {t('traefik.installInstructions')}
+              {t('common.installInstructions')}
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Button asChild>

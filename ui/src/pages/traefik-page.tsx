@@ -83,7 +83,7 @@ export function TraefikPage() {
           <CardContent>
             <div className="flex flex-col gap-4">
               <p className="text-sm text-muted-foreground">
-                {t('traefik.installInstructions')}
+                {t('common.installInstructions')}
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" asChild>

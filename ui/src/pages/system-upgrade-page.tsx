@@ -76,7 +76,7 @@ export function SystemUpgradePage() {
           <CardContent>
             <div className="flex flex-col gap-4">
               <p className="text-sm text-muted-foreground">
-                {t('systemUpgrade.installInstructions')}
+                {t('common.installInstructions')}
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" asChild>
