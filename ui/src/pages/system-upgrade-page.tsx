@@ -87,7 +87,7 @@ export function SystemUpgradePage() {
                     className="flex items-center gap-2"
                   >
                     <IconDownload className="h-4 w-4" />
-                    {t('systemUpgrade.installGuide')}
+                    {t('common.installGuide')}
                     <IconExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
@@ -143,7 +143,7 @@ export function SystemUpgradePage() {
 
       {availableWorkloads.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">{t('systemUpgrade.summary')}</h2>
+          <h2 className="text-lg font-semibold">{t('common.summary')}</h2>
           <Card>
             <CardContent className="pt-6">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

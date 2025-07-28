@@ -109,7 +109,7 @@ const TraefikOverview: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <IconDownload className="h-4 w-4" />
-                  {t('traefik.installGuide')}
+                  {t('common.installGuide')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -120,7 +120,7 @@ const TraefikOverview: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {t('traefik.learnMore')}
+                  {t('common.learnMore')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -186,7 +186,7 @@ const TraefikOverview: React.FC = () => {
       {availableWorkloads.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('traefik.summary')}</CardTitle>
+            <CardTitle>{t('common.summary')}</CardTitle>
             <CardDescription>
               {t('traefik.description')}
             </CardDescription>
@@ -378,7 +378,7 @@ const TraefikOverview: React.FC = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2"
           >
-            {t('traefik.learnMore')}
+            {t('common.learnMore')}
             <IconExternalLink className="h-4 w-4" />
           </a>
         </Button>

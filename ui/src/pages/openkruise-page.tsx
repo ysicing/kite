@@ -97,7 +97,7 @@ export function OpenKruisePage() {
                   className="flex items-center gap-2"
                 >
                   <IconDownload className="h-4 w-4" />
-                  {t('openkruise.installGuide')}
+                  {t('common.installGuide')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -108,7 +108,7 @@ export function OpenKruisePage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {t('openkruise.learnMore')}
+                  {t('common.learnMore')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -170,7 +170,7 @@ export function OpenKruisePage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
-              {t('openkruise.learnMore')}
+              {t('common.learnMore')}
               <IconExternalLink className="h-4 w-4" />
             </a>
           </Button>
@@ -179,7 +179,7 @@ export function OpenKruisePage() {
 
       {availableWorkloads.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">{t('openkruise.summary')}</h2>
+          <h2 className="text-lg font-semibold">{t('common.summary')}</h2>
           <Card>
             <CardContent className="pt-6">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

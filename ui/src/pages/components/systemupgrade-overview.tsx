@@ -109,7 +109,7 @@ const SystemUpgradeOverview: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <IconDownload className="h-4 w-4" />
-                  {t('systemUpgrade.installGuide')}
+                  {t('common.installGuide')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -120,7 +120,7 @@ const SystemUpgradeOverview: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {t('systemUpgrade.learnMore')}
+                  {t('common.learnMore')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>

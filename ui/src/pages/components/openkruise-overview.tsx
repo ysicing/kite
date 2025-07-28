@@ -105,7 +105,7 @@ const OpenKruiseOverview: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <IconDownload className="h-4 w-4" />
-                  {t('openkruise.installGuide')}
+                  {t('common.installGuide')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -116,7 +116,7 @@ const OpenKruiseOverview: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {t('openkruise.learnMore')}
+                  {t('common.learnMore')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -178,7 +178,7 @@ const OpenKruiseOverview: React.FC = () => {
       {availableWorkloads.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('openkruise.summary')}</CardTitle>
+            <CardTitle>{t('common.summary')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -287,7 +287,7 @@ const OpenKruiseOverview: React.FC = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2"
           >
-            {t('openkruise.learnMore')}
+            {t('common.learnMore')}
             <IconExternalLink className="h-4 w-4" />
           </a>
         </Button>

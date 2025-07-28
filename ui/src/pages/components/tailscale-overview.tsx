@@ -211,7 +211,7 @@ const TailscaleOverview: React.FC = () => {
                   className="flex items-center gap-2"
                 >
                   <IconDownload className="h-4 w-4" />
-                  {t('tailscale.installGuide')}
+                  {t('common.installGuide')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -222,7 +222,7 @@ const TailscaleOverview: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {t('tailscale.learnMore')}
+                  {t('common.learnMore')}
                   <IconExternalLink className="h-4 w-4" />
                 </a>
               </Button>
@@ -471,7 +471,7 @@ const TailscaleOverview: React.FC = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2"
           >
-            {t('tailscale.learnMore')}
+            {t('common.learnMore')}
             <IconExternalLink className="h-4 w-4" />
           </a>
         </Button>
