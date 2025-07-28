@@ -63,16 +63,24 @@ func getCurrentVersion() string {
 
 // 检查是否有新版本
 func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
-	// 如果缓存存在且在1小时内，直接返回缓存
-	if h.cachedVersion != nil && time.Since(h.lastCheck) < time.Hour {
+	// 如果缓存存在且在10分钟内，直接返回缓存
+	if h.cachedVersion != nil && time.Since(h.lastCheck) < time.Minute*10 {
 		return h.cachedVersion, nil
 	}
 
+	// 设置HTTP客户端超时
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
 	// 获取GitHub仓库最新提交的SHA
-	resp, err := http.Get("https://api.github.com/repos/ysicing/kite/commits/main")
+	resp, err := client.Get("https://api.github.com/repos/ysicing/kite/commits/main")
 	if err != nil {
 		klog.Warningf("Failed to check for updates: %v", err)
-		// 返回当前版本信息，标记为无更新
+		// 如果有缓存，返回缓存；否则返回当前版本信息
+		if h.cachedVersion != nil {
+			return h.cachedVersion, nil
+		}
 		return &VersionInfo{
 			Current:   h.currentVersion,
 			Latest:    h.currentVersion,
@@ -84,6 +92,10 @@ func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		klog.Warningf("GitHub API returned status: %d", resp.StatusCode)
+		// 如果有缓存，返回缓存；否则返回当前版本信息
+		if h.cachedVersion != nil {
+			return h.cachedVersion, nil
+		}
 		return &VersionInfo{
 			Current:   h.currentVersion,
 			Latest:    h.currentVersion,
@@ -95,6 +107,10 @@ func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
 	var commit GitHubCommit
 	if err := json.NewDecoder(resp.Body).Decode(&commit); err != nil {
 		klog.Warningf("Failed to decode GitHub commit: %v", err)
+		// 如果有缓存，返回缓存；否则返回当前版本信息
+		if h.cachedVersion != nil {
+			return h.cachedVersion, nil
+		}
 		return &VersionInfo{
 			Current:   h.currentVersion,
 			Latest:    h.currentVersion,
@@ -104,7 +120,14 @@ func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
 	}
 
 	// 比较当前版本（SHA）与最新提交的SHA
-	hasUpdate := h.currentVersion != commit.SHA && h.currentVersion != "unknown"
+	// 如果当前版本是unknown（开发环境），始终认为有更新可用
+	hasUpdate := h.currentVersion != commit.SHA
+
+	// 如果当前版本是unknown，设置为开发版本标识
+	current := h.currentVersion
+	if current == "unknown" {
+		current = "dev-unknown"
+	}
 
 	// 解析提交时间
 	commitDate := ""
@@ -113,7 +136,7 @@ func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
 	}
 
 	versionInfo := &VersionInfo{
-		Current:     h.currentVersion,
+		Current:     current,
 		Latest:      commit.SHA,
 		HasUpdate:   hasUpdate,
 		ReleaseURL:  commit.HTMLURL,
@@ -150,6 +173,14 @@ func (h *VersionHandler) GetCurrentVersion(c *gin.Context) {
 
 // 一键升级处理器 - 重启kube-system中的kite deployment
 func (h *VersionHandler) UpgradeKite(c *gin.Context) {
+	// 检查是否为开发环境
+	if h.currentVersion == "unknown" {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "当前为开发环境，请手动重启应用或重新构建以获取最新版本",
+		})
+		return
+	}
+
 	// 获取部署处理器
 	deploymentHandler := resources.NewDeploymentHandler()
 

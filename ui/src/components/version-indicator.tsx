@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, Info, RefreshCw, Upload } from 'lucide-react'
 import { toast } from 'sonner'
@@ -12,33 +12,25 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 
 interface VersionIndicatorProps {
   variant?: 'compact' | 'full'
   className?: string
 }
 
-// 格式化SHA显示，只显示前8位
+// Format SHA display to show only first 8 characters
 function formatSHA(sha: string): string {
   if (!sha || sha === 'unknown') return sha
   return sha.substring(0, 8)
 }
 
-// 生成GitHub commit链接
+// Generate GitHub commit link
 function getCommitUrl(sha: string): string {
   if (!sha || sha === 'unknown') return ''
   return `https://github.com/ysicing/kite/commit/${sha}`
 }
 
-// 可点击的版本Badge组件
+// Clickable version Badge component
 function VersionBadge({ sha, className = '' }: { sha: string; className?: string }) {
   const formattedSHA = formatSHA(sha)
   const commitUrl = getCommitUrl(sha)
@@ -69,39 +61,31 @@ function VersionBadge({ sha, className = '' }: { sha: string; className?: string
 export function VersionIndicator({ variant = 'compact', className }: VersionIndicatorProps) {
   const { t } = useTranslation()
   const { data: versionInfo, isLoading, error, refetch } = useVersionInfo()
-  const [showUpdateBadge, setShowUpdateBadge] = useState(false)
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
   const [isUpgrading, setIsUpgrading] = useState(false)
 
-  useEffect(() => {
-    if (versionInfo?.hasUpdate) {
-      setShowUpdateBadge(true)
-      // 显示更新提示5秒后自动隐藏
-      const timer = setTimeout(() => {
-        setShowUpdateBadge(false)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [versionInfo?.hasUpdate])
-
   const handleUpgrade = async () => {
+    setIsUpgrading(true)
+    
     try {
-      setIsUpgrading(true)
       const result = await upgradeKite()
+      
       toast.success(t('version.upgradeSuccess'), {
         description: result.message,
       })
-      setShowUpgradeDialog(false)
-      // 等待几秒后刷新版本信息
+      
+      // Wait a few seconds then refresh version info
       setTimeout(() => {
         refetch()
       }, 3000)
+      
     } catch (error) {
       toast.error(t('version.upgradeError'), {
-        description: error instanceof Error ? error.message : '升级失败',
+        description: error instanceof Error ? error.message : t('version.upgradeError'),
       })
     } finally {
-      setIsUpgrading(false)
+      setTimeout(() => {
+        setIsUpgrading(false)
+      }, 1000)
     }
   }
 
@@ -132,8 +116,8 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className={`relative p-2 ${className}`}>
             <Info className="h-4 w-4" />
-            {versionInfo.hasUpdate && showUpdateBadge && (
-              <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
+            {versionInfo?.hasUpdate && (
+              <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-500 rounded-full animate-pulse" />
             )}
           </Button>
         </PopoverTrigger>
@@ -158,18 +142,18 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
                 <span className="text-sm text-muted-foreground">
                   {t('version.current')}
                 </span>
-                <VersionBadge sha={versionInfo.current} />
+                <VersionBadge sha={versionInfo?.current || 'unknown'} />
               </div>
               
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">
                   {t('version.latest')}
                 </span>
-                <VersionBadge sha={versionInfo.latest} />
+                <VersionBadge sha={versionInfo?.latest || 'unknown'} />
               </div>
             </div>
             
-            {versionInfo.hasUpdate && (
+            {versionInfo?.hasUpdate && (
               <>
                 <Separator />
                 <div className="space-y-2">
@@ -209,7 +193,7 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
                     <Button
                       variant="default"
                       size="sm"
-                      onClick={() => setShowUpgradeDialog(true)}
+                      onClick={handleUpgrade}
                       disabled={isUpgrading}
                       className="flex-1 bg-green-600 hover:bg-green-700"
                     >
@@ -317,7 +301,7 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
                 <Button
                   variant="default"
                   size="sm"
-                  onClick={() => setShowUpgradeDialog(true)}
+                  onClick={handleUpgrade}
                   disabled={isUpgrading}
                   className="bg-green-600 hover:bg-green-700"
                 >
@@ -344,49 +328,6 @@ export function VersionIndicator({ variant = 'compact', className }: VersionIndi
           time: new Date(versionInfo.updatedAt).toLocaleString() 
         })}
       </div>
-      
-      {/* 升级确认对话框 */}
-      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('version.upgradeConfirm')}</DialogTitle>
-            <DialogDescription>
-              {t('version.upgradeConfirmMessage')}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground">
-              {t('version.upgradeDescription')}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowUpgradeDialog(false)}
-              disabled={isUpgrading}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              onClick={handleUpgrade}
-              disabled={isUpgrading}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {isUpgrading ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  {t('version.upgrading')}
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  {t('version.upgrade')}
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 } 
