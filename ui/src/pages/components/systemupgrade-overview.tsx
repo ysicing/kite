@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,7 +16,10 @@ import {
   IconX,
   IconAlertCircle,
   IconClock,
-  IconArrowRight
+  IconArrowRight,
+  IconInfoCircle,
+  IconDownload,
+  IconExternalLink
 } from '@tabler/icons-react'
 
 const SystemUpgradeOverview: React.FC = () => {
@@ -24,17 +27,18 @@ const SystemUpgradeOverview: React.FC = () => {
   const navigate = useNavigate()
   const { updateActiveTab } = useLastActiveTab()
 
+  const { data: systemUpgradeStatus, isLoading: statusLoading } = useSystemUpgradeStatus()
+
   const { data: plansData, isLoading: plansLoading, error: plansError } = useQuery({
     queryKey: ['resources', 'plans'],
     queryFn: () => fetchResources('plans'),
+    enabled: systemUpgradeStatus?.installed,
   })
-
-  const { data: systemUpgradeStatus, isLoading: statusLoading } = useSystemUpgradeStatus()
 
   const plans = (plansData as any)?.items as UpgradePlan[] || []
 
   const isLoading = plansLoading || statusLoading
-  const hasError = plansError
+  const hasError = plansError && systemUpgradeStatus?.installed === true
 
   const getPlanStatus = (plan: UpgradePlan): 'ready' | 'notReady' | 'unknown' => {
     const condition = plan.status?.conditions?.find(c => c.type === 'Ready')
@@ -75,6 +79,58 @@ const SystemUpgradeOverview: React.FC = () => {
     )
   }
 
+  if (systemUpgradeStatus?.installed !== true) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-2">
+          <IconArrowUp className="h-6 w-6" />
+          <h2 className="text-xl font-semibold">{t('nav.systemUpgrade')} {t('common.overview')}</h2>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconInfoCircle className="h-5 w-5 text-blue-500" />
+              {t('systemUpgrade.notInstalled')}
+            </CardTitle>
+            <CardDescription>
+              {t('systemUpgrade.notInstalledDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              {t('systemUpgrade.installInstructions')}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button asChild>
+                <a
+                  href="https://github.com/rancher/system-upgrade-controller"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <IconDownload className="h-4 w-4" />
+                  {t('systemUpgrade.installGuide')}
+                  <IconExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href="https://github.com/rancher/system-upgrade-controller/blob/master/README.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  {t('systemUpgrade.learnMore')}
+                  <IconExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -83,20 +139,12 @@ const SystemUpgradeOverview: React.FC = () => {
           <h2 className="text-xl font-semibold">{t('nav.systemUpgrade')} {t('common.overview')}</h2>
         </div>
         <div className="flex items-center gap-2">
-          {systemUpgradeStatus?.installed ? (
-            <>
-              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                ✓ Installed
-              </Badge>
-              {systemUpgradeStatus.version && (
-                <Badge variant="outline">
-                  {t('common.version')}: {systemUpgradeStatus.version}
-                </Badge>
-              )}
-            </>
-          ) : (
-            <Badge variant="outline" className="text-orange-600 border-orange-300">
-              Not Installed
+          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+            ✓ Installed
+          </Badge>
+          {systemUpgradeStatus.version && (
+            <Badge variant="outline">
+              {t('common.version')}: {systemUpgradeStatus.version}
             </Badge>
           )}
         </div>
