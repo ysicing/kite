@@ -720,7 +720,7 @@ func checkSystemUpgradeUnstructuredWorkload(ctx context.Context, cs *cluster.Cli
 	})
 
 	if err := cs.K8sClient.List(ctx, list); err != nil {
-		return true, 0 // CRD exists but listing failed, still consider available
+		return false, 0 // CRD exists but listing failed, workload not available
 	}
 
 	return true, len(list.Items)
