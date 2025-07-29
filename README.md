@@ -114,9 +114,12 @@ _安全的 GitHub 和自定义 OAuth 提供商认证_
 ### 📈 **监控与可观测性**
 
 - 📊 **实时指标** - 基于 Prometheus 的 CPU、内存和网络使用图表
+- 🤖 **智能发现** - 自动发现集群中的 Prometheus 服务，无需手动配置
+- 🔗 **多种访问方式** - 支持 ClusterIP、NodePort、LoadBalancer、Ingress 等
 - 📋 **集群概览** - 全面的集群健康状态和资源统计
 - 📝 **实时日志** - 实时流式传输 Pod 日志，支持过滤和搜索
 - 💻 **Web 终端** - 通过浏览器直接在 Pod 中执行命令
+- ⚡ **零配置部署** - 支持常见 Prometheus 部署模式的自动识别
 
 ### 🔐 **身份认证**
 
@@ -134,8 +137,8 @@ _安全的 GitHub 和自定义 OAuth 提供商认证_
 | `PORT`                     | 服务器端口                                                                                    | `8080`                        | 否   |
 | `KUBECONFIG`               | 多集群访问的 Kubernetes 配置路径                                                              | `inCluster or ~/.kube/config` | 否   |
 | `ENABLE_ANALYTICS`         | 启用匿名使用分析                                                                              | `false`                       | 否   |
-| `PROMETHEUS_URL`           | 默认 Prometheus 服务器 URL [Prometheus 设置指南](docs/PROMETHEUS_SETUP.md)                   | `-`                           | 否   |
-| `<CLUSTER>_PROMETHEUS_URL` | 集群特定的 Prometheus URL（参见下面的多集群部分）                                             | `-`                           | 否   |
+| `PROMETHEUS_URL`           | 默认 Prometheus 服务器 URL，详见 [Prometheus 集成指南](docs/PROMETHEUS_INTEGRATION_GUIDE.md) | `auto-discovery`              | 否   |
+| `<CLUSTER>_PROMETHEUS_URL` | 集群特定的 Prometheus URL，优先级高于默认配置                                                 | `auto-discovery`              | 否   |
 | `JWT_SECRET`               | 用于签署令牌的 JWT 密钥。默认为随机字符串                                                     | `random string`               | 是\* |
 | `OAUTH_ENABLED`            | 启用 OAuth 认证。[OAuth 设置指南](docs/OAUTH_SETUP.md)                                       | `false`                       | 否   |
 | `OAUTH_ALLOW_USERS`        | 允许访问仪表板的用户逗号分隔列表，支持通配符（\*）允许所有用户                                | `-`                           | OAuth\* |
@@ -193,6 +196,53 @@ docker run --rm -p 8080:8080 -v ~/.kube/config:/home/nonroot/.kube/config ghcr.i
    ```bash
    make run
    ```
+
+---
+
+## 📊 Prometheus 监控集成
+
+Kite 提供了企业级的 Prometheus 集成功能，支持智能自动发现和灵活的配置方式。
+
+### 🤖 自动发现功能
+
+**零配置监控** - Kite 能够自动发现集群中的 Prometheus 服务，无需手动配置 URL：
+
+- ✅ **智能识别**：自动识别 Prometheus Server、Prometheus Operator、Kube-Prometheus-Stack 等部署模式
+- ✅ **多种访问方式**：支持 ClusterIP、NodePort、LoadBalancer、Ingress 等访问方式
+- ✅ **优先级算法**：根据命名空间、服务类型、命名规范等智能选择最佳端点
+- ✅ **连通性测试**：自动验证发现的端点是否可访问
+
+### 🔧 配置方式
+
+**方式1：自动发现（推荐）**
+```bash
+# 无需任何配置，Kite 会自动发现集群中的 Prometheus
+kubectl apply -f deploy/install.yaml
+```
+
+**方式2：环境变量配置**
+```bash
+# 全局默认配置
+export PROMETHEUS_URL=http://prometheus.monitoring.svc.cluster.local:9090
+
+# 集群特定配置（多集群环境）
+export PRODUCTION_PROMETHEUS_URL=https://prometheus-prod.example.com
+export STAGING_PROMETHEUS_URL=http://prometheus-staging.monitoring.svc.cluster.local:9090
+```
+
+**方式3：Kubernetes ConfigMap**
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kite-config
+data:
+  PROMETHEUS_URL: "http://prometheus-server.monitoring.svc.cluster.local:9090"
+```
+
+详细的集成指南和故障排除文档：
+
+- ⚙️ **[配置示例](docs/PROMETHEUS_CONFIG_EXAMPLES.md)** - 各种场景的配置方法
 
 ---
 

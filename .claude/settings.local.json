@@ -15,7 +15,9 @@
       "Bash(npx eslint:*)",
       "Bash(go doc:*)",
       "Bash(grep:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(go test:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

@@ -1,11 +1,13 @@
 package cluster
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"k8s.io/client-go/rest"
@@ -41,7 +43,7 @@ func createCmInCluster() (*ClusterManager, error) {
 	if err != nil {
 		return nil, err
 	}
-	promClient, err := prometheus.NewClient(getPrometheusURL("default"))
+	promClient, err := prometheus.NewClient(getPrometheusURL("default", k8sClient))
 	if err != nil {
 		klog.Warningf("Failed to create Prometheus client, some features may not work as expected, err: %v", err)
 	}
@@ -83,7 +85,7 @@ func createCmFromKubeconfig(kubeconfig string) (*ClusterManager, error) {
 				klog.Warningf("Failed to create k8s client for context %s: %v", contextName, err)
 				return
 			}
-			promClient, err := prometheus.NewClient(getPrometheusURL(contextName))
+			promClient, err := prometheus.NewClient(getPrometheusURL(contextName, k8sClient))
 			if err != nil {
 				klog.Warningf("Failed to create Prometheus client for cluster %s, some features may not work as expected, err: %v", contextName, err)
 			}
@@ -155,9 +157,11 @@ func (cm *ClusterManager) GetClusters(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-func getPrometheusURL(clusterName string) string {
+func getPrometheusURL(clusterName string, k8sClient *kube.K8sClient) string {
+	// Try environment variables first (backwards compatibility)
 	envKey := utils.ToEnvName(clusterName) + "_PROMETHEUS_URL"
 	if url := os.Getenv(envKey); url != "" {
+		klog.Infof("Using environment variable Prometheus URL for cluster %s: %s", clusterName, url)
 		return url
 	}
 
@@ -165,5 +169,20 @@ func getPrometheusURL(clusterName string) string {
 		klog.Infof("Using default Prometheus URL for cluster %s: %s", clusterName, url)
 		return url
 	}
+
+	// Try auto-discovery if no environment variable is set
+	if k8sClient != nil && k8sClient.ClientSet != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
+		url, err := prometheus.AutoDiscoverPrometheusURL(ctx, k8sClient.ClientSet)
+		if err != nil {
+			klog.Warningf("Failed to auto-discover Prometheus URL for cluster %s: %v", clusterName, err)
+		} else {
+			klog.Infof("Auto-discovered Prometheus URL for cluster %s: %s", clusterName, url)
+			return url
+		}
+	}
+
 	return ""
 }
