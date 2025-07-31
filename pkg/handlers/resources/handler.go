@@ -989,7 +989,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 
 	// Add unified Kruise operations routes for remaining workload types that support scaling
 	kruiseOpsHandler := &KruiseOperationHandler{}
-	kruiseScalableResources := []string{"uniteddeployments", "broadcastjobs"}
+	kruiseScalableResources := []string{"uniteddeployments"}
 	for _, resourceType := range kruiseScalableResources {
 		if handler, exists := handlers[resourceType]; exists && !handler.IsClusterScoped() {
 			g := group.Group("/" + resourceType)

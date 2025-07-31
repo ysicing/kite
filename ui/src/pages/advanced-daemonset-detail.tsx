@@ -18,8 +18,9 @@ import {
   updateResource,
   useResource,
   useResources,
+  restartAdvancedDaemonSet,
 } from '@/lib/api'
-import { toSimpleContainer } from '@/lib/k8s'
+import { toSimpleContainer, isOpenKruiseResourceRestartable } from '@/lib/k8s'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -140,28 +141,26 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
     if (!advancedDaemonSet) return
 
     try {
-      // Create a deep copy of the advanceddaemonset to avoid modifying the original
-      const updatedAdvancedDaemonSet = {
-        ...advancedDaemonSet,
+      // Use the dedicated restart API instead of generic update
+      const result = await restartAdvancedDaemonSet(namespace, name)
+      
+      toast.success(`${t('openkruise.advanceddaemonsets.restartSuccess')} - ${result.message}`)
+      
+      // Show restart timestamp if available
+      if (result.restartedAt) {
+        console.log(`AdvancedDaemonSet restarted at: ${result.restartedAt}`)
       }
-
-      // Ensure template metadata and annotations exist
-      if (!updatedAdvancedDaemonSet.spec?.template?.metadata) {
-        updatedAdvancedDaemonSet.spec!.template!.metadata = {}
-      }
-      if (!updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations) {
-        updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations = {}
-      }
-
-      // Add restart annotation to trigger pod restart
-      updatedAdvancedDaemonSet.spec!.template!.metadata!.annotations[
-        'kite.kubernetes.io/restartedAt'
-      ] = new Date().toISOString()
-
-      await updateResource('advanceddaemonsets', name, namespace, updatedAdvancedDaemonSet)
-      toast.success(t('openkruise.advanceddaemonsets.restartSuccess'))
+      
       setIsRestartPopoverOpen(false)
+      
+      // Start polling for updates to show the restart in progress
       setRefreshInterval(1000)
+      
+      // Stop polling after 30 seconds
+      setTimeout(() => {
+        setRefreshInterval(0)
+      }, 30000)
+      
     } catch (error) {
       console.error(t('openkruise.advanceddaemonsets.restartError'), error)
       toast.error(
@@ -285,46 +284,48 @@ export function AdvancedDaemonSetDetail(props: { namespace: string; name: string
             <IconRefresh className="w-4 h-4" />
             {t('openkruise.advanceddaemonsets.refresh')}
           </Button>
-          <Popover
-            open={isRestartPopoverOpen}
-            onOpenChange={setIsRestartPopoverOpen}
-          >
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconReload className="w-4 h-4" />
-                {t('openkruise.advanceddaemonsets.restart')}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">{t('openkruise.advanceddaemonsets.restartDialogTitle')}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {t('openkruise.advanceddaemonsets.restartDialogDescription')}
-                  </p>
+          {isOpenKruiseResourceRestartable('advanceddaemonsets') && (
+            <Popover
+              open={isRestartPopoverOpen}
+              onOpenChange={setIsRestartPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconReload className="w-4 h-4" />
+                  {t('openkruise.advanceddaemonsets.restart')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">{t('openkruise.advanceddaemonsets.restartDialogTitle')}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {t('openkruise.advanceddaemonsets.restartDialogDescription')}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsRestartPopoverOpen(false)}
+                      className="flex-1"
+                    >
+                      {t('openkruise.advanceddaemonsets.restartDialogCancel')}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleRestart()
+                        setIsRestartPopoverOpen(false)
+                      }}
+                      className="flex-1"
+                    >
+                      <IconReload className="w-4 h-4 mr-2" />
+                      {t('openkruise.advanceddaemonsets.restart')}
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsRestartPopoverOpen(false)}
-                    className="flex-1"
-                  >
-                    {t('openkruise.advanceddaemonsets.restartDialogCancel')}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handleRestart()
-                      setIsRestartPopoverOpen(false)
-                    }}
-                    className="flex-1"
-                  >
-                    <IconReload className="w-4 h-4 mr-2" />
-                    {t('openkruise.advanceddaemonsets.restart')}
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+              </PopoverContent>
+            </Popover>
+          )}
           <Button
             variant="destructive"
             size="sm"

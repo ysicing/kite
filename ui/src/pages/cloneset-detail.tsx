@@ -16,8 +16,9 @@ import {
   updateResource,
   useResource,
   useResources,
+  restartCloneSet,
 } from '@/lib/api'
-import { getCloneSetStatus, toSimpleContainer } from '@/lib/k8s'
+import { getCloneSetStatus, toSimpleContainer, isOpenKruiseResourceRestartable } from '@/lib/k8s'
 import { formatDate } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -187,24 +188,24 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
     try {
       if (!cloneSet) return
       
-      const updatedCloneSet = { ...cloneSet }
-      if (updatedCloneSet.spec?.template?.metadata?.annotations) {
-        updatedCloneSet.spec.template.metadata.annotations[
-          'kubectl.kubernetes.io/restartedAt'
-        ] = new Date().toISOString()
-      } else {
-        updatedCloneSet.spec!.template!.metadata = {
-          ...updatedCloneSet.spec!.template!.metadata,
-          annotations: {
-            ...updatedCloneSet.spec!.template!.metadata?.annotations,
-            'kubectl.kubernetes.io/restartedAt': new Date().toISOString(),
-          },
-        }
+      // Use the dedicated restart API instead of generic update
+      const result = await restartCloneSet(namespace, name)
+      
+      toast.success(`${t('openkruise.clonesets.restartSuccess')} - ${result.message}`)
+      
+      // Show restart timestamp if available
+      if (result.restartedAt) {
+        console.log(`CloneSet restarted at: ${result.restartedAt}`)
       }
       
-      await updateResource('clonesets', name, namespace, updatedCloneSet)
-      toast.success(t('openkruise.clonesets.restartSuccess'))
+      // Start polling for updates to show the restart in progress
       setRefreshInterval(1000)
+      
+      // Stop polling after 30 seconds
+      setTimeout(() => {
+        setRefreshInterval(0)
+      }, 30000)
+      
     } catch (error) {
       console.error('Failed to restart CloneSet:', error)
       toast.error(
@@ -374,46 +375,48 @@ export function CloneSetDetail(props: { namespace: string; name: string }) {
               </div>
             </PopoverContent>
           </Popover>
-          <Popover
-            open={isRestartPopoverOpen}
-            onOpenChange={setIsRestartPopoverOpen}
-          >
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconReload className="w-4 h-4" />
-                {t('common.restart')}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">{t('openkruise.clonesets.restartCloneSet')}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {t('openkruise.clonesets.restartDescription')}
-                  </p>
+          {isOpenKruiseResourceRestartable('clonesets') && (
+            <Popover
+              open={isRestartPopoverOpen}
+              onOpenChange={setIsRestartPopoverOpen}
+            >
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconReload className="w-4 h-4" />
+                  {t('common.restart')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80" align="end">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">{t('openkruise.clonesets.restartCloneSet')}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {t('openkruise.clonesets.restartDescription')}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsRestartPopoverOpen(false)}
+                      className="flex-1"
+                    >
+                      {t('common.cancel')}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleRestart()
+                        setIsRestartPopoverOpen(false)
+                      }}
+                      className="flex-1"
+                    >
+                      <IconReload className="w-4 h-4 mr-2" />
+                      {t('common.restart')}
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsRestartPopoverOpen(false)}
-                    className="flex-1"
-                  >
-                    {t('common.cancel')}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handleRestart()
-                      setIsRestartPopoverOpen(false)
-                    }}
-                    className="flex-1"
-                  >
-                    <IconReload className="w-4 h-4 mr-2" />
-                    {t('common.restart')}
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+              </PopoverContent>
+            </Popover>
+          )}
           <Button
             variant="destructive"
             size="sm"

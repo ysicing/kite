@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 
 import {
   deleteResource,
+  restartStatefulSet,
   updateResource,
   useResource,
   useResources,
@@ -175,40 +176,14 @@ export function StatefulSetDetail(props: { namespace: string; name: string }) {
   }
 
   const handleRestart = async () => {
-    if (!statefulset) return
-
     try {
-      const updatedStatefulSet = { ...statefulset } as StatefulSet
-      if (!updatedStatefulSet.spec) {
-        updatedStatefulSet.spec = {
-          selector: { matchLabels: {} },
-          template: { spec: { containers: [] } },
-          serviceName: '',
-        }
-      }
-      if (!updatedStatefulSet.spec.template) {
-        updatedStatefulSet.spec.template = { spec: { containers: [] } }
-      }
-      if (!updatedStatefulSet.spec.template.metadata) {
-        updatedStatefulSet.spec.template.metadata = {}
-      }
-      if (!updatedStatefulSet.spec.template.metadata.annotations) {
-        updatedStatefulSet.spec.template.metadata.annotations = {}
-      }
-
-      // Add restart annotation to trigger pod restart
-      updatedStatefulSet.spec.template.metadata.annotations[
-        'kite.kubernetes.io/restartedAt'
-      ] = new Date().toISOString()
-
-      await updateResource('statefulsets', name, namespace, updatedStatefulSet)
-      toast.success('StatefulSet restart initiated')
-      setIsRestartPopoverOpen(false)
-      setRefreshInterval(1000)
+      await restartStatefulSet(namespace, name)
+      toast.success('StatefulSet restarted successfully')
+      setRefreshInterval(1000) // Set a short refresh interval to see changes
     } catch (error) {
-      console.error('Failed to restart statefulset:', error)
+      console.error('Failed to restart StatefulSet:', error)
       toast.error(
-        `Failed to restart statefulset: ${
+        `Failed to restart StatefulSet: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`
       )

@@ -444,3 +444,37 @@ export function toSimpleContainer(
     })),
   ]
 }
+
+// OpenKruise workload types that support restart operations
+const RESTARTABLE_OPENKRUISE_RESOURCES = [
+  'clonesets',
+  'advancedstatefulsets',
+  'advanceddaemonsets',
+] as const
+
+// OpenKruise workload types that do NOT support restart operations
+const NON_RESTARTABLE_OPENKRUISE_RESOURCES = [
+  'sidecarsets',
+  'advancedcronjobs',
+  'workloadspreads',
+  'uniteddeployments',
+  'broadcastjobs',
+] as const
+
+/**
+ * Check if an OpenKruise resource type supports restart operations
+ * @param resourceType - The OpenKruise resource type (e.g., 'clonesets', 'advancedstatefulsets')
+ * @returns true if the resource supports restart operations, false otherwise
+ */
+export function isOpenKruiseResourceRestartable(resourceType: string): boolean {
+  return RESTARTABLE_OPENKRUISE_RESOURCES.includes(resourceType as any)
+}
+
+/**
+ * Check if a resource type is an OpenKruise resource
+ * @param resourceType - The resource type to check
+ * @returns true if it's an OpenKruise resource, false otherwise
+ */
+export function isOpenKruiseResource(resourceType: string): boolean {
+  return [...RESTARTABLE_OPENKRUISE_RESOURCES, ...NON_RESTARTABLE_OPENKRUISE_RESOURCES].includes(resourceType as any)
+}

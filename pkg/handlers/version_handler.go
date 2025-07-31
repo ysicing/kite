@@ -193,7 +193,7 @@ func (h *VersionHandler) UpgradeKite(c *gin.Context) {
 		return
 	}
 
-	klog.Infof("Kite deployment restarted successfully")
+	klog.Infof("Kite deployment restarted")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Kite已成功重启，升级即将生效",
 	})

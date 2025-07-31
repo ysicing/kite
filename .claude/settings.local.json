@@ -17,7 +17,9 @@
       "Bash(grep:*)",
       "Bash(npm install:*)",
       "Bash(go test:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(/dev/null)",
+      "WebFetch(domain:kubernetes.io)"
     ],
     "deny": []
   }

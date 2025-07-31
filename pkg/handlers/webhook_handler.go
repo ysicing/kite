@@ -45,7 +45,7 @@ func (h *WebhookHandler) HandleWebhook(c *gin.Context) {
 				return
 			}
 			c.JSON(200, gin.H{
-				"message": "Resource restarted successfully",
+				"message": "Resource restarted",
 			})
 			return
 		}

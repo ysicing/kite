@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 
 import {
   deleteResource,
+  restartDaemonSet,
   updateResource,
   useResource,
   useResources,
@@ -137,32 +138,14 @@ export function DaemonSetDetail(props: { namespace: string; name: string }) {
   }
 
   const handleRestart = async () => {
-    if (!daemonset) return
-
     try {
-      // Create a deep copy of the daemonset to avoid modifying the original
-      const updatedDaemonSet = {
-        ...daemonset,
-      }
-
-      // Ensure annotations object exists
-      if (!updatedDaemonSet.spec!.template!.metadata!.annotations) {
-        updatedDaemonSet.spec!.template!.metadata!.annotations = {}
-      }
-
-      // Add restart annotation to trigger pod restart
-      updatedDaemonSet.spec!.template!.metadata!.annotations[
-        'kite.kubernetes.io/restartedAt'
-      ] = new Date().toISOString()
-
-      await updateResource('daemonsets', name, namespace, updatedDaemonSet)
-      toast.success('DaemonSet restart initiated')
-      setIsRestartPopoverOpen(false)
-      setRefreshInterval(1000)
+      await restartDaemonSet(namespace, name)
+      toast.success('DaemonSet restarted successfully')
+      setRefreshInterval(1000) // Set a short refresh interval to see changes
     } catch (error) {
-      console.error('Failed to restart daemonset:', error)
+      console.error('Failed to restart DaemonSet:', error)
       toast.error(
-        `Failed to restart daemonset: ${
+        `Failed to restart DaemonSet: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`
       )

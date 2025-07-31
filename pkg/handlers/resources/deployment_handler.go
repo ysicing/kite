@@ -39,7 +39,7 @@ func (h *DeploymentHandler) Restart(c *gin.Context, namespace, name string) erro
 	if deployment.Spec.Template.Annotations == nil {
 		deployment.Spec.Template.Annotations = make(map[string]string)
 	}
-	deployment.Spec.Template.Annotations["kite.kubernetes.io/restartedAt"] = time.Now().Format(time.RFC3339)
+	deployment.Spec.Template.Annotations[RestartAnnotationKey] = time.Now().Format(time.RFC3339)
 	return cs.K8sClient.Update(c.Request.Context(), &deployment)
 }
 
@@ -57,7 +57,7 @@ func (h *DeploymentHandler) RestartDeployment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Deployment restarted successfully",
+		"message": "Deployment restarted",
 	})
 }
 

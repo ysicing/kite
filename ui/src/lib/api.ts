@@ -140,14 +140,103 @@ export const scaleDeployment = async (
 export const restartDeployment = async (
   namespace: string,
   name: string
-): Promise<void> => {
+): Promise<{ message: string; restartedAt?: string }> => {
   const endpoint = `/deployments/${namespace}/${name}/restart`
-  await apiClient.post(`${endpoint}`, {
+  const response = await apiClient.post<{
+    message: string
+    restartedAt?: string
+  }>(endpoint, {}, {
     headers: {
       'Content-Type': 'application/json',
     },
   })
+  
+  return response
 }
+
+// Native Kubernetes resource restart APIs
+export const restartStatefulSet = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  const endpoint = `/statefulsets/${namespace}/${name}/restart`
+  const response = await apiClient.post<{
+    message: string
+    restartedAt?: string
+  }>(endpoint, {}, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return response
+}
+
+export const restartDaemonSet = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  const endpoint = `/daemonsets/${namespace}/${name}/restart`
+  const response = await apiClient.post<{
+    message: string
+    restartedAt?: string
+  }>(endpoint, {}, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return response
+}
+
+// OpenKruise workload restart APIs
+export const restartKruiseWorkload = async (
+  resource: string,
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  const endpoint = `/${resource}/${namespace}/${name}/restart`
+  const response = await apiClient.post<{
+    message: string
+    restartedAt?: string
+  }>(endpoint, {}, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  return response
+}
+
+// Specific Kruise workload restart functions for better type safety
+export const restartCloneSet = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  return restartKruiseWorkload('clonesets', namespace, name)
+}
+
+export const restartAdvancedStatefulSet = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  return restartKruiseWorkload('advancedstatefulsets', namespace, name)
+}
+
+export const restartAdvancedDaemonSet = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  return restartKruiseWorkload('advanceddaemonsets', namespace, name)
+}
+
+export const restartUnitedDeployment = async (
+  namespace: string,
+  name: string
+): Promise<{ message: string; restartedAt?: string }> => {
+  return restartKruiseWorkload('uniteddeployments', namespace, name)
+}
+
 
 // Node operation APIs
 export const drainNode = async (
