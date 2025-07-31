@@ -1385,6 +1385,7 @@ export const useLogsWebSocket = (
   })
   const speedUpdateTimerRef = useRef<NodeJS.Timeout | null>(null)
 
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const stopStreaming = useCallback(() => {
     if (webSocketRef.current) {
       webSocketRef.current.close()
@@ -1395,6 +1396,12 @@ export const useLogsWebSocket = (
     if (speedUpdateTimerRef.current) {
       clearInterval(speedUpdateTimerRef.current)
       speedUpdateTimerRef.current = null
+    }
+
+    // Clear ping interval
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current)
+      pingIntervalRef.current = null
     }
 
     setIsConnected(false)
@@ -1481,6 +1488,15 @@ export const useLogsWebSocket = (
             }
           }
         }, 500)
+
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current)
+        }
+        pingIntervalRef.current = setInterval(() => {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }))
+          }
+        }, 20000)
       }
 
       ws.onclose = () => {
@@ -1512,6 +1528,8 @@ export const useLogsWebSocket = (
               break
             case 'close':
               setIsConnected(false)
+              break
+            case 'pong':
               break
           }
         } catch (err) {
