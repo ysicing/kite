@@ -79,6 +79,10 @@
     "saveYamlError": "Failed to save YAML",
     "yamlConfiguration": "YAML Configuration",
     "related": "Related",
+    "relatedResources": "Related Resources",
+    "view": "View",
+    "deleteSuccess": "Delete successful",
+    "saveSuccess": "Save successful",
     "uid": "UID",
     "statistics": "Statistics",
     "noData": "No data available",
@@ -215,7 +219,12 @@
     "tlsstores": "TLS Stores",
     "traefikservices": "Traefik Services",
     "serverstransports": "Servers Transports",
-    "plans": "Upgrade Plans"
+    "plans": "Upgrade Plans",
+    "rbac": "RBAC",
+    "roles": "Roles",
+    "rolebindings": "Role Bindings",
+    "clusterroles": "Cluster Roles",
+    "clusterrolebindings": "Cluster Role Bindings"
   },
   "overview": {
     "title": "Overview",
@@ -991,5 +1000,23 @@
         "timeout": "Request timed out, please check your network connection or API service status"
       }
     }
+  },
+  "rbac": {
+    "noRelatedResources": "No related resources found",
+    "referencedRole": "Referenced Role",
+    "referencedClusterRole": "Referenced Cluster Role",
+    "boundServiceAccounts": "Bound Service Accounts",
+    "boundUsers": "Bound Users",
+    "boundGroups": "Bound Groups",
+    "referencingRoleBindings": "Referencing Role Bindings",
+    "referencingClusterRoleBindings": "Referencing Cluster Role Bindings",
+    "permissions": "Permissions",
+    "noPermissions": "No permissions defined",
+    "apiGroups": "API Groups",
+    "resources": "Resources",
+    "resourceNames": "Resource Names",
+    "verbs": "Verbs",
+    "nonResourceURLs": "Non-Resource URLs",
+    "externalIdentity": "External Identity"
   }
 }

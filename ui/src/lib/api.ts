@@ -332,7 +332,9 @@ export const updateResource = async <T extends ResourceType>(
   namespace: string | undefined,
   body: ResourceTypeMap[T]
 ): Promise<void> => {
-  const endpoint = `/${resource}/${namespace || '_all'}/${name}`
+  // For cluster-scoped resources, use _all as namespace
+  const ns = clusterScopeResources.includes(resource) ? '_all' : (namespace || '_all')
+  const endpoint = `/${resource}/${ns}/${name}`
   await apiClient.put(`${endpoint}`, body, {
     headers: {
       'Content-Type': 'application/json',
@@ -345,7 +347,9 @@ export const createResource = async <T extends ResourceType>(
   namespace: string | undefined,
   body: ResourceTypeMap[T]
 ): Promise<ResourceTypeMap[T]> => {
-  const endpoint = `/${resource}/${namespace || '_all'}`
+  // For cluster-scoped resources, use _all as namespace
+  const ns = clusterScopeResources.includes(resource) ? '_all' : (namespace || '_all')
+  const endpoint = `/${resource}/${ns}`
   return await apiClient.post<ResourceTypeMap[T]>(`${endpoint}`, body, {
     headers: {
       'Content-Type': 'application/json',
@@ -358,7 +362,9 @@ export const deleteResource = async <T extends ResourceType>(
   name: string,
   namespace: string | undefined
 ): Promise<void> => {
-  const endpoint = `/${resource}/${namespace || '_all'}/${name}`
+  // For cluster-scoped resources, use _all as namespace
+  const ns = clusterScopeResources.includes(resource) ? '_all' : (namespace || '_all')
+  const endpoint = `/${resource}/${ns}/${name}`
   await apiClient.delete(`${endpoint}`)
 }
 
@@ -500,8 +506,10 @@ export const fetchResource = <T>(
   namespace?: string,
   queryParams?: Record<string, string>
 ): Promise<T> => {
-  let endpoint = namespace
-    ? `/${resource}/${namespace}/${name}`
+  // For cluster-scoped resources, use _all as namespace
+  const ns = clusterScopeResources.includes(resource as ResourceType) ? '_all' : namespace
+  let endpoint = ns
+    ? `/${resource}/${ns}/${name}`
     : `/${resource}/${name}`
   
   if (queryParams) {

@@ -7,13 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"k8s.io/apimachinery/pkg/types"
-	corev1 "k8s.io/api/core/v1"
-	appsv1 "k8s.io/api/apps/v1"
 
 	"github.com/zxh326/kite/pkg/cluster"
 
 	kruiseappsv1alpha1 "github.com/openkruise/kruise-api/apps/v1alpha1"
 	kruiseappsv1beta1 "github.com/openkruise/kruise-api/apps/v1beta1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // KruiseOperationType defines the type of operation to perform
@@ -43,9 +43,9 @@ const (
 	UnitedDeploymentType    KruiseWorkloadType = "UnitedDeployment"
 	SidecarSetType          KruiseWorkloadType = "SidecarSet"
 	// Native Kubernetes workload types
-	StatefulSetType         KruiseWorkloadType = "StatefulSet"
-	DaemonSetType           KruiseWorkloadType = "DaemonSet"
-	DeploymentType          KruiseWorkloadType = "Deployment"
+	StatefulSetType KruiseWorkloadType = "StatefulSet"
+	DaemonSetType   KruiseWorkloadType = "DaemonSet"
+	DeploymentType  KruiseWorkloadType = "Deployment"
 )
 
 // KruiseOperationRequest represents a request for Kruise workload operations
@@ -67,16 +67,17 @@ func updateContainerEnv(envVars []corev1.EnvVar, restartedAt string) []corev1.En
 			filtered = append(filtered, env)
 		}
 	}
-	
+
 	// Add the new restart environment variable
 	restartEnv := corev1.EnvVar{
 		Name:  RestartedEnvKey,
 		Value: restartedAt,
 	}
 	filtered = append(filtered, restartEnv)
-	
+
 	return filtered
 }
+
 // KruiseOperationResult represents the result of a Kruise operation
 type KruiseOperationResult struct {
 	Success         bool   `json:"success"`
@@ -332,7 +333,6 @@ func (o *UnitedDeploymentOperations) Restart(ctx context.Context, cs *cluster.Cl
 	return restartedAt, nil
 }
 
-
 // AdvancedDaemonSetOperations implements operations for AdvancedDaemonSet
 type AdvancedDaemonSetOperations struct{}
 
@@ -577,7 +577,7 @@ func NewKruiseOperationsManager() *KruiseOperationsManager {
 	manager.operations[AdvancedStatefulSetType] = &AdvancedStatefulSetOperations{}
 	manager.operations[AdvancedDaemonSetType] = &AdvancedDaemonSetOperations{}
 	manager.operations[UnitedDeploymentType] = &UnitedDeploymentOperations{}
-	
+
 	// Register native Kubernetes workload operations
 	manager.operations[StatefulSetType] = &StatefulSetOperations{}
 	manager.operations[DaemonSetType] = &DaemonSetOperations{}

@@ -26,6 +26,9 @@ import {
   IconArrowUp,
   IconShield,
   IconUser,
+  IconUsers,
+  IconUserCheck,
+  IconKey,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -255,6 +258,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.secrets'),
         url: '/secrets',
         icon: IconLock,
+      },
+      {
+        title: t('nav.rbac'),
+        icon: IconShield,
+        isGroup: true,
+        children: [
+          {
+            title: t('nav.roles'),
+            url: '/roles',
+            icon: IconUser,
+          },
+          {
+            title: t('nav.rolebindings'),
+            url: '/rolebindings',
+            icon: IconUserCheck,
+          },
+          {
+            title: t('nav.clusterroles'),
+            url: '/clusterroles',
+            icon: IconUsers,
+          },
+          {
+            title: t('nav.clusterrolebindings'),
+            url: '/clusterrolebindings',
+            icon: IconKey,
+          },
+        ]
       },
       {
         title: t('nav.admissionControllers'),

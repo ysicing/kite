@@ -24,6 +24,7 @@ import {
 } from 'kubernetes-types/core/v1'
 import { EndpointSlice } from 'kubernetes-types/discovery/v1'
 import { Ingress } from 'kubernetes-types/networking/v1'
+import { ClusterRole, ClusterRoleBinding, Role, RoleBinding } from 'kubernetes-types/rbac/v1'
 import { StorageClass } from 'kubernetes-types/storage/v1'
 
 import { CloneSet, AdvancedDaemonSet } from '@/types/k8s'
@@ -111,9 +112,14 @@ export type ResourceType =
   | 'persistentvolumes'
   | 'persistentvolumeclaims'
   | 'storageclasses'
+  | 'clusterroles'
+  | 'clusterrolebindings'
+  | 'roles'
+  | 'rolebindings'
   | 'podmetrics'
   | 'replicasets'
   | 'clonesets'
+  | 'sidecarsets'
   | 'nodeimages'
   | 'connectors'
   | 'proxyclasses'
@@ -135,6 +141,9 @@ export const clusterScopeResources: ResourceType[] = [
   'nodes',
   'events',
   'storageclasses',
+  'clusterroles',
+  'clusterrolebindings',
+  'sidecarsets',
   'nodeimages',
   'connectors',
   'proxyclasses',
@@ -228,6 +237,22 @@ export interface ResourcesTypeMap {
     items: StorageClassWithInfo[]
     metadata?: listMetadataType
   }
+  clusterroles: {
+    items: ClusterRole[]
+    metadata?: listMetadataType
+  }
+  clusterrolebindings: {
+    items: ClusterRoleBinding[]
+    metadata?: listMetadataType
+  }
+  roles: {
+    items: Role[]
+    metadata?: listMetadataType
+  }
+  rolebindings: {
+    items: RoleBinding[]
+    metadata?: listMetadataType
+  }
   podmetrics: {
     items: PodMetrics[]
     metadata?: listMetadataType
@@ -238,6 +263,10 @@ export interface ResourcesTypeMap {
   }
   clonesets: {
     items: CloneSet[]
+    metadata?: listMetadataType
+  }
+  sidecarsets: {
+    items: CustomResource[]
     metadata?: listMetadataType
   }
   nodeimages: {
@@ -333,9 +362,14 @@ export interface ResourceTypeMap {
   events: Event
   persistentvolumes: PersistentVolume
   storageclasses: StorageClassWithInfo
+  clusterroles: ClusterRole
+  clusterrolebindings: ClusterRoleBinding
+  roles: Role
+  rolebindings: RoleBinding
   replicasets: ReplicaSet
   podmetrics: PodMetrics
   clonesets: CloneSet
+  sidecarsets: CustomResource
   nodeimages: CustomResource
   connectors: CustomResource
   proxyclasses: CustomResource

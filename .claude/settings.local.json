@@ -19,7 +19,8 @@
       "Bash(go test:*)",
       "Bash(chmod:*)",
       "Bash(/dev/null)",
-      "WebFetch(domain:kubernetes.io)"
+      "WebFetch(domain:kubernetes.io)",
+      "Bash(kubectl get rolebindings:*)"
     ],
     "deny": []
   }

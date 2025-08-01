@@ -79,6 +79,10 @@
     "saveYamlError": "保存 YAML 失败",
     "yamlConfiguration": "YAML 配置",
     "related": "关联资源",
+    "relatedResources": "关联资源",
+    "view": "查看",
+    "deleteSuccess": "删除成功",
+    "saveSuccess": "保存成功",
     "uid": "UID",
     "statistics": "统计信息",
     "noData": "无数据",
@@ -215,7 +219,12 @@
     "tlsstores": "TLS存储",
     "traefikservices": "服务",
     "serverstransports": "服务器传输",
-    "plans": "升级计划"
+    "plans": "升级计划",
+    "rbac": "权限管理",
+    "roles": "角色",
+    "rolebindings": "角色绑定",
+    "clusterroles": "集群角色",
+    "clusterrolebindings": "集群角色绑定"
   },
   "overview": {
     "title": "概览",
@@ -983,5 +992,23 @@
         "timeout": "请求超时，请检查您的网络连接或API服务状态"
       }
     }
+  },
+  "rbac": {
+    "noRelatedResources": "未找到相关资源",
+    "referencedRole": "引用的角色",
+    "referencedClusterRole": "引用的集群角色",
+    "boundServiceAccounts": "绑定的服务账户", 
+    "boundUsers": "绑定的用户",
+    "boundGroups": "绑定的用户组",
+    "referencingRoleBindings": "引用此角色的角色绑定",
+    "referencingClusterRoleBindings": "引用此角色的集群角色绑定",
+    "permissions": "权限规则",
+    "noPermissions": "没有定义权限规则",
+    "apiGroups": "API组",
+    "resources": "资源",
+    "resourceNames": "资源名称",
+    "verbs": "操作动作",
+    "nonResourceURLs": "非K8s资源URL",
+    "externalIdentity": "外部身份"
   }
 }

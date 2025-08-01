@@ -5,6 +5,8 @@ import { Card, CardContent } from '@/components/ui/card'
 
 import { AdvancedDaemonSetDetail } from './advanced-daemonset-detail'
 import { CloneSetDetail } from './cloneset-detail'
+import { ClusterRoleDetail } from './clusterrole-detail'
+import { ClusterRoleBindingDetail } from './clusterrolebinding-detail'
 import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
 import { IngressDetail } from './ingress-detail'
@@ -12,6 +14,8 @@ import { NodeDetail } from './node-detail'
 import { PodDetail } from './pod-detail'
 import { ProxyClassDetail } from './proxyclass-detail'
 import { PVDetailPage } from './pv-detail-page'
+import { RoleDetail } from './role-detail'
+import { RoleBindingDetail } from './rolebinding-detail'
 import { SimpleResourceDetail } from './simple-resource-detail'
 import { StatefulSetDetail } from './statefulset-detail'
 import UpgradePlanDetail from './upgrade-plan-detail'
@@ -64,6 +68,15 @@ export function ResourceDetail() {
       return <IngressRouteDetail namespace={namespace!} name={name} />
     case 'serviceaccounts':
       return <ServiceAccountDetail namespace={namespace!} name={name} />
+    // RBAC resources
+    case 'clusterroles':
+      return <ClusterRoleDetail name={name} />
+    case 'clusterrolebindings':
+      return <ClusterRoleBindingDetail name={name} />
+    case 'roles':
+      return <RoleDetail namespace={namespace!} name={name} />
+    case 'rolebindings':
+      return <RoleBindingDetail namespace={namespace!} name={name} />
     default:
       return (
         <SimpleResourceDetail
