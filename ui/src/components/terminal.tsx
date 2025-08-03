@@ -49,15 +49,24 @@ interface TerminalProps {
 
 export function Terminal({
   namespace,
-  podName,
+  podName: propPodName,
   nodeName,
   pods,
   containers = [],
   type = 'pod',
 }: TerminalProps) {
+  // Smart detection: Check URL params first, then props
+  const urlParams = new URLSearchParams(window.location.search)
+  const urlPodName = urlParams.get('pod')
+  const urlContainer = urlParams.get('container')
+
+  // Use URL pod if available, otherwise use prop
+  const effectivePodName = urlPodName || propPodName
+
   const [selectedPod, setSelectedPod] = useState<string>('')
   const [selectedContainer, setSelectedContainer] = useState<string>('')
   const [isConnected, setIsConnected] = useState(false)
+  const [reconnectFlag, setReconnectFlag] = useState(false)
   const [networkSpeed, setNetworkSpeed] = useState({ upload: 0, download: 0 })
   const [terminalTheme, setTerminalTheme] = useState<TerminalTheme>(() => {
     const saved = localStorage.getItem('terminal-theme')
@@ -82,11 +91,32 @@ export function Terminal({
   const speedUpdateTimerRef = useRef<NodeJS.Timeout | null>(null)
   const pingTimerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Initialize pod/container state on props change
+  // Initialize pod/container state
   useEffect(() => {
-    setSelectedPod(podName || pods?.[0]?.metadata?.name || '')
-    setSelectedContainer(containers.length > 0 ? containers[0].name : '')
-  }, [podName, pods, containers])
+    if (type === 'pod') {
+      // Priority: URL param > prop podName > first pod from list
+      const targetPod = effectivePodName || pods?.[0]?.metadata?.name || ''
+      setSelectedPod(targetPod)
+
+      // Priority: URL container > first container > empty (default)
+      const targetContainer = urlContainer ||
+        (containers.length > 0 ? containers[0].name : '')
+      setSelectedContainer(targetContainer)
+
+      // Check if selected container is an init container
+      const selectedContainerInfo = containers.find(c => c.name === targetContainer)
+      if (selectedContainerInfo?.init) {
+        console.warn('[Terminal] Selected container is an init container, connection may fail if it has already completed')
+      }
+
+      console.log('[Terminal] Initialized:', {
+        pod: targetPod,
+        container: targetContainer,
+        isInit: selectedContainerInfo?.init,
+        source: urlPodName ? 'URL' : (propPodName ? 'prop' : 'list')
+      })
+    }
+  }, [effectivePodName, urlContainer, pods, containers, type, propPodName, urlPodName])
 
   // Handle theme change and persist to localStorage
   const handleThemeChange = useCallback((theme: TerminalTheme) => {
@@ -156,8 +186,15 @@ export function Terminal({
   }, [])
 
   const handleContainerChange = useCallback((containerName?: string) => {
-    if (containerName) setSelectedContainer(containerName)
-  }, [])
+    if (containerName) {
+      setSelectedContainer(containerName)
+      // Check if this is an init container
+      const containerInfo = containers.find(c => c.name === containerName)
+      if (containerInfo?.init) {
+        console.warn('[Terminal] Switching to init container:', containerName, '- connection may fail if it has completed')
+      }
+    }
+  }, [containers])
 
   const handlePodChange = useCallback((podName?: string) => {
     setSelectedPod(podName || '')
@@ -179,14 +216,37 @@ export function Terminal({
 
   // Unified terminal and websocket lifecycle
   useEffect(() => {
+    console.log('[Terminal] Effect triggered with:', {
+      type,
+      namespace,
+      selectedPod,
+      selectedContainer,
+      nodeName,
+      hasPods: !!pods,
+      podsLength: pods?.length,
+      hasTerminalRef: !!terminalRef.current
+    })
+
     if (type === 'pod') {
-      if (!pods || pods.length === 0) return
-      if (!selectedPod) return
-      if (!selectedContainer) return
+      if (!selectedPod) {
+        console.log('[Terminal] No pod selected')
+        return
+      }
+      // Container can be empty string (default container)
+      if (selectedContainer === undefined) {
+        console.log('[Terminal] Container not initialized')
+        return
+      }
     } else if (type === 'node') {
-      if (!nodeName && !namespace) return
+      if (!nodeName && !namespace) {
+        console.log('[Terminal] Missing nodeName and namespace for node terminal')
+        return
+      }
     }
-    if (!terminalRef.current) return
+    if (!terminalRef.current) {
+      console.log('[Terminal] No terminal ref')
+      return
+    }
 
     if (xtermRef.current) xtermRef.current.dispose()
     if (wsRef.current) wsRef.current.close()
@@ -260,10 +320,24 @@ export function Terminal({
       type === 'pod'
         ? `${protocol}//${host}/api/v1/terminal/${namespace}/${selectedPod}/ws?container=${selectedContainer}&x-cluster-name=${currentCluster}`
         : `${protocol}//${host}/api/v1/node-terminal/${nodeName || namespace}/ws?x-cluster-name=${currentCluster}`
+
+    console.log('[Terminal] Creating WebSocket connection:', {
+      wsUrl,
+      protocol,
+      isDev,
+      host,
+      currentCluster,
+      type,
+      namespace,
+      selectedPod,
+      selectedContainer
+    })
+
     const websocket = new WebSocket(wsUrl)
     wsRef.current = websocket
 
     websocket.onopen = () => {
+      console.log('[Terminal] WebSocket connected successfully')
       setIsConnected(true)
       networkStatsRef.current = {
         lastReset: Date.now(),
@@ -305,6 +379,7 @@ export function Terminal({
     }
 
     websocket.onmessage = (event) => {
+      console.log('[Terminal] WebSocket message received:', event.data)
       try {
         const message = JSON.parse(event.data)
         const dataSize = new Blob([event.data]).size
@@ -320,10 +395,19 @@ export function Terminal({
           case 'connected':
             terminal.writeln(`\x1b[32m${message.data}\x1b[0m`)
             break
-          case 'error':
-            terminal.writeln(`\x1b[31mError: ${message.data}\x1b[0m`)
+          case 'error': {
+            // Check if this is an init container error
+            const errorMsg = message.data.toLowerCase()
+            if (errorMsg.includes('init') || errorMsg.includes('completed') || errorMsg.includes('not found')) {
+              terminal.writeln(`\x1b[33m⚠ ${message.data}\x1b[0m`)
+              terminal.writeln(`\x1b[33mTip: Init containers run before main containers and exit when complete.\x1b[0m`)
+              terminal.writeln(`\x1b[33mYou can only connect to running containers.\x1b[0m`)
+            } else {
+              terminal.writeln(`\x1b[31mError: ${message.data}\x1b[0m`)
+            }
             setIsConnected(false)
             break
+          }
           case 'pong':
             // Ignore pong messages from server
             break
@@ -334,12 +418,17 @@ export function Terminal({
     }
 
     websocket.onerror = (error) => {
-      console.error('WebSocket error:', error)
+      console.error('[Terminal] WebSocket error:', error)
       terminal.writeln('\x1b[31mWebSocket connection error\x1b[0m')
       setIsConnected(false)
     }
 
     websocket.onclose = (event) => {
+      console.log('[Terminal] WebSocket closed:', {
+        code: event.code,
+        reason: event.reason,
+        wasClean: event.wasClean
+      })
       setIsConnected(false)
       setNetworkSpeed({ upload: 0, download: 0 })
       if (speedUpdateTimerRef.current) {
@@ -412,7 +501,14 @@ export function Terminal({
       if (pingTimerRef.current) clearInterval(pingTimerRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPod, selectedContainer, namespace, nodeName, type, updateNetworkStats])
+  }, [
+    selectedPod,
+    selectedContainer,
+    namespace,
+    type,
+    updateNetworkStats,
+    reconnectFlag,
+  ])
 
   // Clear terminal
   const clearTerminal = useCallback(() => {
@@ -432,7 +528,12 @@ export function Terminal({
               <IconTerminal className="h-5 w-5" />
               Terminal
             </CardTitle>
-            <ConnectionIndicator isConnected={isConnected} />
+            <ConnectionIndicator
+              isConnected={isConnected}
+              onReconnect={() => {
+                setReconnectFlag((prev) => !prev)
+              }}
+            />
             <NetworkSpeedIndicator
               uploadSpeed={networkSpeed.upload}
               downloadSpeed={networkSpeed.download}
@@ -442,16 +543,24 @@ export function Terminal({
           <div className="flex items-center gap-2">
             {/* Container Selector */}
             {containers.length > 1 && (
-              <ContainerSelector
-                containers={containers}
-                showAllOption={false}
-                selectedContainer={selectedContainer}
-                onContainerChange={handleContainerChange}
-              />
+              <>
+                <ContainerSelector
+                  containers={containers}
+                  showAllOption={false}
+                  selectedContainer={selectedContainer}
+                  onContainerChange={handleContainerChange}
+                />
+                {/* Show warning if init container is selected */}
+                {containers.find(c => c.name === selectedContainer)?.init && (
+                  <span className="text-xs text-amber-600" title="Init containers may have already completed and exited">
+                    ⚠️ Init Container
+                  </span>
+                )}
+              </>
             )}
 
-            {/* Pod Selector */}
-            {pods && pods.length > 0 && (
+            {/* Pod Selector - only show if we have a pods list and no URL override */}
+            {!urlPodName && pods && pods.length > 0 && (
               <PodSelector
                 pods={pods}
                 selectedPod={selectedPod}

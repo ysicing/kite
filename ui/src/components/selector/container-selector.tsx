@@ -85,17 +85,22 @@ export function ContainerSelector({
                     )}
                   />
                   <div className="flex flex-col">
-                    <span className="font-medium">
+                    <span className="font-medium flex items-center gap-1">
                       {container.name}
                       {container.init && (
-                        <span className="text-xs text-muted-foreground ml-1">
-                          (init)
+                        <span className="text-xs px-1 py-0.5 bg-amber-100 text-amber-700 rounded">
+                          INIT
                         </span>
                       )}
                     </span>
                     {container.image && (
                       <span className="text-xs text-muted-foreground">
                         {container.image}
+                      </span>
+                    )}
+                    {container.init && (
+                      <span className="text-xs text-amber-600">
+                        ⚠️ May have already completed
                       </span>
                     )}
                   </div>

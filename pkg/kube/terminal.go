@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"golang.org/x/net/websocket"
@@ -48,6 +49,8 @@ func NewTerminalSession(client *K8sClient, conn *websocket.Conn, namespace, podN
 }
 
 func (session *TerminalSession) Start(ctx context.Context, subResource string) error {
+	klog.Infof("Starting terminal session for pod %s/%s, container: '%s' (empty means default)", session.namespace, session.podName, session.container)
+
 	req := session.k8sClient.ClientSet.CoreV1().RESTClient().Post().
 		Resource("pods").
 		Name(session.podName).
@@ -55,9 +58,12 @@ func (session *TerminalSession) Start(ctx context.Context, subResource string) e
 		SubResource(subResource)
 
 	// Set up exec parameters
+	command := []string{"sh", "-c", "for shell in bash ash sh; do if command -v $shell >/dev/null 2>&1; then exec $shell; fi; done; echo 'No compatible shell found' && exit 1"}
+	klog.Infof("Exec command: %v", command)
+
 	req.VersionedParams(&corev1.PodExecOptions{
 		Container: session.container,
-		Command:   []string{"sh", "-c", "for shell in bash ash sh; do if command -v $shell >/dev/null 2>&1; then exec $shell; fi; done; echo 'No compatible shell found' && exit 1"},
+		Command:   command,
 		Stdin:     true,
 		Stdout:    true,
 		Stderr:    true,
@@ -68,15 +74,24 @@ func (session *TerminalSession) Start(ctx context.Context, subResource string) e
 	exec, err := remotecommand.NewSPDYExecutor(session.k8sClient.Configuration, "POST", req.URL())
 
 	if err != nil {
-		log.Printf("Failed to create executor: %v", err)
-		session.SendErrorMessage(fmt.Sprintf("Failed to create executor: %v", err))
+		klog.Errorf("Failed to create executor for pod %s/%s: %v", session.namespace, session.podName, err)
+		// Provide more helpful error message for init containers
+		if session.container != "" {
+			session.SendErrorMessage(fmt.Sprintf("Failed to connect to container '%s'. If this is an init container, it may have already completed.", session.container))
+		} else {
+			session.SendErrorMessage(fmt.Sprintf("Failed to create executor: %v", err))
+		}
 		return err
 	}
+
+	klog.Infof("Executor created successfully for pod %s/%s", session.namespace, session.podName)
 
 	// Send initial connection success message
 	session.SendMessage("connected", "Terminal connected successfully")
 
 	go session.checkHeartbeat(ctx)
+
+	klog.Infof("Starting stream for pod %s/%s", session.namespace, session.podName)
 	// Start the exec session
 	err = exec.StreamWithContext(ctx, remotecommand.StreamOptions{
 		Stdin:             session,
@@ -87,9 +102,17 @@ func (session *TerminalSession) Start(ctx context.Context, subResource string) e
 	})
 
 	if err != nil {
-		session.SendErrorMessage(err.Error())
+		klog.Errorf("Stream error for pod %s/%s: %v", session.namespace, session.podName, err)
+		// Provide more helpful error message for init containers
+		if session.container != "" && strings.Contains(err.Error(), "not found") {
+			session.SendErrorMessage(fmt.Sprintf("Container '%s' not found or not running. If this is an init container, it may have already completed.", session.container))
+		} else {
+			session.SendErrorMessage(err.Error())
+		}
 		return err
 	}
+
+	klog.Infof("Stream ended successfully for pod %s/%s", session.namespace, session.podName)
 
 	return nil
 }
