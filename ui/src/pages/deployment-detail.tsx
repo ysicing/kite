@@ -5,6 +5,7 @@ import {
   IconReload,
   IconScale,
   IconTrash,
+  IconChartLine,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import * as yaml from 'js-yaml'
@@ -35,6 +36,7 @@ import {
 } from '@/components/ui/popover'
 import { ResponsiveTabs } from '@/components/ui/responsive-tabs'
 import { ContainerTable } from '@/components/container-table'
+import { CreateHPADialog } from '@/components/create-hpa-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog'
 import { DeploymentStatusIcon } from '@/components/deployment-status-icon'
 import { EventTable } from '@/components/event-table'
@@ -58,6 +60,7 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [refreshInterval, setRefreshInterval] = useState<number>(0)
+  const [isCreateHPADialogOpen, setIsCreateHPADialogOpen] = useState(false)
   const navigate = useNavigate()
   const { t } = useTranslation()
 
@@ -355,6 +358,14 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
               </div>
             </PopoverContent>
           </Popover>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCreateHPADialogOpen(true)}
+          >
+            <IconChartLine className="w-4 h-4" />
+            {t('hpa.autoScale')}
+          </Button>
           <Popover
             open={isRestartPopoverOpen}
             onOpenChange={setIsRestartPopoverOpen}
@@ -774,6 +785,17 @@ export function DeploymentDetail(props: { namespace: string; name: string }) {
         resourceType="deployment"
         namespace={namespace}
         isDeleting={isDeleting}
+      />
+
+      <CreateHPADialog
+        open={isCreateHPADialogOpen}
+        onOpenChange={setIsCreateHPADialogOpen}
+        targetKind="Deployment"
+        targetName={name}
+        targetNamespace={namespace}
+        onSuccess={() => {
+          toast.success(t('hpa.viewInList'))
+        }}
       />
     </div>
   )

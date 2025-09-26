@@ -9,6 +9,7 @@ import { ClusterRoleDetail } from './clusterrole-detail'
 import { ClusterRoleBindingDetail } from './clusterrolebinding-detail'
 import { DaemonSetDetail } from './daemonset-detail'
 import { DeploymentDetail } from './deployment-detail'
+import { HPADetail } from './hpa-detail'
 import { IngressDetail } from './ingress-detail'
 import { NodeDetail } from './node-detail'
 import { PodDetail } from './pod-detail'
@@ -66,6 +67,8 @@ export function ResourceDetail() {
       return <IngressDetail namespace={namespace!} name={name} />
     case 'ingressroutes':
       return <IngressRouteDetail namespace={namespace!} name={name} />
+    case 'horizontalpodautoscalers':
+      return <HPADetail namespace={namespace!} name={name} />
     case 'serviceaccounts':
       return <ServiceAccountDetail namespace={namespace!} name={name} />
     // RBAC resources

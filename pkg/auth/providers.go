@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"k8s.io/klog/v2"
 
 	"github.com/zxh326/kite/pkg/common"
-	"k8s.io/klog/v2"
 )
 
 // OAuthProvider defines the interface for OAuth providers

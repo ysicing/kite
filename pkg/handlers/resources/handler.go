@@ -893,6 +893,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 		"persistentvolumes":               NewGenericResourceHandler[*corev1.PersistentVolume, *corev1.PersistentVolumeList]("persistentvolumes", true, false),
 		"persistentvolumeclaims":          NewGenericResourceHandler[*corev1.PersistentVolumeClaim, *corev1.PersistentVolumeClaimList]("persistentvolumeclaims", false, false),
 		"configmaps":                      NewGenericResourceHandler[*corev1.ConfigMap, *corev1.ConfigMapList]("configmaps", false, true),
+		"horizontalpodautoscalers":        NewHPAHandler(),
 		"secrets":                         NewGenericResourceHandler[*corev1.Secret, *corev1.SecretList]("secrets", false, true),
 		"serviceaccounts":                 NewGenericResourceHandler[*corev1.ServiceAccount, *corev1.ServiceAccountList]("serviceaccounts", false, true),
 		"services":                        NewGenericResourceHandler[*corev1.Service, *corev1.ServiceList]("services", false, true),
@@ -1005,7 +1006,7 @@ func RegisterRoutes(group *gin.RouterGroup) {
 	}
 
 	// Register related resources route for supported resource types
-	supportedRelatedResourceTypes := []string{"pods", "deployments", "statefulsets", "daemonsets", "configmaps", "secrets", "persistentvolumeclaims", "httproutes"}
+	supportedRelatedResourceTypes := []string{"pods", "deployments", "statefulsets", "daemonsets", "configmaps", "horizontalpodautoscalers", "secrets", "persistentvolumeclaims", "httproutes"}
 	for _, resourceType := range supportedRelatedResourceTypes {
 		if handler, exists := handlers[resourceType]; exists && !handler.IsClusterScoped() {
 			g := group.Group("/" + resourceType)

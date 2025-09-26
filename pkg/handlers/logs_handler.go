@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/websocket"
 
 	"github.com/zxh326/kite/pkg/cluster"
 
-	"golang.org/x/net/websocket"
 	corev1 "k8s.io/api/core/v1"
 )
 

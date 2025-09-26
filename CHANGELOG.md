@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025-09-26]
+
+### Added
+- **Horizontal Pod Autoscaler (HPA) 完整支持**: 实现了 Kubernetes HPA 资源的完整管理功能
+  - 新增 HPA 列表页面，显示所有 HPA 资源及其实时状态
+  - 新增 HPA 详情页面，展示完整的配置信息、指标状态和扩缩历史
+  - 新增 HPA 创建对话框，支持从 Deployment 页面直接创建自动扩缩策略
+  - 实现 HPA 专用 API 处理器，提供推荐配置和创建接口
+- **HPA 智能推荐系统**:
+  - 自动检测工作负载的资源请求配置
+  - 基于当前副本数推荐合理的最小/最大副本范围
+  - 智能提示缺少资源请求时的配置建议
+- **HPA 指标监控**:
+  - 实时显示 CPU/内存使用率与目标值对比
+  - 扩缩状态可视化（稳定/扩容中/缩容中）
+  - 条件状态监控（Active/Unable to Scale）
+- **日志查看器重连功能**: 添加重连图标，支持手动重新连接日志流
+- **日志查看器心跳机制**: 添加 WebSocket 心跳，保持连接稳定性
+
+### Changed
+- **日志系统重构**: 将日志查看器从轮询改为 WebSocket 实时推送
+- **日志查看器滚动优化**: 改进自动滚动行为，提升用户体验
+- **OAuth 配置简化**: 简化 OAuth 认证配置流程
+- **UI 组件优化**: 为 Pod/Container 选择器添加最大宽度限制
+- **导航菜单更新**: 在"配置"分组中添加"水平自动扩缩"菜单项（位于 ConfigMaps 之后）
+- **Deployment 页面增强**: 添加 "Auto Scale" 按钮，支持快速创建 HPA
+
+### Fixed
+- **Pod 计数问题**: 修复未就绪 Pod 数量包含已完成 Pod 的问题 (#86)
+- **命名空间默认值**: 修复缺少默认命名空间的问题 (#92)
+- **日志错误显示**: 修复日志查看器错误日志显示问题
+- **React Table 错误**: 修复 HPA 列表页面 accessor 缺少 ID 的问题
+
+### Technical Details
+- **后端实现**:
+  - 新增 `pkg/handlers/resources/hpa_handler.go` 实现 HPA 专用处理器
+  - 添加 HPA 推荐配置 API：`GET /:namespace/recommendation`
+  - 添加 HPA 创建 API：`POST /create`
+  - 集成 `k8s.io/api/autoscaling/v2` 支持 HPA v2 版本
+- **前端实现**:
+  - 新增 `ui/src/pages/hpa-list-page.tsx` HPA 列表页面
+  - 新增 `ui/src/pages/hpa-detail.tsx` HPA 详情页面
+  - 新增 `ui/src/components/create-hpa-dialog.tsx` HPA 创建对话框
+  - 完整的国际化支持（中英文）
+- **WebSocket 集成**: 日志系统使用 WebSocket 替代轮询机制
+
 ## [v2025.07.04-22:22] - 2025-07-04
 
 ### Added

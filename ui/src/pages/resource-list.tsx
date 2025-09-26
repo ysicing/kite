@@ -10,6 +10,7 @@ import { DaemonSetListPage } from './daemonset-list-page'
 import { DeploymentListPage } from './deployment-list-page'
 import { EventListPage } from './event-list-page'
 import { GatewayListPage } from './gateway-list-page'
+import { HPAListPage } from './hpa-list-page'
 import { HTTPRouteListPage } from './httproute-list-page'
 import { IngressListPage } from './ingress-list-page'
 import { JobListPage } from './job-list-page'
@@ -56,6 +57,8 @@ export function ResourceList() {
       return <ConfigMapListPage />
     case 'secrets':
       return <SecretListPage />
+    case 'horizontalpodautoscalers':
+      return <HPAListPage />
     case 'persistentvolumes':
       return <PVListPage />
     case 'persistentvolumeclaims':

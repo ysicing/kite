@@ -29,6 +29,7 @@ import {
   IconUsers,
   IconUserCheck,
   IconKey,
+  IconChartBar,
 } from '@tabler/icons-react'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -258,6 +259,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('nav.secrets'),
         url: '/secrets',
         icon: IconLock,
+      },
+      {
+        title: t('nav.horizontalpodautoscalers'),
+        url: '/horizontalpodautoscalers',
+        icon: IconChartBar,
       },
       {
         title: t('nav.rbac'),
