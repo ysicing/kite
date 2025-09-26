@@ -199,19 +199,19 @@ export function ResourcePaginationTable<T>({
   })
 
   // Calculate filtered row counts for current page
-  const totalRowCount = useMemo(() => data?.length || 0, [data])
+  const totalRowCount = useMemo(() => memoizedData.length, [memoizedData])
   const filteredRowCount = useMemo(() => {
-    if (!data || data.length === 0) return 0
+    if (memoizedData.length === 0) return 0
     // Force re-computation when filters change
     void debouncedSearchQuery // Ensure dependency is used
     void columnFilters // Ensure dependency is used
     return table.getFilteredRowModel().rows.length
-  }, [table, data, debouncedSearchQuery, columnFilters])
+  }, [table, memoizedData, debouncedSearchQuery, columnFilters])
 
   // Calculate total count and pages for pagination display
   // For server-side pagination, we estimate total based on current progress
   const actualTotalCount = useMemo(() => {
-    const currentPageCount = data?.length || 0
+    const currentPageCount = memoizedData.length
     if (currentPage === 0 && !hasNextPage) {
       // First page and no more pages - total is just current page count
       return currentPageCount
@@ -226,7 +226,7 @@ export function ResourcePaginationTable<T>({
       // No more pages - total is (currentPage * pageSize) + current page count
       return currentPage * pageSize + currentPageCount
     }
-  }, [currentPage, data?.length, hasNextPage, remainingItems, pageSize])
+  }, [currentPage, memoizedData.length, hasNextPage, remainingItems, pageSize])
 
   const totalPages = useMemo(() => {
     if (hasNextPage) {
@@ -246,7 +246,7 @@ export function ResourcePaginationTable<T>({
   // Render empty state based on condition
   const renderEmptyState = () => {
     // Only show loading state if there's no existing data
-    if (isLoading && (!data || data.length === 0)) {
+    if (isLoading && memoizedData.length === 0) {
       return (
         <div className="h-72 flex flex-col items-center justify-center">
           <div className="mb-4 bg-muted/30 p-6 rounded-full">
@@ -287,7 +287,7 @@ export function ResourcePaginationTable<T>({
       )
     }
 
-    if (data && data.length === 0) {
+    if (memoizedData.length === 0) {
       return (
         <div className="h-72 flex flex-col items-center justify-center">
           <div className="mb-4 bg-muted/30 p-6 rounded-full">
@@ -469,7 +469,7 @@ export function ResourcePaginationTable<T>({
       </div>
 
       {/* Loading indicator for refetch */}
-      {isLoading && data && data.length > 0 && (
+      {isLoading && memoizedData.length > 0 && (
         <div className="flex items-center justify-center py-2 bg-muted/20 rounded-md">
           <Database className="h-4 w-4 text-muted-foreground animate-pulse mr-2" />
           <span className="text-sm text-muted-foreground">
@@ -482,7 +482,7 @@ export function ResourcePaginationTable<T>({
       <div className="overflow-hidden rounded-lg border">
         <div
           className={`rounded-md transition-opacity duration-200 ${
-            isLoading && data && data.length > 0 ? 'opacity-75' : 'opacity-100'
+            isLoading && memoizedData.length > 0 ? 'opacity-75' : 'opacity-100'
           }`}
         >
           {renderEmptyState() || (
@@ -533,7 +533,7 @@ export function ResourcePaginationTable<T>({
       </div>
 
       {/* Pagination with memoized calculations */}
-      {data && data.length > 0 && (
+      {memoizedData.length > 0 && (
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
             {hasActiveFilters ? (

@@ -46,13 +46,15 @@ export function HPADetail(props: { namespace: string; name: string }) {
     isError: isHPAError,
     error: hpaError,
     refetch: refetchHPA,
-  } = useResource<HorizontalPodAutoscaler>('horizontalpodautoscalers', name, namespace)
+  } = useResource('horizontalpodautoscalers', name, namespace)
+
+  const hpaData = (hpa as HorizontalPodAutoscaler) || ({} as HorizontalPodAutoscaler)
 
   useEffect(() => {
-    if (hpa) {
-      setYamlContent(yaml.dump(hpa, { indent: 2 }))
+    if (hpaData) {
+      setYamlContent(yaml.dump(hpaData, { indent: 2 }))
     }
-  }, [hpa])
+  }, [hpaData])
 
   const handleYamlChange = (value: string) => {
     setYamlContent(value)
@@ -111,10 +113,10 @@ export function HPADetail(props: { namespace: string; name: string }) {
   }
 
   // Extract metrics information
-  const metrics = hpa.spec?.metrics || []
-  const currentMetrics = hpa.status?.currentMetrics || []
-  const conditions = hpa.status?.conditions || []
-  const scaleTargetRef = hpa.spec?.scaleTargetRef
+  const metrics = hpaData.spec?.metrics || []
+  const currentMetrics = hpaData.status?.currentMetrics || []
+  const conditions = hpaData.status?.conditions || []
+  const scaleTargetRef = hpaData.spec?.scaleTargetRef
 
   const tabs = [
     {
@@ -131,19 +133,19 @@ export function HPADetail(props: { namespace: string; name: string }) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-muted-foreground">{t('common.name')}</Label>
-                  <p className="font-medium">{hpa.metadata?.name}</p>
+                  <p className="font-medium">{hpaData.metadata?.name}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">{t('common.namespace')}</Label>
-                  <p className="font-medium">{hpa.metadata?.namespace}</p>
+                  <p className="font-medium">{hpaData.metadata?.namespace}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">{t('common.created')}</Label>
-                  <p className="font-medium">{formatDate(hpa.metadata?.creationTimestamp || '')}</p>
+                  <p className="font-medium">{formatDate(hpaData.metadata?.creationTimestamp || '')}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">UID</Label>
-                  <p className="font-mono text-xs">{hpa.metadata?.uid}</p>
+                  <p className="font-mono text-xs">{hpaData.metadata?.uid}</p>
                 </div>
               </div>
             </CardContent>
@@ -184,27 +186,27 @@ export function HPADetail(props: { namespace: string; name: string }) {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label className="text-muted-foreground">Min Replicas</Label>
-                  <p className="font-medium text-xl">{hpa.spec?.minReplicas || 1}</p>
+                  <p className="font-medium text-xl">{hpaData.spec?.minReplicas || 1}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Max Replicas</Label>
-                  <p className="font-medium text-xl">{hpa.spec?.maxReplicas}</p>
+                  <p className="font-medium text-xl">{hpaData.spec?.maxReplicas}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Current Replicas</Label>
-                  <p className="font-medium text-xl">{hpa.status?.currentReplicas || '-'}</p>
+                  <p className="font-medium text-xl">{hpaData.status?.currentReplicas || '-'}</p>
                 </div>
               </div>
-              {hpa.status?.desiredReplicas !== undefined && (
+              {hpaData.status?.desiredReplicas !== undefined && (
                 <div className="mt-4 p-3 bg-muted rounded-md">
                   <p className="text-sm">
                     <span className="text-muted-foreground">Desired Replicas: </span>
-                    <span className="font-medium">{hpa.status.desiredReplicas}</span>
+                    <span className="font-medium">{hpaData.status.desiredReplicas}</span>
                   </p>
-                  {hpa.status?.lastScaleTime && (
+                  {hpaData.status?.lastScaleTime && (
                     <p className="text-sm mt-1">
                       <span className="text-muted-foreground">Last Scale Time: </span>
-                      <span className="font-medium">{formatDate(hpa.status.lastScaleTime)}</span>
+                      <span className="font-medium">{formatDate(hpaData.status.lastScaleTime)}</span>
                     </p>
                   )}
                 </div>
@@ -233,7 +235,7 @@ export function HPADetail(props: { namespace: string; name: string }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {metrics.map((metric, index) => {
+                    {metrics.map((metric: any, index: number) => {
                       const currentMetric = currentMetrics[index]
                       let metricName = '-'
                       let targetType = '-'
@@ -316,11 +318,11 @@ export function HPADetail(props: { namespace: string; name: string }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {conditions.map((condition, index) => (
+                    {conditions.map((condition: any, index: number) => (
                       <TableRow key={index}>
                         <TableCell>{condition.type}</TableCell>
                         <TableCell>
-                          <Badge variant={condition.status === 'True' ? 'success' : 'secondary'}>
+                          <Badge variant={condition.status === 'True' ? 'default' : 'secondary'}>
                             {condition.status}
                           </Badge>
                         </TableCell>
@@ -340,17 +342,16 @@ export function HPADetail(props: { namespace: string; name: string }) {
     {
       value: 'labels',
       label: t('common.labelsAnnotations'),
-      content: <LabelsAnno labels={hpa.metadata?.labels} annotations={hpa.metadata?.annotations} />,
+      content: <LabelsAnno labels={hpaData.metadata?.labels || {}} annotations={hpaData.metadata?.annotations || {}} />,
     },
     {
       value: 'events',
       label: t('common.events'),
       content: (
         <EventTable
-          namespace={namespace}
-          uid={hpa.metadata?.uid}
+          resource="horizontalpodautoscalers"
           name={name}
-          kind="HorizontalPodAutoscaler"
+          namespace={namespace}
         />
       ),
     },
@@ -359,7 +360,7 @@ export function HPADetail(props: { namespace: string; name: string }) {
       label: t('common.relatedResources'),
       content: (
         <RelatedResourcesTable
-          resourceType="horizontalpodautoscalers"
+          resource="horizontalpodautoscalers"
           name={name}
           namespace={namespace}
         />
@@ -385,9 +386,9 @@ export function HPADetail(props: { namespace: string; name: string }) {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold">{hpa.metadata?.name}</h1>
+          <h1 className="text-3xl font-bold">{hpaData.metadata?.name}</h1>
           <p className="text-muted-foreground mt-2">
-            HorizontalPodAutoscaler in namespace {hpa.metadata?.namespace}
+            HorizontalPodAutoscaler in namespace {hpaData.metadata?.namespace}
           </p>
         </div>
         <div className="flex gap-2">
@@ -412,7 +413,7 @@ export function HPADetail(props: { namespace: string; name: string }) {
       </div>
 
       {/* Tabs */}
-      <ResponsiveTabs tabs={tabs} defaultValue="overview" />
+      <ResponsiveTabs tabs={tabs} />
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
@@ -420,8 +421,8 @@ export function HPADetail(props: { namespace: string; name: string }) {
         onOpenChange={setIsDeleteDialogOpen}
         onConfirm={handleDelete}
         resourceType="HorizontalPodAutoscaler"
-        resourceName={hpa.metadata?.name || ''}
-        namespace={hpa.metadata?.namespace}
+        resourceName={hpaData.metadata?.name || ''}
+        namespace={hpaData.metadata?.namespace}
       />
     </div>
   )

@@ -24,6 +24,7 @@ import {
 } from 'kubernetes-types/core/v1'
 import { EndpointSlice } from 'kubernetes-types/discovery/v1'
 import { Ingress } from 'kubernetes-types/networking/v1'
+import { HorizontalPodAutoscaler } from 'kubernetes-types/autoscaling/v2'
 import { ClusterRole, ClusterRoleBinding, Role, RoleBinding } from 'kubernetes-types/rbac/v1'
 import { StorageClass } from 'kubernetes-types/storage/v1'
 
@@ -119,6 +120,7 @@ export type ResourceType =
   | 'podmetrics'
   | 'replicasets'
   | 'clonesets'
+  | 'horizontalpodautoscalers'
   | 'sidecarsets'
   | 'nodeimages'
   | 'connectors'
@@ -321,6 +323,10 @@ export interface ResourcesTypeMap {
     items: ServiceAccount[]
     metadata?: listMetadataType
   }
+  horizontalpodautoscalers: {
+    items: HorizontalPodAutoscaler[]
+    metadata?: listMetadataType
+  }
 }
 
 export interface PodMetrics {
@@ -369,6 +375,7 @@ export interface ResourceTypeMap {
   replicasets: ReplicaSet
   podmetrics: PodMetrics
   clonesets: CloneSet
+  horizontalpodautoscalers: HorizontalPodAutoscaler
   sidecarsets: CustomResource
   nodeimages: CustomResource
   connectors: CustomResource

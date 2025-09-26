@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025-09-27]
+
+### Fixed
+- **后端编译错误**: 修复 Go 代码中 fmt.Errorf 使用非常量格式字符串的错误
+  - 修复 advanced_daemonset_handler.go 中的格式化错误
+  - 修复 advanced_statefulset_handler.go 中的格式化错误
+  - 修复 cloneset_handler.go 中的格式化错误
+- **前端 TypeScript 编译错误**: 修复多个类型定义和组件属性问题
+  - 添加 HorizontalPodAutoscaler 到 ResourcesTypeMap 类型映射
+  - 修复 create-hpa-dialog.tsx 中未使用的 axios 导入和 API 调用方法
+  - 修复 hpa-detail.tsx 和 hpa-list-page.tsx 中的类型不匹配问题
+  - 修复 Badge 组件 variant 属性值（移除无效的 'success' 和 'warning'）
+  - 修复 EventTable 组件属性（从 'kind' 改为 'resource'）
+  - 修复 Switch 组件的 disabled 属性类型处理
+- **数据处理类型错误**: 修复资源表格组件中的数据访问问题
+  - 修复 resource-table.tsx 中的 memoizedData 类型处理
+  - 修复 resource-pagination-table.tsx 中的数据长度检查
+
+### Changed
+- **性能分析优化**: pprof 性能分析工具现在仅在 EnablePprof 配置启用时才启动
+- **代码质量改进**: 统一使用 memoizedData 替代直接访问数据，提高组件渲染性能
+
 ## [2025-09-26]
 
 ### Added

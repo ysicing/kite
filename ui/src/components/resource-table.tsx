@@ -476,7 +476,7 @@ export function ResourceTable<T>({
       </div>
 
       {/* Loading indicator for refetch */}
-      {isLoading && data && (data as T[]).length > 0 && (
+      {isLoading && memoizedData.length > 0 && (
         <div className="flex items-center justify-center py-2 bg-muted/20 rounded-md">
           <Database className="h-4 w-4 text-muted-foreground animate-pulse mr-2" />
           <span className="text-sm text-muted-foreground">
@@ -489,7 +489,7 @@ export function ResourceTable<T>({
       <div className="overflow-hidden rounded-lg border">
         <div
           className={`rounded-md transition-opacity duration-200 ${
-            isLoading && data && (data as T[]).length > 0
+            isLoading && memoizedData.length > 0
               ? 'opacity-75'
               : 'opacity-100'
           }`}

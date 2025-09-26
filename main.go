@@ -132,9 +132,11 @@ func setupWebhookRouter(r *gin.Engine, cm *cluster.ClusterManager) {
 func main() {
 	klog.InitFlags(nil)
 	flag.Parse()
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+	if common.EnablePprof {
+		go func() {
+			log.Println(http.ListenAndServe("localhost:6060", nil))
+		}()
+	}
 
 	common.LoadEnvs()
 	gin.SetMode(gin.ReleaseMode)

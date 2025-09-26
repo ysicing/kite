@@ -112,7 +112,7 @@ func (h *AdvancedStatefulSetHandler) Restart(c *gin.Context, namespace, name str
 
 	result := GetKruiseOperationsManager().ExecuteOperation(c.Request.Context(), cs, req)
 	if !result.Success {
-		return errors.NewInternalError(fmt.Errorf(result.ErrorDetail))
+		return errors.NewInternalError(fmt.Errorf("%s", result.ErrorDetail))
 	}
 
 	return nil

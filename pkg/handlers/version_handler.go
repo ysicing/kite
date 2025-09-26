@@ -10,6 +10,7 @@ import (
 	"k8s.io/klog/v2"
 
 	"github.com/zxh326/kite/pkg/cluster"
+	"github.com/zxh326/kite/pkg/common"
 	"github.com/zxh326/kite/pkg/handlers/resources"
 )
 
@@ -63,6 +64,22 @@ func getCurrentVersion() string {
 
 // 检查是否有新版本
 func (h *VersionHandler) checkForUpdates() (*VersionInfo, error) {
+	// Allow disabling version check via env
+	if !common.EnableVersionCheck {
+		current := h.currentVersion
+		if current == "unknown" {
+			current = "dev-unknown"
+		}
+		vi := &VersionInfo{
+			Current:   current,
+			Latest:    current,
+			HasUpdate: false,
+			UpdatedAt: time.Now(),
+		}
+		h.cachedVersion = vi
+		h.lastCheck = time.Now()
+		return vi, nil
+	}
 	// 如果缓存存在且在10分钟内，直接返回缓存
 	if h.cachedVersion != nil && time.Since(h.lastCheck) < time.Minute*10 {
 		return h.cachedVersion, nil

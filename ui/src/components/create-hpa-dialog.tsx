@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { IconPlus, IconChartLine } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import axios from 'axios'
 
 import {
   Dialog,
@@ -88,15 +87,10 @@ export function CreateHPADialog({
 
     setLoadingRecommendation(true)
     try {
-      const response = await apiClient.request({
-        method: 'GET',
-        url: `/api/horizontalpodautoscalers/${targetNamespace}/recommendation`,
-        params: {
-          type: targetKind,
-          name: targetName,
-        },
-      })
-      const data = response.data as HPARecommendation
+      const response = await apiClient.get<HPARecommendation>(
+        `/horizontalpodautoscalers/${targetNamespace}/recommendation?type=${targetKind}&name=${targetName}`
+      )
+      const data = response
       setRecommendation(data)
 
       // Apply recommendations
@@ -151,11 +145,7 @@ export function CreateHPADialog({
         payload.targetMemoryPercent = targetMemoryPercent
       }
 
-      await apiClient.request({
-        method: 'POST',
-        url: '/api/horizontalpodautoscalers/create',
-        data: payload,
-      })
+      await apiClient.post('/horizontalpodautoscalers/create', payload)
 
       toast.success(t('hpa.createSuccess', { name: hpaName }))
       onOpenChange(false)
@@ -170,7 +160,7 @@ export function CreateHPADialog({
       setEnableMemory(false)
       setTargetMemoryPercent(80)
     } catch (error: any) {
-      toast.error(error.response?.data?.error || t('hpa.createError'))
+      toast.error(error.message || t('hpa.createError'))
     } finally {
       setIsCreating(false)
     }
@@ -303,9 +293,9 @@ export function CreateHPADialog({
                 </Label>
                 <Switch
                   id="enable-cpu"
-                  checked={enableCPU}
+                  checked={enableCPU ?? false}
                   onCheckedChange={setEnableCPU}
-                  disabled={recommendation && !recommendation.hasCPURequests}
+                  disabled={recommendation ? !recommendation.hasCPURequests : false}
                 />
               </div>
               {enableCPU && (
@@ -334,9 +324,9 @@ export function CreateHPADialog({
                 </Label>
                 <Switch
                   id="enable-memory"
-                  checked={enableMemory}
+                  checked={enableMemory ?? false}
                   onCheckedChange={setEnableMemory}
-                  disabled={recommendation && !recommendation.hasMemoryRequests}
+                  disabled={recommendation ? !recommendation.hasMemoryRequests : false}
                 />
               </div>
               {enableMemory && (

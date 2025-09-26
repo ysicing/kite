@@ -17,12 +17,14 @@ const (
 )
 
 var (
-	Port            = "8080"
-	JwtSecret       = ""
-	OAuthEnabled    = false
-	OAuthProviders  = ""
-	OAuthAllowUsers = ""
-	EnableAnalytics = false
+	Port               = "8080"
+	JwtSecret          = ""
+	OAuthEnabled       = false
+	OAuthProviders     = ""
+	OAuthAllowUsers    = ""
+	EnableAnalytics    = false
+	EnablePprof        = false
+	EnableVersionCheck = true
 
 	NodeTerminalImage = "busybox:latest"
 
@@ -66,6 +68,14 @@ func LoadEnvs() {
 
 	if analytics := os.Getenv("ENABLE_ANALYTICS"); analytics == "true" {
 		EnableAnalytics = true
+	}
+
+	if pprof := os.Getenv("ENABLE_PPROF"); pprof == "true" {
+		EnablePprof = true
+	}
+
+	if vcheck := os.Getenv("ENABLE_VERSION_CHECK"); vcheck != "" {
+		EnableVersionCheck = vcheck == "true"
 	}
 
 	if nodeTerminalImage := os.Getenv("NODE_TERMINAL_IMAGE"); nodeTerminalImage != "" {

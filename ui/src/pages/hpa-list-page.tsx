@@ -132,15 +132,15 @@ export function HPAListPage() {
 
           switch (status) {
             case 'stable':
-              variant = 'success'
+              variant = 'default'
               statusText = t('hpa.stable')
               break
             case 'scaling-up':
-              variant = 'warning'
+              variant = 'outline'
               statusText = t('hpa.scalingUp')
               break
             case 'scaling-down':
-              variant = 'warning'
+              variant = 'outline'
               statusText = t('hpa.scalingDown')
               break
             default:
@@ -177,7 +177,7 @@ export function HPAListPage() {
 
           if (scalingActive?.status === 'True') {
             return (
-              <Badge variant="success" className="text-xs">
+              <Badge variant="default" className="text-xs">
                 {t('hpa.active')}
               </Badge>
             )
