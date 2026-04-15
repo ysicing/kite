@@ -5,12 +5,12 @@ import "strings"
 func GuessSearchResources(query string) (string, string) {
 	guessSearchResources := "all"
 	query = strings.TrimSpace(query)
-	q := strings.Split(query, " ")
+	q := strings.Fields(query)
 	if len(q) < 2 {
 		return guessSearchResources, query
 	}
-	if len(strings.Split(query, " ")) >= 2 {
-		switch strings.ToLower(strings.Split(query, " ")[0]) {
+	if len(q) >= 2 {
+		switch strings.ToLower(q[0]) {
 		case "po", "pod", "pods":
 			guessSearchResources = "pods"
 		case "svc", "service", "services":

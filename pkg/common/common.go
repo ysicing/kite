@@ -25,6 +25,7 @@ var (
 	EnableAnalytics    = false
 	EnablePprof        = false
 	EnableVersionCheck = true
+	CORSAllowedOrigins []string
 
 	NodeTerminalImage = "busybox:latest"
 
@@ -39,6 +40,8 @@ var (
 )
 
 func LoadEnvs() {
+	CORSAllowedOrigins = nil
+
 	if secret := os.Getenv("JWT_SECRET"); secret != "" {
 		JwtSecret = secret
 	} else {
@@ -92,5 +95,12 @@ func LoadEnvs() {
 	}
 	if readonly := os.Getenv("READONLY"); readonly == "true" {
 		Readonly = true
+	}
+	if allowedOrigins := os.Getenv("CORS_ALLOWED_ORIGINS"); allowedOrigins != "" {
+		for _, origin := range utils.SplitAndTrim(allowedOrigins, ",") {
+			if origin != "" {
+				CORSAllowedOrigins = append(CORSAllowedOrigins, origin)
+			}
+		}
 	}
 }

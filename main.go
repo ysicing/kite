@@ -143,7 +143,7 @@ func main() {
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(middleware.Logger())
-	r.Use(middleware.CORS())
+	r.Use(middleware.DevCORS(common.CORSAllowedOrigins))
 
 	cm, err := cluster.NewClusterManager()
 	if err != nil {
@@ -155,10 +155,7 @@ func main() {
 	setupWebhookRouter(r, cm)
 	setupStatic(r)
 
-	srv := &http.Server{
-		Addr:    ":" + common.Port,
-		Handler: r.Handler(),
-	}
+	srv := newHTTPServer(r.Handler())
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			klog.Fatalf("Failed to start server: %v", err)
@@ -175,5 +172,14 @@ func main() {
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		klog.Fatalf("Failed to shutdown server: %v", err)
+	}
+}
+
+func newHTTPServer(handler http.Handler) *http.Server {
+	return &http.Server{
+		Addr:              ":" + common.Port,
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       120 * time.Second,
 	}
 }

@@ -28,3 +28,15 @@ func ToEnvName(input string) string {
 	s = strings.ToUpper(s)
 	return s
 }
+
+func SplitAndTrim(input, sep string) []string {
+	parts := strings.Split(input, sep)
+	result := make([]string, 0, len(parts))
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}

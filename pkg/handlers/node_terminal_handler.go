@@ -85,7 +85,7 @@ func (h *NodeTerminalHandler) HandleNodeTerminalWebSocket(c *gin.Context) {
 }
 
 func (h *NodeTerminalHandler) createNodeAgent(ctx context.Context, cs *cluster.ClientSet, nodeName string) (string, error) {
-	podName := fmt.Sprintf("%s-%s-%s", common.NodeTerminalPodName, nodeName, utils.RandomString(5))
+	podName := buildNodeTerminalPodName(nodeName)
 
 	// Define the kite node agent pod spec
 	pod := &corev1.Pod{
@@ -149,6 +149,19 @@ func (h *NodeTerminalHandler) createNodeAgent(ctx context.Context, cs *cluster.C
 	}
 
 	return podName, nil
+}
+
+func buildNodeTerminalPodName(nodeName string) string {
+	const randomSuffixLength = 5
+	const maxPodNameLength = 63
+
+	maxNodeNameLength := maxPodNameLength - len(common.NodeTerminalPodName) - randomSuffixLength - 2
+	truncatedNodeName := nodeName
+	if maxNodeNameLength > 0 && len(truncatedNodeName) > maxNodeNameLength {
+		truncatedNodeName = truncatedNodeName[:maxNodeNameLength]
+	}
+
+	return fmt.Sprintf("%s-%s-%s", common.NodeTerminalPodName, truncatedNodeName, utils.RandomString(randomSuffixLength))
 }
 
 // waitForPodReady waits for the kite node agent pod to be ready

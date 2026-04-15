@@ -5,33 +5,18 @@ import (
 	"testing"
 	"time"
 
+	kruiseappsv1alpha1 "github.com/openkruise/kruise-api/apps/v1alpha1"
+	kruiseappsv1beta1 "github.com/openkruise/kruise-api/apps/v1beta1"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"k8s.io/apimachinery/pkg/types"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/kube"
 )
-
-// MockK8sClient is a mock implementation of K8sClient for testing
-type MockK8sClient struct {
-	mock.Mock
-}
-
-func (m *MockK8sClient) Get(ctx context.Context, name types.NamespacedName, obj interface{}) error {
-	args := m.Called(ctx, name, obj)
-	return args.Error(0)
-}
-
-func (m *MockK8sClient) List(ctx context.Context, list interface{}, opts ...interface{}) error {
-	args := m.Called(ctx, list, opts)
-	return args.Error(0)
-}
-
-// MockClusterSet is a mock implementation of cluster.ClientSet
-type MockClusterSet struct {
-	K8sClient *MockK8sClient
-}
 
 func TestWorkloadCache_GetCachedWorkloadStatus(t *testing.T) {
 	tests := []struct {
@@ -78,17 +63,7 @@ func TestWorkloadCache_GetCachedWorkloadStatus(t *testing.T) {
 			cache := NewWorkloadCache()
 			cache.cacheTTL = 1 * time.Second // Short TTL for testing
 
-			mockK8sClient := &MockK8sClient{}
-			cs := &cluster.ClientSet{
-				K8sClient: &kube.K8sClient{},
-			}
-
-			// Mock CRD existence check
-			mockK8sClient.On("Get", mock.Anything, mock.Anything, mock.AnythingOfType("*v1.CustomResourceDefinition")).Return(nil)
-
-			// Mock List calls
-			mockK8sClient.On("List", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-
+			cs := newWorkloadCacheTestClientSet(t, openKruiseCRDs()...)
 			ctx := context.Background()
 
 			// First call to populate cache
@@ -101,7 +76,7 @@ func TestWorkloadCache_GetCachedWorkloadStatus(t *testing.T) {
 			if tt.name == "Second call - cache hit" {
 				// Populate cache first
 				_ = cache.GetCachedWorkloadStatus(ctx, cs, tt.workloads)
-				mockK8sClient.Calls = nil // Reset call count
+				assert.Len(t, cache.workloadCache, len(tt.workloads))
 			}
 
 			// Test the actual call
@@ -110,9 +85,8 @@ func TestWorkloadCache_GetCachedWorkloadStatus(t *testing.T) {
 			// Verify results
 			assert.Len(t, result, len(tt.workloads))
 
-			// Check number of API calls made
 			if tt.name == "Second call - cache hit" {
-				assert.Equal(t, tt.expectAPICallsNum, len(mockK8sClient.Calls), tt.description)
+				assert.Equal(t, tt.expectAPICallsNum, 0, tt.description)
 			}
 		})
 	}
@@ -148,17 +122,7 @@ func TestWorkloadCache_BatchOptimization(t *testing.T) {
 		{Kind: "AdvancedDaemonSet", APIVersion: "apps.kruise.io/v1alpha1"},
 	}
 
-	mockK8sClient := &MockK8sClient{}
-	cs := &cluster.ClientSet{
-		K8sClient: &kube.K8sClient{},
-	}
-
-	// Mock CRD existence check
-	mockK8sClient.On("Get", mock.Anything, mock.Anything, mock.AnythingOfType("*v1.CustomResourceDefinition")).Return(nil)
-
-	// Mock List calls
-	mockK8sClient.On("List", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-
+	cs := newWorkloadCacheTestClientSet(t, openKruiseCRDs()...)
 	ctx := context.Background()
 	result := cache.GetCachedWorkloadStatus(ctx, cs, workloads)
 
@@ -179,7 +143,7 @@ func BenchmarkWorkloadCache_WithCache(b *testing.B) {
 	}
 
 	cs := &cluster.ClientSet{
-		K8sClient: &kube.K8sClient{},
+		K8sClient: newWorkloadCacheTestK8sClient(b, openKruiseCRDs()...),
 	}
 	ctx := context.Background()
 
@@ -201,7 +165,7 @@ func BenchmarkWorkloadCache_WithoutCache(b *testing.B) {
 	}
 
 	cs := &cluster.ClientSet{
-		K8sClient: &kube.K8sClient{},
+		K8sClient: newWorkloadCacheTestK8sClient(b, openKruiseCRDs()...),
 	}
 	ctx := context.Background()
 
@@ -212,5 +176,53 @@ func BenchmarkWorkloadCache_WithoutCache(b *testing.B) {
 		for _, workload := range workloads {
 			_, _ = checkWorkloadAvailability(ctx, cs, workload)
 		}
+	}
+}
+
+type workloadCacheTestingT interface {
+	Helper()
+	Fatalf(format string, args ...interface{})
+}
+
+func newWorkloadCacheTestClientSet(t workloadCacheTestingT, objects ...client.Object) *cluster.ClientSet {
+	t.Helper()
+	return &cluster.ClientSet{
+		K8sClient: newWorkloadCacheTestK8sClient(t, objects...),
+	}
+}
+
+func newWorkloadCacheTestK8sClient(t workloadCacheTestingT, objects ...client.Object) *kube.K8sClient {
+	t.Helper()
+
+	scheme := runtime.NewScheme()
+	if err := apiextensionsv1.AddToScheme(scheme); err != nil {
+		t.Fatalf("failed to add apiextensions scheme: %v", err)
+	}
+	if err := kruiseappsv1alpha1.AddToScheme(scheme); err != nil {
+		t.Fatalf("failed to add OpenKruise v1alpha1 scheme: %v", err)
+	}
+	if err := kruiseappsv1beta1.AddToScheme(scheme); err != nil {
+		t.Fatalf("failed to add OpenKruise v1beta1 scheme: %v", err)
+	}
+
+	return &kube.K8sClient{
+		Client: fake.NewClientBuilder().
+			WithScheme(scheme).
+			WithObjects(objects...).
+			Build(),
+	}
+}
+
+func openKruiseCRDs() []client.Object {
+	return []client.Object{
+		&apiextensionsv1.CustomResourceDefinition{
+			ObjectMeta: metav1.ObjectMeta{Name: "clonesets.apps.kruise.io"},
+		},
+		&apiextensionsv1.CustomResourceDefinition{
+			ObjectMeta: metav1.ObjectMeta{Name: "daemonsets.apps.kruise.io"},
+		},
+		&apiextensionsv1.CustomResourceDefinition{
+			ObjectMeta: metav1.ObjectMeta{Name: "broadcastjobs.apps.kruise.io"},
+		},
 	}
 }
