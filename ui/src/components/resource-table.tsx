@@ -83,11 +83,12 @@ export function ResourceTable<T>({
   const [selectedNamespace, setSelectedNamespace] = useState<
     string | undefined
   >()
-  
+  const effectiveNamespace = clusterScope ? undefined : selectedNamespace
+
   // Use external data if provided, otherwise fetch data internally
   const internalQuery = useResources(
     resourceType ?? (resourceName.toLowerCase() as ResourceType),
-    selectedNamespace,
+    effectiveNamespace,
     {
       refreshInterval: 5000, // Refresh every 5 seconds
       disable: !!externalData, // Only fetch if no external data is provided

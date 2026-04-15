@@ -9,6 +9,7 @@ import (
 
 	"github.com/zxh326/kite/pkg/cluster"
 	"github.com/zxh326/kite/pkg/common"
+	"github.com/zxh326/kite/pkg/utils"
 
 	v1 "k8s.io/api/core/v1"
 )
@@ -74,7 +75,7 @@ func GetOverview(c *gin.Context) {
 				}
 			}
 		}
-		if pod.Status.Phase == v1.PodRunning || pod.Status.Phase == v1.PodSucceeded {
+		if utils.IsPodReady(&pod) || pod.Status.Phase == v1.PodSucceeded {
 			runningPods++
 		}
 	}
